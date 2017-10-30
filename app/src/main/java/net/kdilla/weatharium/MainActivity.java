@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinnerSelectCountry;
     private SharedPreferences preferences;
     private TextView textViewWeather;
-    private final String SAVED_COUNTRY = "saved countery";
+    private final String SAVED_COUNTRY_WEATHER = "saved countery";
     private String currentWeather;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +52,23 @@ public class MainActivity extends AppCompatActivity {
         preferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor ed = preferences.edit();
         currentWeather = WeatherByCountry.getWeatherInCountry(MainActivity.this, spinnerSelectCountry.getSelectedItemPosition());
-        ed.putString(SAVED_COUNTRY, currentWeather);
+        ed.putString(SAVED_COUNTRY_WEATHER, currentWeather);
         ed.commit();
 
     }
 
     private void loadPreferencesAndShowWeather() {
         preferences = getPreferences(MODE_PRIVATE);
-        String savedPrefs = preferences.getString(SAVED_COUNTRY, "");
+        String savedPrefs = preferences.getString(SAVED_COUNTRY_WEATHER, "");
+        String[] savedPrefsSplit = savedPrefs.split(" ");
+        String savedCountry = savedPrefsSplit[0];
+        String[] countries=this.getResources().getStringArray(R.array.country_selection);
+        for (int i = 0; i < countries.length; i++) {
+            if (countries[i].equals(savedCountry)){
+                spinnerSelectCountry.setId(i);
+                break;
+            }
+        }
         textViewWeather.setText(savedPrefs);
         Toast.makeText(MainActivity.this, (R.string.country_loaded), Toast.LENGTH_SHORT).show();
     }
