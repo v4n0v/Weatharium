@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">Weatharium</string>
     <string name="tw_header_text">Welcome to</string>
-    <string name="tap_to_continue">Tap to continue</string>
+    <string name="tap_to_select">Select your country</string>
+    <string name="btn_behold_weatharium">Behold weatharium</string>
+    <string name="country_loaded">Country selected</string>
+    <string-array name="country_selection">
+        <item>Russia</item>
+        <item>Ukraine</item>
+        <item>Belorussia</item>
+        <item>China</item>
+        <item>USA</item>
+    </string-array>
+    <string-array name="weather">
+        <item>In Russia +5</item>
+        <item>In Ukraine +5</item>
+        <item>In Belorussia +5</item>
+        <item>In China +5</item>
+        <item>In USA +5</item>
+    </string-array>
 </resources>

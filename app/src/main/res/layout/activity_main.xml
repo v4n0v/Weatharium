@@ -7,41 +7,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context="net.kdilla.weatharium.MainActivity"
     android:weightSum="1">
 
 
     <TextView
-        android:id="@+id/tvHeader"
+        android:id="@+id/textview_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-
-        android:paddingTop="120dp"
+        android:gravity="center"
         android:text="@string/tw_header_text"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/colorLogoText"
         android:textSize="56sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
     <ImageView
-        android:id="@+id/iv_logo"
+        android:id="@+id/img_logo"
         android:layout_width="284dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_weight="0.04"
+        android:src="@drawable/logo"/>
 
-        android:src="@drawable/logo"
-        android:layout_weight="0.04" />
     <TextView
+        android:id="@+id/textview_tmp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:text="@string/tap_to_continue"
+        android:layout_marginTop="@dimen/big_margin"
+        android:text="@string/tap_to_select"
         android:layout_gravity="center"
-        android:textColor="@color/colorLogoText"
-        />
+        android:textColor="@color/colorLogoText"/>
+
+    <Spinner
+        android:id="@+id/spinner_sel_country"
+        android:layout_marginTop="@dimen/std_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/country_selection"/>
+    <Button
+        android:id="@+id/btn_run"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/std_margin"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_behold_weatharium"/>
+    <TextView
+        android:id="@+id/textview_weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/std_margin"
+        android:layout_gravity="center"
+        android:textColor="@color/colorLogoText"/>
 </LinearLayout>
 
-
-    <!--  --> <!--android:layout_marginTop="40dp" -->
