@@ -60,12 +60,14 @@ public class MainActivity extends AppCompatActivity {
     private void loadPreferencesAndShowWeather() {
         preferences = getPreferences(MODE_PRIVATE);
         String savedPrefs = preferences.getString(SAVED_COUNTRY_WEATHER, "");
+
+        // поулчаю имя страны и пытаюсь установливаю его, как элемент по умолчанию в спиннере
         String[] savedPrefsSplit = savedPrefs.split(" ");
         String savedCountry = savedPrefsSplit[0];
         String[] countries=this.getResources().getStringArray(R.array.country_selection);
         for (int i = 0; i < countries.length; i++) {
             if (countries[i].equals(savedCountry)){
-                spinnerSelectCountry.setId(i);
+                spinnerSelectCountry.setSelection(i);
                 break;
             }
         }
