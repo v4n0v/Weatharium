@@ -72,8 +72,6 @@ public class SelectCountryActivity extends AppCompatActivity {
     private void loadPreferencesAndShowWeather() {
         preferences = getPreferences(MODE_PRIVATE);
         // восстанавливаю из настроек последний элемент спиннера
-        String savedPrefsWeather = preferences.getString(PreferencesID.SAVED_COUNTRY_WEATHER, "");
-        // поулчаю имя страны и установливаю его, как элемент по умолчанию в спиннере
         spinnerSelectCountry.setSelection(preferences.getInt(PreferencesID.SAVED_COUNTRY, 1));
 
         Toast.makeText(SelectCountryActivity.this, (R.string.country_loaded), Toast.LENGTH_SHORT).show();
