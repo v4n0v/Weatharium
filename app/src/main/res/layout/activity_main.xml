@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context="net.kdilla.weatharium.MainActivity"
+    tools:context="net.kdilla.weatharium.SelectCountryActivity"
     android:weightSum="1">
 
 
@@ -61,6 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/std_margin"
         android:layout_gravity="center"
-        android:textColor="@color/colorLogoText"/>
+        android:textColor="@color/colorLogoText"
+        android:text="@string/load_error"
+        android:visibility="invisible"/>
 </LinearLayout>
 

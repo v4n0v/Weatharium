@@ -3,7 +3,10 @@
     <string name="tw_header_text">Welcome to</string>
     <string name="tap_to_select">Select your country</string>
     <string name="btn_behold_weatharium">Behold weatharium</string>
-    <string name="country_loaded">Country selected</string>
+    <string name="country_loaded">Last country loaded</string>
+    <string name="load_error">Load error</string>
+    <string name="share_with_friends">Share with friends</string>
+    <string name="select_app">Select the aplication</string>
     <string-array name="country_selection">
         <item>Russia</item>
         <item>Ukraine</item>
