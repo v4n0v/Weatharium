@@ -1,23 +1,24 @@
 <resources>
     <string name="app_name">Weatharium</string>
     <string name="tw_header_text">Добро пожаловать</string>
-    <string name="tap_to_select">Выбери страну</string>
+    <string name="tap_to_select">Выбери город</string>
     <string name="btn_behold_weatharium">Узри weatharium</string>
-    <string name="country_loaded">Последняя выбранная страна загружена</string>
+    <string name="city_loaded">Последняя выбранная страна загружена</string>
     <string name="load_error">Ошибка закгрузки</string>
     <string name="share_with_friends">Поделиться с друзьями</string>
-    <string-array name="country_selection">
-        <item>Россия</item>
-        <item>Украина</item>
-        <item>Белорусь</item>
-        <item>Китай</item>
-        <item>США</item>
+    <string-array name="city_selection">
+        <item>Москва</item>
+        <item>Санкт Петербург</item>
+        <item>Лондон</item>
+        <item>Париж</item>
+        <item>Гонк Конг</item>
     </string-array>
     <string-array name="weather">
-        <item>Россия +5</item>
-        <item>Украина +5</item>
-        <item>Белорусь +5</item>
-        <item>Китай +5</item>
-        <item>США +5</item>
+        <item>Москва +5</item>
+        <item>Санкт Петербург +5</item>
+        <item>Лондон +5</item>
+        <item>Париж +5</item>
+        <item>Гонк Конг +5</item>
     </string-array>
+
 </resources>

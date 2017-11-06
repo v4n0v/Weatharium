@@ -17,7 +17,7 @@ class WeatherByCountry {
 
 
     static String[] getCountriesList(Context context){
-        String[] countriesList = context.getResources().getStringArray(R.array.country_selection);
+        String[] countriesList = context.getResources().getStringArray(R.array.city_selection);
 
         return countriesList;
     }
