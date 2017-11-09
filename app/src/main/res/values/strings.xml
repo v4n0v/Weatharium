@@ -7,6 +7,12 @@
     <string name="load_error">Load error</string>
     <string name="share_with_friends">Share with friends</string>
     <string name="select_app">Select the aplication</string>
+    <string name="chb_pressure">pressure</string>
+    <string name="chb_wind">wind</string>
+    <string name="chb_storm">storm</string>
+    <string name="tv_additional">Additional:</string>
+
+
     <string-array name="city_selection">
         <item>Moscow</item>
         <item>St. Petersburg</item>
@@ -21,4 +27,25 @@
         <item>In Paris +5</item>
         <item>In Hong Kong +5</item>
     </string-array>
+    <string-array name="wind">
+        <item>12</item>
+        <item>2</item>
+        <item>4</item>
+        <item>3</item>
+        <item>9</item>
+    </string-array>
+    <string-array name="pressure">
+        <item>745</item>
+        <item>721</item>
+        <item>759</item>
+        <item>761</item>
+        <item>780</item>
+    </string-array>
+    <integer-array name="storm">
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+    </integer-array>
 </resources>

@@ -1,9 +1,6 @@
 package net.kdilla.weatharium;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +15,8 @@ public class ShowWeatherActivity extends AppCompatActivity {
 
     Button btnShare;
     TextView tvShowWeather;
+
+
     private String currentWeather;
     private int cityPosition;
     //  private SharedPreferences preferences;
@@ -27,6 +26,9 @@ public class ShowWeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_weather);
         initLayouts();
 
+        TextView tvShowPressure = (TextView) findViewById(R.id.tv_show_pressure);
+        TextView tvShowWind = (TextView) findViewById(R.id.tv_show_wind);
+        TextView tvShowStorm = (TextView) findViewById(R.id.tv_show_storm);
         if (savedInstanceState != null) {
 
             currentWeather = savedInstanceState.getString(KEY_WEATHER);
@@ -37,8 +39,19 @@ public class ShowWeatherActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             currentWeather = intent.getStringExtra(PreferencesID.WEATHER_POS);
+
             if (currentWeather != null)
                 tvShowWeather.setText(currentWeather);
+            if (intent.getBooleanExtra(PreferencesID.ADD_PRESSURE, false)){
+                tvShowPressure.setText("pressure");
+
+            }
+            if (intent.getBooleanExtra(PreferencesID.ADD_WIND, false)){
+                tvShowWind.setText("wind");
+            }
+            if (intent.getBooleanExtra(PreferencesID.ADD_STORM, false)){
+                tvShowStorm.setText("storm");
+            }
         }
     }
 
@@ -77,8 +90,8 @@ public class ShowWeatherActivity extends AppCompatActivity {
 //
 //        // создаем Intent
 //        Intent returnIntent = new Intent();
-//        // заполняем переменной currentWeather с ключем SAVED_COUNTRY_WEATHER
-//        returnIntent.putExtra(PreferencesID.SAVED_COUNTRY_WEATHER, currentWeather);
+//        // заполняем переменной currentWeather с ключем SAVED_WEATHER
+//        returnIntent.putExtra(PreferencesID.SAVED_WEATHER, currentWeather);
 //        // сохраняем значения для отправки
 //        setResult(RESULT_OK, returnIntent);
 //        // завершаем работу активити

@@ -6,6 +6,12 @@
     <string name="city_loaded">Последняя выбранная страна загружена</string>
     <string name="load_error">Ошибка закгрузки</string>
     <string name="share_with_friends">Поделиться с друзьями</string>
+
+    <string name="chb_pressure">давление</string>
+    <string name="chb_wind">ветер</string>
+    <string name="chb_storm">шторм</string>
+    <string name="tv_additional">Дополнительно:</string>
+
     <string-array name="city_selection">
         <item>Москва</item>
         <item>Санкт Петербург</item>
