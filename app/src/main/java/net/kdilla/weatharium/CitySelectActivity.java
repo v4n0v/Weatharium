@@ -91,7 +91,7 @@ public class CitySelectActivity extends AppCompatActivity {
 
     private void showWeatherActivity(int categoryId) {
         Intent intent = new Intent(this, ShowWeatherFromList.class);
-        intent.putExtra(ShowWeatherFromList.EXTRA_CITY_NOM, categoryId);
+        intent.putExtra(PreferencesID.EXTRA_CITY_NOM, categoryId);
         isWind = chbWind.isChecked();
         isPressure = chbPressure.isChecked();
         isStorm = chbStorm.isChecked();

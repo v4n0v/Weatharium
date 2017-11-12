@@ -13,7 +13,7 @@ import net.kdilla.weatharium.utils.GetWeatherFromRes;
 import net.kdilla.weatharium.utils.PreferencesID;
 
 public class ShowWeatherFromList extends AppCompatActivity {
-    public static final String EXTRA_CITY_NOM = "nailNom";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class ShowWeatherFromList extends AppCompatActivity {
             TextView city = (TextView) findViewById(R.id.city);
             TextView temperature = (TextView) findViewById(R.id.texview_weather);
 
-            int cityNom = bundle.getInt(EXTRA_CITY_NOM);
+            int cityNom = bundle.getInt(PreferencesID.EXTRA_CITY_NOM);
             CityWeather weather = new CityWeather(GetWeatherFromRes.getCity(this, cityNom),
                     GetWeatherFromRes.getWeather(this, cityNom));//CityWeather.cityWeatherList[cityNom];
             Log.d("ShowWeatherFromList", "cityNom " + weather);

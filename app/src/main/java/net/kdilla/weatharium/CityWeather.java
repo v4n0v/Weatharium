@@ -1,7 +1,5 @@
 package net.kdilla.weatharium;
 
-import android.content.Context;
-
 /**
  * Created by avetc on 12.11.2017.
  */
