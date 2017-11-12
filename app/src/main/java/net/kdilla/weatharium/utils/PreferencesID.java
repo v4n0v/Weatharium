@@ -17,6 +17,8 @@ public class PreferencesID {
     public static final String ADD_PRESSURE = "add pressure";
     public static final String ADD_STORM = "add storm";
 
+    public static final String EXTRA_CITY_NOM = "cityNom";
+
     public static final int REQUEST_CODE_WEATHER = 1;
 
 

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Weatharium</string>
-    <string name="tw_header_text">Добро пожаловать</string>
-    <string name="tap_to_select">Выбери город</string>
+    <string name="tw_header_text">Добро пожаловать в</string>
+    <string name="tap_to_select">Выбери город и узри Weatharium</string>
     <string name="btn_behold_weatharium">Узри weatharium</string>
     <string name="city_loaded">Последняя выбранная страна загружена</string>
     <string name="load_error">Ошибка закгрузки</string>
@@ -12,6 +12,13 @@
     <string name="chb_storm">шторм</string>
     <string name="tv_additional">Дополнительно:</string>
 
+    <string name="pressure_title">Давление: </string>
+    <string name="wind_title">Ветер: </string>
+    <string name="storm_title">Еще что-нибудь: </string>
+
+    <string name="pressure_dim">ммртст</string>
+    <string name="wind_dim">м/с</string>
+    <string name="storm_dim">ссс</string>
     <string-array name="city_selection">
         <item>Москва</item>
         <item>Санкт Петербург</item>
@@ -20,11 +27,11 @@
         <item>Гонк Конг</item>
     </string-array>
     <string-array name="weather">
-        <item>Москва +5</item>
-        <item>Санкт Петербург +5</item>
-        <item>Лондон +5</item>
-        <item>Париж +5</item>
-        <item>Гонк Конг +5</item>
+        <item>Температура: +5</item>
+        <item>Температура: +8</item>
+        <item>Температура: +2</item>
+        <item>Температура: +6</item>
+        <item>Температура: +1</item>
     </string-array>
 
 </resources>

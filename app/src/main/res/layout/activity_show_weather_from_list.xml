@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/std_margin"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorLogoText"
+            android:textSize="@dimen/text_size_h1"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/texview_weather"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/std_margin"
+            android:layout_marginTop="@dimen/std_margin"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/colorLogoText" />
+
+
+
+        <LinearLayout
+            android:id="@+id/addition_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+
+
+    <!--     <TextView
+             android:id="@+id/texview_pressure"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_marginLeft="@dimen/std_margin"
+             android:layout_marginTop="@dimen/lil_margin"
+
+             android:textAppearance="?android:attr/textAppearanceMedium"
+             android:textColor="@color/colorLogoText" />
+
+         <TextView
+             android:id="@+id/texview_wind"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_marginLeft="@dimen/std_margin"
+
+             android:layout_marginTop="@dimen/lil_margin"
+             android:textAppearance="?android:attr/textAppearanceMedium" />
+
+         <TextView
+             android:id="@+id/texview_storm"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_marginLeft="@dimen/std_margin"
+             android:layout_marginTop="@dimen/lil_margin"
+             android:textAppearance="?android:attr/textAppearanceMedium"
+             android:textColor="@color/colorLogoText" />
+             -->

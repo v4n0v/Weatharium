@@ -3,4 +3,7 @@
     <dimen name="std_margin">10dp</dimen>
     <dimen name="std_padding">10dp</dimen>
     <dimen name="big_margin">60dp</dimen>
+    <dimen name="text_size_h1">40sp</dimen>
+    <dimen name="text_size_h2">20sp</dimen>
+    <dimen name="lil_margin">6dp</dimen>
 </resources>

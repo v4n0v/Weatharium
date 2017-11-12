@@ -6,92 +6,75 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
-    tools:context="net.kdilla.weatharium.SelectCountryActivity"
-    android:weightSum="1">
+    android:orientation="vertical"
+    android:weightSum="1"
+    tools:context="net.kdilla.weatharium.SelectCountryActivity">
 
-
-    <TextView
-        android:id="@+id/textview_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/tw_header_text"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textColor="@color/colorLogoText"
-        android:textSize="56sp"
-        android:textStyle="bold"/>
-
-    <ImageView
-        android:id="@+id/img_logo"
-        android:layout_width="284dp"
-        android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_weight="0.04"
-        android:src="@drawable/logo"/>
 
     <TextView
         android:id="@+id/textview_tmp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="@dimen/big_margin"
         android:text="@string/tap_to_select"
-        android:layout_gravity="center"
-        android:textColor="@color/colorLogoText"/>
+        android:textColor="@color/colorLogoText"
+        android:textSize="@dimen/text_size_h2"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/spinner_sel_country"
-        android:layout_marginTop="@dimen/std_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:entries="@array/city_selection"/>
+        android:layout_marginTop="@dimen/std_margin"
+        android:entries="@array/city_selection" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/std_margin" >
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/tv_additional"
-   />
+        android:layout_marginTop="@dimen/std_margin"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_additional" />
+
         <CheckBox
             android:id="@+id/chb_pressure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/chb_pressure" />
+
         <CheckBox
             android:id="@+id/chb_wind"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/chb_wind"
-            />
+            android:text="@string/chb_wind" />
+
         <CheckBox
             android:id="@+id/chb_storm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/chb_storm"
-            />
+            android:text="@string/chb_storm" />
     </LinearLayout>
+
     <Button
         android:id="@+id/btn_run"
         android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/std_margin"
         android:layout_height="wrap_content"
-        android:text="@string/btn_behold_weatharium"/>
+        android:layout_marginTop="@dimen/std_margin"
+        android:text="@string/btn_behold_weatharium" />
 
     <TextView
         android:id="@+id/textview_weather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/std_margin"
         android:layout_gravity="center"
-        android:textColor="@color/colorLogoText"
+        android:layout_marginTop="@dimen/std_margin"
         android:text="@string/load_error"
-        android:visibility="invisible"/>
+        android:textColor="@color/colorLogoText"
+        android:visibility="invisible" />
 </LinearLayout>
 
