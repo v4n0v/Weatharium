@@ -38,6 +38,9 @@ public class SplashActivity extends AppCompatActivity implements View.OnClickLis
 
     private void showNext(){
         Log.d("SplashActivity","Show next");
-        startActivity(new Intent(SplashActivity.this, CitySelectActivity.class));
+        Intent intent = new Intent(SplashActivity.this, CitySelectActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        startActivity(intent);
     }
 }
