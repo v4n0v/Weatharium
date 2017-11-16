@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,17 +8,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/city"
+        <!--- заоголовк  и  конка -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/std_margin"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/colorLogoText"
-            android:textSize="@dimen/text_size_h1"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/image_weather_ico"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_marginLeft="@dimen/std_margin"
+                tools:src="@drawable/rainy" />
+
+            <TextView
+                android:id="@+id/city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/std_margin"
+                android:layout_marginTop="@dimen/lil_margin"
+                android:textAlignment="center"
+                android:textColor="@color/colorLogoText"
+                android:textSize="@dimen/text_size_h1"
+                android:textStyle="bold"
+                tools:text="City" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/texview_weather"
@@ -28,15 +44,13 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/colorLogoText" />
 
-
-
+        <!-- конетейнер для доп. информации -->
         <LinearLayout
             android:id="@+id/addition_container"
-            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/std_margin"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-        </LinearLayout>
+            android:orientation="vertical"></LinearLayout>
 
     </LinearLayout>
 

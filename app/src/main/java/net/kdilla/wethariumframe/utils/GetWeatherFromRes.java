@@ -1,24 +1,23 @@
-package net.kdilla.weatharium.utils;
+package net.kdilla.wethariumframe.utils;
 
 import android.content.Context;
 
-import net.kdilla.weatharium.R;
+import net.kdilla.wethariumframe.R;
 
 /**
- * Created by avetc on 30.10.2017.
+ * Created by avetc on 15.11.2017.
  */
 
 public class GetWeatherFromRes {
 
-
     public static  String getWeather(Context context, int pos){
-        String[] countriesWeatherList = context.getResources().getStringArray(R.array.weather);
+        String[] countriesWeatherList = context.getResources().getStringArray(R.array.temperature);
 
         return countriesWeatherList[pos];
     }
 
     public static String[] getWeatherList(Context context){
-        String[] weatherList = context.getResources().getStringArray(R.array.weather);
+        String[] weatherList = context.getResources().getStringArray(R.array.temperature);
 
         return weatherList;
     }
@@ -49,11 +48,12 @@ public class GetWeatherFromRes {
                 context.getResources().getString(R.string.wind_dim);
 
     }
-    public static String getStorm(Context context, int pos){
-        int[] stormList = context.getResources().getIntArray(R.array.storm);
+    public static String getSomething(Context context, int pos){
+        int[] stormList = context.getResources().getIntArray(R.array.something);
 
         return context.getResources().getString(R.string.storm_title)+" "+
                 Integer.toString(stormList[pos])+
-                context.getResources().getString(R.string.storm_dim);
+                context.getResources().getString(R.string.something_dim);
     }
+
 }

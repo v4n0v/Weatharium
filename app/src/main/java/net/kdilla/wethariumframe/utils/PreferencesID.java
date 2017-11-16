@@ -1,4 +1,4 @@
-package net.kdilla.weatharium.utils;
+package net.kdilla.wethariumframe.utils;
 
 /**
  * Created by avetc on 01.11.2017.
