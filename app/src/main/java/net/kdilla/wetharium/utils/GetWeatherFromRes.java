@@ -1,12 +1,9 @@
-package net.kdilla.wethariumframe.utils;
+package net.kdilla.wetharium.utils;
 
 import android.content.Context;
 
-import net.kdilla.wethariumframe.R;
+import net.kdilla.wetharium.R;
 
-/**
- * Created by avetc on 15.11.2017.
- */
 
 public class GetWeatherFromRes {
 
@@ -17,9 +14,8 @@ public class GetWeatherFromRes {
     }
 
     public static String[] getWeatherList(Context context){
-        String[] weatherList = context.getResources().getStringArray(R.array.temperature);
 
-        return weatherList;
+        return context.getResources().getStringArray(R.array.temperature);
     }
     public static String getCity(Context context, int pos){
         String[] citylist = context.getResources().getStringArray(R.array.city_selection);
@@ -27,9 +23,8 @@ public class GetWeatherFromRes {
         return citylist[pos];
     }
     public static String[] getCityList(Context context){
-        String[] countriesList = context.getResources().getStringArray(R.array.city_selection);
 
-        return countriesList;
+        return context.getResources().getStringArray(R.array.city_selection);
     }
 
     public static String getPressure(Context context, int pos){

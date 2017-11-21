@@ -1,8 +1,4 @@
-package net.kdilla.wethariumframe.utils;
-
-/**
- * Created by avetc on 01.11.2017.
- */
+package net.kdilla.wetharium.utils;
 
 public class PreferencesID {
     public static final String SAVED_WEATHER = "saved_weather";
@@ -20,7 +16,7 @@ public class PreferencesID {
     public static final String EXTRA_CITY_NOM = "cityNom";
 
     public static final int REQUEST_CODE_WEATHER = 1;
-
+    public final static int VERTICAL = 1;
 
 
 }

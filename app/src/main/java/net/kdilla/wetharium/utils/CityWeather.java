@@ -1,8 +1,5 @@
-package net.kdilla.wethariumframe.utils;
+package net.kdilla.wetharium.utils;
 
-/**
- * Created by avetc on 15.11.2017.
- */
 public class CityWeather {
 
 

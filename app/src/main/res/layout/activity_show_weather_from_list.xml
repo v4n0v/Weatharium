@@ -46,7 +46,7 @@
 
         <!-- конетейнер для доп. информации -->
         <LinearLayout
-            android:id="@+id/addition_container"
+            android:id="@+id/addition_info_container"
             android:layout_marginLeft="@dimen/std_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

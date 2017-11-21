@@ -1,10 +1,6 @@
-package net.kdilla.wethariumframe.utils;
+package net.kdilla.wetharium.utils;
 
-import net.kdilla.wethariumframe.R;
-
-/**
- * Created by avetc on 16.11.2017.
- */
+import net.kdilla.wetharium.R;
 
 public class WeatherIcon {
     public static int sunny = R.drawable.sunny;

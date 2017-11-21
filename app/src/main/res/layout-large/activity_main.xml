@@ -28,7 +28,7 @@
 
 		<fragment
 			android:id="@+id/list_frag"
-			class="net.kdilla.wethariumframe.fragments.CityListFragment"
+			class="net.kdilla.wetharium.fragments.CityListFragment"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="2" />

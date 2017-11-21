@@ -1,4 +1,4 @@
-package net.kdilla.wethariumframe.fragments;
+package net.kdilla.wetharium.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import net.kdilla.wethariumframe.R;
-import net.kdilla.wethariumframe.utils.GetWeatherFromRes;
+import net.kdilla.wetharium.R;
+import net.kdilla.wetharium.utils.GetWeatherFromRes;
+import net.kdilla.wetharium.utils.PreferencesID;
 
 /**
  * Created by avetc on 15.11.2017.
@@ -20,16 +21,16 @@ import net.kdilla.wethariumframe.utils.GetWeatherFromRes;
 
 public class CityListFragment extends Fragment{
 
-    private final static int VERTICAL = 1;
+    //private final static int VERTICAL = 1;
 
     private CitySelectListener mainActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_city_list, container, false);
-        RecyclerView citySelectRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        RecyclerView citySelectRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_city_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(VERTICAL);
+        layoutManager.setOrientation(PreferencesID.VERTICAL);
         citySelectRecyclerView.setLayoutManager(layoutManager);
         citySelectRecyclerView.setAdapter(new MyAdapter());
         return rootView;

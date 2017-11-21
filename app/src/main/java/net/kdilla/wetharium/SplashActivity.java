@@ -1,4 +1,4 @@
-package net.kdilla.wethariumframe;
+package net.kdilla.wetharium;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package net.kdilla.wethariumframe;
+package net.kdilla.wetharium;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
@@ -7,9 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 
-import net.kdilla.wethariumframe.fragments.CitySelectListener;
-import net.kdilla.wethariumframe.fragments.WeatherDetailFragment;
-import net.kdilla.wethariumframe.utils.PreferencesID;
+import net.kdilla.wetharium.fragments.AdditionalInfoFragment;
+import net.kdilla.wetharium.fragments.CitySelectListener;
+import net.kdilla.wetharium.fragments.WeatherDetailFragment;
+import net.kdilla.wetharium.utils.PreferencesID;
 
 public class MainActivity extends AppCompatActivity implements CitySelectListener{
     private boolean isWind;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements CitySelectListene
         isSomething = chbStorm.isChecked();
 
         if (fragmentContainer != null) {
+          // WeatherDetailFragment detailFragment =  WeatherDetailFragment.init(getIntent().getBundleExtra("key"));
             WeatherDetailFragment detailFragment = new WeatherDetailFragment();
 
             detailFragment.setCityId(id);
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements CitySelectListene
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment_container, detailFragment);
+//            transaction.replace(R.id.fragment_container, detailFragment);
+
             transaction.commit();
         } else {
             Intent intent = new Intent(this, ShowWeatherFromList.class);

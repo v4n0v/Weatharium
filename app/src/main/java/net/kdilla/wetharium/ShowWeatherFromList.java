@@ -1,4 +1,4 @@
-package net.kdilla.wethariumframe;
+package net.kdilla.wetharium;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,10 +7,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import net.kdilla.wethariumframe.utils.CityWeather;
-import net.kdilla.wethariumframe.utils.GetWeatherFromRes;
-import net.kdilla.wethariumframe.utils.PreferencesID;
-import net.kdilla.wethariumframe.utils.WeatherIcon;
+import net.kdilla.wetharium.utils.CityWeather;
+import net.kdilla.wetharium.utils.GetWeatherFromRes;
+import net.kdilla.wetharium.utils.PreferencesID;
+import net.kdilla.wetharium.utils.WeatherIcon;
 
 /**
  * Created by avetc on 15.11.2017.
@@ -38,7 +38,7 @@ public class ShowWeatherFromList extends AppCompatActivity {
             Log.d("ShowWeatherFromList", "weather " + weather.getTemperature());
 
             // получаю LinearLayout и создаю в нем новые TextView
-            LinearLayout container = (LinearLayout) findViewById(R.id.addition_container);
+            LinearLayout container = (LinearLayout) findViewById(R.id.addition_info_container);
             LinearLayout.LayoutParams params = new   LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -80,12 +80,12 @@ public class ShowWeatherFromList extends AppCompatActivity {
                 Log.d("ShowWeatherFromList", "storm " + weather.getSomething());
             }
 
-            // Заполнение наименования услуги ногтевого сервиса
+
 
             city.setText(weather.getCity());
             ImageView imageView = (ImageView) findViewById(R.id.image_weather_ico);
             imageView.setImageResource(WeatherIcon.sunny);
-            // Заполнение описания услуги ногтевого сервиса
+
 
             temperature.setText(weather.getTemperature());
         }
