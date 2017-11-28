@@ -22,6 +22,12 @@ public class GetWeatherFromRes {
 
         return citylist[pos];
     }
+
+    public static String getAdditionItem(Context context, int pos){
+        String[] itemList = context.getResources().getStringArray(R.array.addition_list);
+
+        return itemList[pos];
+    }
     public static String[] getCityList(Context context){
 
         return context.getResources().getStringArray(R.array.city_selection);

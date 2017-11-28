@@ -76,7 +76,7 @@ public class AdditionalInfoFragment extends Fragment {
                 // TextView pressure = (TextView) findViewById(R.id.texview_pressure);
                 // pressure.setText(weather.getPressure());
 
-                Log.d("ShowWeatherFromList", "pressure " + weather.getPressure());
+                Log.d("ShowWeatherActivity", "pressure " + weather.getPressure());
 
             }
 //            if (savedInstanceState.getBoolean(PreferencesID.ADD_WIND)) {
@@ -88,7 +88,7 @@ public class AdditionalInfoFragment extends Fragment {
                 containerAddInfo.addView(tv_wind, params);
 
 
-                Log.d("ShowWeatherFromList", "wind " + weather.getWind());
+                Log.d("ShowWeatherActivity", "wind " + weather.getWind());
 
             }
             if (showSomething) {
@@ -98,7 +98,7 @@ public class AdditionalInfoFragment extends Fragment {
                 tvSomething.setText(weather.getSomething());
                 containerAddInfo.addView(tvSomething, params);
 
-                Log.d("ShowWeatherFromList", "storm " + weather.getSomething());
+                Log.d("ShowWeatherActivity", "storm " + weather.getSomething());
             }
 
 //        }

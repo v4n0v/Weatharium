@@ -16,7 +16,7 @@ import net.kdilla.wetharium.utils.WeatherIcon;
  * Created by avetc on 15.11.2017.
  */
 
-public class ShowWeatherFromList extends AppCompatActivity {
+public class ShowWeatherActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +33,9 @@ public class ShowWeatherFromList extends AppCompatActivity {
             int cityNom = bundle.getInt(PreferencesID.EXTRA_CITY_NOM);
             CityWeather weather = new CityWeather(GetWeatherFromRes.getCity(this, cityNom),
                     GetWeatherFromRes.getWeather(this, cityNom));//CityWeather.cityWeatherList[cityNom];
-            Log.d("ShowWeatherFromList", "cityNom " + weather);
-            Log.d("ShowWeatherFromList", "city " + weather.getCity());
-            Log.d("ShowWeatherFromList", "weather " + weather.getTemperature());
+            Log.d("ShowWeatherActivity", "cityNom " + weather);
+            Log.d("ShowWeatherActivity", "city " + weather.getCity());
+            Log.d("ShowWeatherActivity", "weather " + weather.getTemperature());
 
             // получаю LinearLayout и создаю в нем новые TextView
             LinearLayout container = (LinearLayout) findViewById(R.id.addition_info_container);
@@ -56,7 +56,7 @@ public class ShowWeatherFromList extends AppCompatActivity {
                 // TextView pressure = (TextView) findViewById(R.id.texview_pressure);
                 // pressure.setText(weather.getPressure());
 
-                Log.d("ShowWeatherFromList", "pressure " + weather.getPressure());
+                Log.d("ShowWeatherActivity", "pressure " + weather.getPressure());
 
             }
             if (bundle.getBoolean(PreferencesID.ADD_WIND)){
@@ -67,7 +67,7 @@ public class ShowWeatherFromList extends AppCompatActivity {
                 container.addView(tv_wind, params);
 
 
-                Log.d("ShowWeatherFromList", "wind " + weather.getWind());
+                Log.d("ShowWeatherActivity", "wind " + weather.getWind());
 
             }
             if (bundle.getBoolean(PreferencesID.ADD_STORM)){
@@ -77,7 +77,7 @@ public class ShowWeatherFromList extends AppCompatActivity {
                 tvSomething.setText(weather.getSomething());
                 container.addView(tvSomething, params);
 
-                Log.d("ShowWeatherFromList", "storm " + weather.getSomething());
+                Log.d("ShowWeatherActivity", "storm " + weather.getSomething());
             }
 
 

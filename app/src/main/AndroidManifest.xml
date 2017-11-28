@@ -17,8 +17,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="net.kdilla.wetharium.ShowWeatherFromList"></activity>
+        <activity android:name="net.kdilla.wetharium.ShowWeatherActivity"></activity>
         <activity android:name="net.kdilla.wetharium.MainActivity"></activity>
+        <activity android:name="net.kdilla.wetharium.OptionsActivity"></activity>
     </application>
 
 </manifest>

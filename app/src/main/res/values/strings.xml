@@ -19,6 +19,12 @@
     <string name="pressure_dim">mm Hg</string>
     <string name="wind_dim">m/s</string>
     <string name="something_dim">sss</string>
+    <string name="menu_options">options</string>
+    <string name="menu_clear">clear</string>
+
+    <string name="menu_next">edit</string>
+    <string name="menu_cancel">delete</string>
+    <string name="select_additional_options">Select additional options</string>
     <string-array name="city_selection">
         <item>Moscow</item>
         <item>St. Petersburg</item>
@@ -54,5 +60,9 @@
         <item>1</item>
         <item>0</item>
     </integer-array>
-
+    <string-array name="addition_list">
+        <item>Pressure</item>
+        <item>Wind</item>
+        <item>Something else</item>
+    </string-array>
 </resources>
