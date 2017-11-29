@@ -67,20 +67,7 @@ public class OptionsActivity  extends AppCompatActivity{
             @Override
             public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
                 onBackPressed();
-                // AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
-//                List files = getSelectedElements();
-//
-//                switch (menuItem.getItemId()) {
-//                    case R.id.menu_edit:
-//                        editElement();
-//                        return true;
-//                    case R.id.menu_delete:
-//                        deleteElement();
-//                        return true;
-//                    default:
-//                        actionMode.finish();
-//                        return false;
-//                }
+
                 return true;
             }
 
@@ -140,9 +127,7 @@ public class OptionsActivity  extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
-
-        SparseBooleanArray sparseBooleanArray = listView.getCheckedItemPositions();
+         SparseBooleanArray sparseBooleanArray = listView.getCheckedItemPositions();
         isPressure=false;  isWind=false; isSomething=false;
         if (sparseBooleanArray!=null && sparseBooleanArray.size()>0) {
             for (int i = 0; i < sparseBooleanArray.size(); i++) {
@@ -160,16 +145,6 @@ public class OptionsActivity  extends AppCompatActivity{
             }
         }
 
-
-//        if (sparseBooleanArray.valueAt(0)) {
-//            isPressure=true;
-//        }else isPressure=false;
-//        if (sparseBooleanArray.valueAt(1)) {
-//            isWind=true;
-//        } else isWind=false;
-//        if (sparseBooleanArray.valueAt(2)) {
-//            isSomething=true;
-//        }else isSomething=false;
         // создаем Intent
         Intent returnIntent = new Intent();
         // заполняем переменной currentWeather с ключем SAVED_COUNTRY_WEATHER

@@ -22,76 +22,15 @@ public class MainActivity extends AppCompatActivity implements CitySelectListene
     private boolean isWind;
     private boolean isPressure;
     private boolean isSomething;
-    private CheckBox chbPressure;
-    private CheckBox chbWind;
-    private CheckBox chbStorm;
+//    private CheckBox chbPressure;
+//    private CheckBox chbWind;
+//    private CheckBox chbStorm;
 
-    List<String> elements;
-    ArrayAdapter<String> adapter;
-
-private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        initViews();
-//        elements = new ArrayList<>();
-//        String[] itemList = this.getResources().getStringArray(R.array.addition_list);
-//        for (int i = 0; i < itemList.length; i++) {
-//            elements.add(itemList[i]);
-//        }
-//        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, elements);
-//        listView.setAdapter(adapter);
-//
-//        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-//        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-//            @Override
-//            public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
-//
-//            }
-//
-//            @Override
-//            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-//                MenuInflater inflater = actionMode.getMenuInflater();
-//                inflater.inflate(R.menu.context_menu, menu);
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-//
-//                // AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
-//
-//                switch (menuItem.getItemId()) {
-//                    case R.id.menu_edit:
-//                        editElement();
-//                        return true;
-//                    case R.id.menu_delete:
-//                        deleteElement();
-//                        return true;
-//                    default:
-//                        actionMode.finish();
-//                        return false;
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onDestroyActionMode(ActionMode actionMode) {
-//
-//            }
-//        });
-//        WeatherDetailFragment detailFragment = new WeatherDetailFragment();
-//        detailFragment.setCityId(1);
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.add(R.id.fragment_container, detailFragment);
-//        transaction.commit();
     }
 
     private void editElement() {
@@ -120,10 +59,7 @@ private ListView listView;
         return true;
     }
     private void initViews() {
-//        chbPressure = (CheckBox) findViewById(R.id.chb_pressure);
-//        chbWind = (CheckBox) findViewById(R.id.chb_wind);
-//        chbStorm = (CheckBox) findViewById(R.id.chb_something);
-      //  listView = (ListView) findViewById(R.id.list);
+
     }
 
     @Override
@@ -179,11 +115,6 @@ private ListView listView;
                 isPressure = data.getBooleanExtra(PreferencesID.ADD_PRESSURE, false);
                 isWind = data.getBooleanExtra(PreferencesID.ADD_WIND, false);
                 isSomething = data.getBooleanExtra(PreferencesID.ADD_STORM, false);
-//                String returnString = data.getStringExtra(PreferencesID.SAVED_COUNTRY_WEATHER);
-//                // инициализируем текстовое поле и выводим на экран
-//            //    TextView infoTextView = (TextView) findViewById(R.id.textview_weather);
-//                infoTextView.setVisibility(View.VISIBLE);
-//                infoTextView.setText(returnString);
             }
         }
 
