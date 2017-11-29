@@ -129,9 +129,9 @@ private ListView listView;
     @Override
     public void onListItemClick(int id) {
         View fragmentContainer = findViewById(R.id.fragment_container);
-        isWind = chbWind.isChecked();
-        isPressure = chbPressure.isChecked();
-        isSomething = chbStorm.isChecked();
+//        isWind = chbWind.isChecked();
+//        isPressure = chbPressure.isChecked();
+//        isSomething = chbStorm.isChecked();
 
         if (fragmentContainer != null) {
           // WeatherDetailFragment detailFragment =  WeatherDetailFragment.init(getIntent().getBundleExtra("key"));
@@ -163,8 +163,30 @@ private ListView listView;
     public void showOptions(MenuItem item) {
         Intent intent = new Intent(this, OptionsActivity.class);
 
-        startActivity(intent);
+        startActivityForResult(intent, PreferencesID.REQUEST_CODE_WEATHER);
 
 
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // проверяем есть ли результат
+        if (resultCode == RESULT_OK) {
+            // если код тот же, что мы отправили
+            if (requestCode == PreferencesID.REQUEST_CODE_WEATHER) {
+                // созраняем возвращенное значение в переменную
+                isPressure = data.getBooleanExtra(PreferencesID.ADD_PRESSURE, true);
+                isWind = data.getBooleanExtra(PreferencesID.ADD_WIND, true);
+                isSomething = data.getBooleanExtra(PreferencesID.ADD_STORM, true);
+//                String returnString = data.getStringExtra(PreferencesID.SAVED_COUNTRY_WEATHER);
+//                // инициализируем текстовое поле и выводим на экран
+//            //    TextView infoTextView = (TextView) findViewById(R.id.textview_weather);
+//                infoTextView.setVisibility(View.VISIBLE);
+//                infoTextView.setText(returnString);
+            }
+        }
+
+    }
+
 }
