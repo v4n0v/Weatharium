@@ -176,9 +176,9 @@ private ListView listView;
             // если код тот же, что мы отправили
             if (requestCode == PreferencesID.REQUEST_CODE_WEATHER) {
                 // созраняем возвращенное значение в переменную
-                isPressure = data.getBooleanExtra(PreferencesID.ADD_PRESSURE, true);
-                isWind = data.getBooleanExtra(PreferencesID.ADD_WIND, true);
-                isSomething = data.getBooleanExtra(PreferencesID.ADD_STORM, true);
+                isPressure = data.getBooleanExtra(PreferencesID.ADD_PRESSURE, false);
+                isWind = data.getBooleanExtra(PreferencesID.ADD_WIND, false);
+                isSomething = data.getBooleanExtra(PreferencesID.ADD_STORM, false);
 //                String returnString = data.getStringExtra(PreferencesID.SAVED_COUNTRY_WEATHER);
 //                // инициализируем текстовое поле и выводим на экран
 //            //    TextView infoTextView = (TextView) findViewById(R.id.textview_weather);

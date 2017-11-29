@@ -3,6 +3,7 @@ package net.kdilla.wetharium;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.ContextMenu;
@@ -142,21 +143,39 @@ public class OptionsActivity  extends AppCompatActivity{
         //super.onBackPressed();
 
         SparseBooleanArray sparseBooleanArray = listView.getCheckedItemPositions();
-        if (sparseBooleanArray.valueAt(0)) {
-            isPressure=true;
-        }else isPressure=false;
-        if (sparseBooleanArray.valueAt(1)) {
-            isWind=true;
-        } else isWind=false;
-        if (sparseBooleanArray.valueAt(2)) {
-            isSomething=true;
-        }else isSomething=false;
+        isPressure=false;  isWind=false; isSomething=false;
+        if (sparseBooleanArray!=null && sparseBooleanArray.size()>0) {
+            for (int i = 0; i < sparseBooleanArray.size(); i++) {
+                if (sparseBooleanArray.valueAt(i)) {
+                    if (sparseBooleanArray.keyAt(i) == 0) {
+                        isPressure = true;
+                    } else if (sparseBooleanArray.keyAt(i) == 1) {
+                        isWind = true;
+                    } else if (sparseBooleanArray.keyAt(i) == 2) {
+                        isSomething = true;
+                    } else {
+                        Log.e("ERROR", "wrong keyAt sparseBooleanArray");
+                    }
+                }
+            }
+        }
+
+
+//        if (sparseBooleanArray.valueAt(0)) {
+//            isPressure=true;
+//        }else isPressure=false;
+//        if (sparseBooleanArray.valueAt(1)) {
+//            isWind=true;
+//        } else isWind=false;
+//        if (sparseBooleanArray.valueAt(2)) {
+//            isSomething=true;
+//        }else isSomething=false;
         // создаем Intent
         Intent returnIntent = new Intent();
         // заполняем переменной currentWeather с ключем SAVED_COUNTRY_WEATHER
          returnIntent.putExtra(PreferencesID.ADD_PRESSURE, isPressure);
         returnIntent.putExtra(PreferencesID.ADD_WIND, isWind);
-        returnIntent.putExtra(PreferencesID.ADD_PRESSURE, isSomething);
+        returnIntent.putExtra(PreferencesID.ADD_STORM, isSomething);
         // сохраняем значения для отправки
         setResult(RESULT_OK, returnIntent);
         // завершаем работу активити
