@@ -123,7 +123,7 @@ private ListView listView;
 //        chbPressure = (CheckBox) findViewById(R.id.chb_pressure);
 //        chbWind = (CheckBox) findViewById(R.id.chb_wind);
 //        chbStorm = (CheckBox) findViewById(R.id.chb_something);
-        listView = (ListView) findViewById(R.id.list);
+      //  listView = (ListView) findViewById(R.id.list);
     }
 
     @Override

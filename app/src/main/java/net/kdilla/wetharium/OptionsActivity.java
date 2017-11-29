@@ -5,9 +5,11 @@ import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ActionMode;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -16,9 +18,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by avetc on 28.11.2017.
- */
 
 public class OptionsActivity  extends AppCompatActivity{
     ListView listView;
@@ -26,11 +25,11 @@ public class OptionsActivity  extends AppCompatActivity{
     ArrayAdapter<String> adapter;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
-        listView = (ListView) findViewById(R.id.list);
+        listView = (ListView) findViewById(R.id.list_addition_info);
         elements = new ArrayList<>();
         String[] itemList = this.getResources().getStringArray(R.array.addition_list);
         for (int i = 0; i < itemList.length; i++) {
@@ -83,6 +82,14 @@ public class OptionsActivity  extends AppCompatActivity{
             }
         });
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.context_menu, menu);
+
+    }
+
     private void editElement() {
 //    private void editElement(int id) {
         int a =  1+(int) (Math.random()*100);
@@ -107,6 +114,6 @@ public class OptionsActivity  extends AppCompatActivity{
 //        chbPressure = (CheckBox) findViewById(R.id.chb_pressure);
 //        chbWind = (CheckBox) findViewById(R.id.chb_wind);
 //        chbStorm = (CheckBox) findViewById(R.id.chb_something);
-        listView = (ListView) findViewById(R.id.list);
+       // listView = (ListView) findViewById(R.id.list);
     }
 }
