@@ -10,4 +10,5 @@
     <dimen name="img_logo_splash_height">155dp</dimen>
     <dimen name="city_list_font_size">20sp</dimen>
     <dimen name="icon_size">60dp</dimen>
+    <dimen name="icon_weather_size">125dp</dimen>
 </resources>

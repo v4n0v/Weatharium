@@ -98,32 +98,7 @@ public class OptionsActivity  extends AppCompatActivity{
 
         return selectedFiles;
     }
-    private void editElement() {
-//    private void editElement(int id) {
-        int a =  1+(int) (Math.random()*100);
-        int b =  1+(int) (Math.random()*100);
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "edit element a= "+a+", b= "+b+"\na/b="+a/b,
-                duration);
-        toast.show();
-    }
 
-    private void deleteElement() {
-        int a =  1+(int) (Math.random()*100);
-        int b =  1+(int) (Math.random()*100);
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "delete element.\n a= "+a+", b= "+b+"\na-b="+(a-b),
-                duration);
-        toast.show();
-    }
-    private void initViews() {
-//        chbPressure = (CheckBox) findViewById(R.id.chb_pressure);
-//        chbWind = (CheckBox) findViewById(R.id.chb_wind);
-//        chbStorm = (CheckBox) findViewById(R.id.chb_something);
-       // listView = (ListView) findViewById(R.id.list);
-    }
 
     @Override
     public void onBackPressed() {
