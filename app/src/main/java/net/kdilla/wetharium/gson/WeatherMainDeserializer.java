@@ -22,8 +22,8 @@ public class WeatherMainDeserializer implements JsonDeserializer<WeatherMain> {
         main.setTemp(jsonObject.get("temp").getAsString());
         main.setHumidity(jsonObject.get("humidity").getAsString());
 
-
-
+        main.setTempMax(jsonObject.get("temp_max").getAsString());
+        main.setTempMin(jsonObject.get("temp_min").getAsString());
 
         return main;
     }

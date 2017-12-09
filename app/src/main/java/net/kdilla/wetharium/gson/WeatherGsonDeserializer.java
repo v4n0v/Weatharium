@@ -32,6 +32,7 @@ public class WeatherGsonDeserializer implements JsonDeserializer<WeatherGSon> {
         JsonArray details = jsonObject.getAsJsonArray("weather");
         JsonObject detailsObject = (JsonObject)details.get(0);
         weather.setId(detailsObject.get("id").getAsInt());
+        weather.setDescription(detailsObject.get("description").getAsString().toUpperCase());
         return weather;
     }
 }

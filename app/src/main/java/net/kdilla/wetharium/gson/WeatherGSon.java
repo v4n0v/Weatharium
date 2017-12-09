@@ -61,6 +61,33 @@ public class WeatherGSon {
     String wind;
     String pressure;
 
+    public String getTempMin() {
+        return tempMin;
+    }
+
+    public void setTempMin(String tempMin) {
+        this.tempMin = tempMin;
+    }
+
+    public String getTempMax() {
+        return tempMax;
+    }
+
+    public void setTempMax(String tempMax) {
+        this.tempMax = tempMax;
+    }
+
+    String tempMin;
+    String tempMax;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    String description;
     int id;
     public void setId(int id) {
         this.id = id;

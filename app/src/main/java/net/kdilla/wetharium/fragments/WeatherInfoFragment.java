@@ -1,6 +1,5 @@
 package net.kdilla.wetharium.fragments;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,20 +15,23 @@ import net.kdilla.wetharium.R;
 public class WeatherInfoFragment extends Fragment{
     private String temperature;
     private String additionalInfo;
+    private String description;
     private String city;
 
     TextView cityTextView;
     TextView additionalTextView;
     TextView temperatureTextView;
+    TextView descriptionTextView;
     Drawable icon;
 
     ImageView weatherImage;
 
-    public void setParams(String city,  String temperature, String additionalInfo, Drawable icon) {
+    public void setParams(String city,  String temperature, String additionalInfo, String description, Drawable icon) {
         this.temperature = temperature;
         this.additionalInfo = additionalInfo;
         this.city = city;
         this.icon=icon;
+        this.description=description;
     }
 
     @Nullable
@@ -41,6 +43,8 @@ public class WeatherInfoFragment extends Fragment{
         cityTextView.setText(city);
         additionalTextView.setText(additionalInfo);
         temperatureTextView.setText(temperature);
+        descriptionTextView.setText(description);
+
         weatherImage.setImageDrawable(icon);
         return  view;
     }
@@ -50,6 +54,7 @@ public class WeatherInfoFragment extends Fragment{
         cityTextView = view.findViewById(R.id.info_city_tv);
         additionalTextView = view.findViewById(R.id.info_additional_info_tv);
         temperatureTextView = view.findViewById(R.id.info_temperature_tv);
+        descriptionTextView = view.findViewById(R.id.info_description_tv);
         weatherImage = view.findViewById(R.id.info_weather_ico);
     }
 }

@@ -24,5 +24,24 @@ public class WeatherMain {
 
     String humidity;
     String temp;
+
+    public String getTempMin() {
+        return tempMin;
+    }
+
+    public void setTempMin(String tempMin) {
+        this.tempMin = tempMin;
+    }
+
+    public String getTempMax() {
+        return tempMax;
+    }
+
+    public void setTempMax(String tempMax) {
+        this.tempMax = tempMax;
+    }
+
+    String tempMin;
+    String tempMax;
     String pressure;
 }
