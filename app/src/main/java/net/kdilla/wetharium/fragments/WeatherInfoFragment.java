@@ -45,12 +45,6 @@ public class WeatherInfoFragment extends Fragment {
     // String cityText;
 
 
-    @Override
-    public void onAttach(Context context) {
-        mainActivity = (MainActivity) context;
-        super.onAttach(context);
-    }
-
 
     int temperature;
     int pressure;
