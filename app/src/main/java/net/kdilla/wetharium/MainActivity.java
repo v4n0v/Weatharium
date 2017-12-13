@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     List<WeatherNote> elements;
     ArrayAdapter<WeatherNote> adapter;
@@ -182,41 +182,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
-    @Override
-    public void onFragmentItemClick(int id) {
-        Fragment fragment = null;
-        switch (id) {
-
-            case (R.id.nav_show):
-                fragment=new WeatherInfoFragment();
-                fillFragment(weatherInfoFragment);
-//                loadPreferences();
-                break;
-            case R.id.nav_last_weather:
-               // fragment=new LastShownFragment();
-                lastShownFragment = new LastShownFragment();
-                lastShownFragment.setElements(elements);
-                fillFragment(lastShownFragment);
-                //        changeFragment=true;
-                break;
-//            case R.id.nav_week:
-//                fragment = new WeekController();
-//                //      changeFragment=true;
-//                break;
-//            case (R.id.btn_yes):
-//                //    changeFragment=true;
-//                fragment = new FormController();
-//                break;
-//            case R.id.nav_day:
-//                fragment = new DayController();
-//                //  changeFragment=true;
-//                break;
-        }
-        //  fillFragment(fragment);
-
-    }
-
     private void fillFragment(Fragment fragment) {
         if (fragment != null) {// && changeFragment){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -244,50 +209,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-            //    weatherInfoFragment.setCity(input.getText().toString());
-
                 weatherInfoFragment.getWeather(input.getText().toString());
                 dbUpdate(elements, input.getText().toString());
-//                boolean isExist = false;
-//                if (elements.size()!=0) {
-//                    for (int i = 0; i < elements.size(); i++) {
-//                        if (elements.get(i).getCity().equals(input.getText().toString())) {
-//
-//                            long id = elements.get(i).getId();
-//                            notesDataSource.editNote(id,
-//                                    input.getText().toString(),
-//                                    weatherInfoFragment.getTemperature(),
-//                                    weatherInfoFragment.getPressure(),
-//                                    weatherInfoFragment.getHumidity(),
-//                                    weatherInfoFragment.getWind()
-//                            );
-//                            isExist = true;
-//                            Toast.makeText(MainActivity.this, "Exist and edited", Toast.LENGTH_SHORT).show();
-//                            Log.d("DB", "Exist and edited");
-//                          break;
-//                        }
-//                        if (!isExist) {
-//                            notesDataSource.addNote(weatherInfoFragment.getCity(),
-//                                    weatherInfoFragment.getTemperature(),
-//                                    weatherInfoFragment.getPressure(),
-//                                    weatherInfoFragment.getHumidity(),
-//                                    weatherInfoFragment.getWind()
-//                            );
-//                            Toast.makeText(MainActivity.this, "Not exist, created new", Toast.LENGTH_SHORT).show();
-//                            Log.d("DB", "Not exist, created new");
-//                        }
-//
-//                    }
-//                } else {
-//                    notesDataSource.addNote(weatherInfoFragment.getCity(),
-//                            weatherInfoFragment.getTemperature(),
-//                            weatherInfoFragment.getPressure(),
-//                            weatherInfoFragment.getHumidity(),
-//                            weatherInfoFragment.getWind()
-//                    );
-//                    Toast.makeText(MainActivity.this, "Table is empty, created new note", Toast.LENGTH_SHORT).show();
-//                    Log.d("DB", "Table is empty, created new note");
-//                }
+
                 elements.clear();
                 elements = notesDataSource.getAllNotes();
                 Log.d("dbUpdate", "Elements count "+elements.size());

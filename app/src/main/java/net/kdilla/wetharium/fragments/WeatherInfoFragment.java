@@ -36,30 +36,6 @@ public class WeatherInfoFragment extends Fragment {
     OnFragmentClickListener mainActivity;
     Handler handler = new Handler();
 
-    public boolean isWind() {
-        return isWind;
-    }
-
-    public void setWind(boolean wind) {
-        isWind = wind;
-    }
-
-    public boolean isPressure() {
-        return isPressure;
-    }
-
-    public void setPressure(boolean pressure) {
-        isPressure = pressure;
-    }
-
-    public boolean isHumidity() {
-        return isHumidity;
-    }
-
-    public void setHumidity(boolean humidity) {
-        isHumidity = humidity;
-    }
-
     private boolean isWind = true;
     private boolean isPressure = true;
     private boolean isHumidity = true;
@@ -81,48 +57,9 @@ public class WeatherInfoFragment extends Fragment {
     int wind;
     int humidity;
 
-    public int getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(int temperature) {
-        this.temperature = temperature;
-    }
-
-    public int getPressure() {
-        return pressure;
-    }
-
-    public void setPressure(int pressure) {
-        this.pressure = pressure;
-    }
-
-    public int getWind() {
-        return wind;
-    }
-
-    public void setWind(int wind) {
-        this.wind = wind;
-    }
-
-    public int getHumidity() {
-        return humidity;
-    }
-
-    public void setHumidity(int humidity) {
-        this.humidity = humidity;
-    }
 
     //    private String additionalInfo;
     private String description;
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getCity() {
-        return city;
-    }
 
     private String city;
 
@@ -277,4 +214,68 @@ public class WeatherInfoFragment extends Fragment {
         this.isWind = isWind;
     }
 
+    public boolean isWind() {
+        return isWind;
+    }
+
+    public void setWind(boolean wind) {
+        isWind = wind;
+    }
+
+    public boolean isPressure() {
+        return isPressure;
+    }
+
+    public void setPressure(boolean pressure) {
+        isPressure = pressure;
+    }
+
+    public boolean isHumidity() {
+        return isHumidity;
+    }
+
+    public void setHumidity(boolean humidity) {
+        isHumidity = humidity;
+    }
+
+
+    public int getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(int temperature) {
+        this.temperature = temperature;
+    }
+
+    public int getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(int pressure) {
+        this.pressure = pressure;
+    }
+
+    public int getWind() {
+        return wind;
+    }
+
+    public void setWind(int wind) {
+        this.wind = wind;
+    }
+
+    public int getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCity() {
+        return city;
+    }
 }
