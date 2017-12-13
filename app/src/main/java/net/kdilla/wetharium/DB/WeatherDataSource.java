@@ -110,7 +110,7 @@ public class WeatherDataSource {
         }
         // make sure to close the cursor
         cursor.close();
-        return notes;
+        return  notes;
     }
 
     private WeatherNote cursorToNote(Cursor cursor) {
