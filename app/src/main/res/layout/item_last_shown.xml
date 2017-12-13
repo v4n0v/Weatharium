@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    android:layout_marginTop="@dimen/margin_border">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/std_padding"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/last_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="City" />
+
+        <TextView
+            android:id="@+id/last_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/std_padding"
+            tools:text="+30" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lil_margin"
+        android:layout_marginLeft="@dimen/std_padding">
+
+        <TextView
+            android:id="@+id/last_pressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="1000mPhg"
+            android:layout_marginRight="@dimen/std_padding"/>
+
+        <TextView
+            android:id="@+id/last_humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/std_padding"
+            tools:text="70%"
+            android:layout_marginRight="@dimen/std_padding"/>
+
+        <TextView
+            android:id="@+id/last_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/std_padding"
+            tools:text="7ms"
+            android:layout_marginRight="@dimen/std_padding"/>
+        <TextView
+            android:id="@+id/last_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/std_padding"
+            tools:text="7ms"
+            android:layout_marginRight="@dimen/std_padding"/>
+    </LinearLayout>
+
+</LinearLayout>

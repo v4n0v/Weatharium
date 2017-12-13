@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/view_addition_info"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+
+    >
+
+    <CheckBox
+        android:id="@+id/chb_pressure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lil_margin"
+        android:layout_marginLeft="@dimen/std_padding"
+
+        android:text="@string/pressure"
+ />
+
+    <CheckBox
+        android:id="@+id/chb_humidity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lil_margin"
+        android:layout_marginLeft="@dimen/std_padding"
+        android:layout_marginRight="5dp"
+        android:text="@string/humidity"
+       />
+
+    <CheckBox
+        android:id="@+id/chb_wind"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="@dimen/lil_margin"
+        android:layout_marginLeft="@dimen/std_padding"
+        android:text="@string/wind"
+        />
+
+</LinearLayout>
