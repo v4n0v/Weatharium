@@ -29,9 +29,10 @@ import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.fragments.LastShownFragment;
 import net.kdilla.wetharium.fragments.LatShownInterface;
-import net.kdilla.wetharium.fragments.OnFragmentClickListener;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
 import net.kdilla.wetharium.utils.Preferences;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -86,7 +87,24 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+//
+//        String webSearch="";
+//        try {
+//            webSearch=  BingWebSearch.getSearchJson("london");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        if (webSearch!=null) {
+//            Log.d("BING", webSearch);
+//        }
 
+     //   JSONObject jsonObject= ImageDataLoader.getJSONData(MainActivity.this, "London");
+
+//        try {
+//            BingWebSearch.SearchWeb("london");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -210,12 +228,13 @@ public class MainActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
 
                 weatherInfoFragment.getWeather(input.getText().toString());
+                fillFragment(weatherInfoFragment);
                 dbUpdate(elements, input.getText().toString());
 
                 elements.clear();
                 elements = notesDataSource.getAllNotes();
                 Log.d("dbUpdate", "Elements count "+elements.size());
-                fillFragment(weatherInfoFragment);
+
             }
         });
         builder.show();
