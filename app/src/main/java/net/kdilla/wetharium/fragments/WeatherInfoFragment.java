@@ -27,9 +27,6 @@ import net.kdilla.wetharium.utils.gson.WeatherMainDeserializer;
 
 import org.json.JSONObject;
 
-/**
- * Created by avetc on 10.12.2017.
- */
 
 public class WeatherInfoFragment extends Fragment {
 
@@ -41,16 +38,11 @@ public class WeatherInfoFragment extends Fragment {
     private boolean isHumidity = true;
     SharedPreferences preferences;
 
-
     // String cityText;
-
-
-
     int temperature;
     int pressure;
     int wind;
     int humidity;
-
 
     //    private String additionalInfo;
     private String description;
@@ -62,7 +54,6 @@ public class WeatherInfoFragment extends Fragment {
     TextView temperatureTextView;
     TextView descriptionTextView;
     Drawable icon;
-
 
     ImageView weatherImage;
 //
@@ -86,10 +77,8 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     private String temperatureFormat(float temperature) {
-
         if (temperature > 0) return "+" + String.valueOf(Math.round(temperature));
         else return String.valueOf(Math.round(temperature));
-
     }
 
     void initViews(View view) {

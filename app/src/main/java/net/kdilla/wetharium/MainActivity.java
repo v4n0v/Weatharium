@@ -2,10 +2,12 @@ package net.kdilla.wetharium;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -41,8 +43,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     List<WeatherNote> elements;
-    ArrayAdapter<WeatherNote> adapter;
-
     WeatherDataSource notesDataSource;
 
     LatShownInterface lisetener;
@@ -106,16 +106,18 @@ public class MainActivity extends AppCompatActivity
 //            e.printStackTrace();
 //        }
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-////                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-//                selectCityDialog();
-//            }
-//        });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT,weatherInfoFragment.getCity()+" "+weatherInfoFragment.getTemperature());
+
+                Intent chosenIntent = Intent.createChooser(intent, "Select app");
+                startActivity(chosenIntent);
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -185,9 +187,12 @@ public class MainActivity extends AppCompatActivity
 //                loadPreferences();
                 break;
             case R.id.nav_last_weather:
-                LastShownFragment lastFragment = new LastShownFragment();
-                lastFragment.setElements(elements);
-                fillFragment(lastFragment);
+//                LastShownFragment lastFragment = new LastShownFragment();
+//                lastFragment.setElements(elements);
+//                fillFragment(lastFragment);
+                Intent intent = new Intent(MainActivity.this, DBListActivity.class);
+                startActivity(intent);
+
                 break;
             case R.id.nav_options:
                 Toast.makeText(MainActivity.this, "Options", Toast.LENGTH_SHORT).show();

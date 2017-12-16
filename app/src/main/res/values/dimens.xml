@@ -10,4 +10,5 @@
     <dimen name="podval_margin">240dp</dimen>
     <dimen name="lil_margin">5dp</dimen>
     <dimen name="margin_border">2dp</dimen>
+    <dimen name="toolbar_height">265dp</dimen>
 </resources>

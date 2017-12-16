@@ -66,7 +66,7 @@ public class LastShownFragment extends Fragment implements LatShownInterface{
         private TextView timeTV;
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_last_shown, parent, false));
-            itemView.setOnClickListener(this);
+            itemView.setOnClickListener(this);      
             cityTV = (TextView) itemView.findViewById(R.id.last_city);
             tempTV = (TextView) itemView.findViewById(R.id.last_temp);
             humidityTV = (TextView) itemView.findViewById(R.id.last_humidity);
@@ -98,7 +98,7 @@ public class LastShownFragment extends Fragment implements LatShownInterface{
 //        mainActivity.onFragmentButtonClick(view.getId());
 //    }
 
-    private class MyAdapter extends RecyclerView.Adapter< MyViewHolder> {
+    private class       MyAdapter extends RecyclerView.Adapter< MyViewHolder> {
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

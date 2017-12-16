@@ -15,11 +15,13 @@
     <string name="humidity_dim">%</string>
     <string name="pressure">Pressure</string>
     <string name="humidity">Humidity</string>
+    <string name="temp">temperature</string>
+    <string name="cels">\u00B0</string>
     <string name="wind">Wind</string>
     <string name="apply">Apply</string>
     <string name="show_weather">Show weather</string>
     <string name="clear_base">Clear base</string>
-
+    <string name="updated">Last update: </string>
     <string-array name="addition_list">
         <item>Pressure</item>
         <item>Wind</item>
