@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import net.kdilla.wetharium.DB.DBHelper;
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.fragments.LastShownFragment;
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+      //  this.deleteDatabase("weather.db");
         notesDataSource = new WeatherDataSource(getApplicationContext());
 
         notesDataSource.open();

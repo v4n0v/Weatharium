@@ -31,6 +31,7 @@ public class WeatherDataSource {
 
     public WeatherDataSource(Context context) {
         dbHelper = new DBHelper(context);
+
     }
 
     public void open() throws SQLException {
