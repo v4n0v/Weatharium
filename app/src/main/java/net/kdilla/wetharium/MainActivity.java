@@ -22,19 +22,19 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import net.kdilla.wetharium.DB.DBHelper;
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.fragments.LastShownFragment;
 import net.kdilla.wetharium.fragments.LatShownInterface;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
 import net.kdilla.wetharium.utils.GoogleSearch;
+import net.kdilla.wetharium.utils.GoogleSearchThread;
 import net.kdilla.wetharium.utils.Preferences;
+import net.kdilla.wetharium.utils.WeatherDataLoader;
 
 import org.json.JSONObject;
 
@@ -82,83 +82,82 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
 
-      //  this.deleteDatabase("weather.db");
+        //  this.deleteDatabase("weather.db");
         notesDataSource = new WeatherDataSource(getApplicationContext());
 
         notesDataSource.open();
 
         elements = notesDataSource.getAllNotes();
 
-        String jsonImg = GoogleSearch.getJson("moscow");
+//        String jsonImg = GoogleSearchThread.getJson("moscow city");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-//
-//        String webSearch="";
-//        try {
-//            webSearch=  BingWebSearch.getSearchJson("london");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        if (webSearch!=null) {
-//            Log.d("BING", webSearch);
-//        }
+        // так не получается запустить
+//        new Thread() {
+//            public void run() {
+//                GoogleSearch.getJson("moscow city");
+//            }
+//        }.start();
 
-     //   JSONObject jsonObject= ImageDataLoader.getJSONData(MainActivity.this, "London");
+        // так получается
+        GoogleSearchThread.getJson("moscow city");
 
-//        try {
-//            BingWebSearch.SearchWeb("london");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+            setSupportActionBar(toolbar);
+
+
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View view){
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT,weatherInfoFragment.getCity()+" "+weatherInfoFragment.getTemperature());
+                intent.putExtra(Intent.EXTRA_TEXT, weatherInfoFragment.getCity() + " " + weatherInfoFragment.getTemperature());
 
                 Intent chosenIntent = Intent.createChooser(intent, "Select app");
                 startActivity(chosenIntent);
             }
-        });
+            });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        weatherInfoFragment = new WeatherInfoFragment();
+            weatherInfoFragment =new
 
-        loadPreferences();
+            WeatherInfoFragment();
 
-        fillFragment(weatherInfoFragment);
+            loadPreferences();
 
-    }
+            fillFragment(weatherInfoFragment);
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+        @Override
+        public void onBackPressed () {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+        }
 
-    public void clearBase(MenuItem item){
+        @Override
+        public boolean onCreateOptionsMenu (Menu menu){
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.main, menu);
+            return true;
+        }
+
+    public void clearBase(MenuItem item) {
         notesDataSource.deleteAll();
         elements.clear();
         Toast.makeText(MainActivity.this, "Base cleared", Toast.LENGTH_SHORT).show();
@@ -244,25 +243,25 @@ public class MainActivity extends AppCompatActivity
 
                 elements.clear();
                 elements = notesDataSource.getAllNotes();
-                Log.d("dbUpdate", "Elements count "+elements.size());
+                Log.d("dbUpdate", "Elements count " + elements.size());
 
             }
         });
         builder.show();
     }
 
-    void dbUpdate(List<WeatherNote> elements, String city){
+    void dbUpdate(List<WeatherNote> elements, String city) {
         boolean isExist = false;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM' at ' HH:mm:ss ");
 
         String time = dateFormat.format(System.currentTimeMillis());
-        if (elements.size()!=0) {
+        if (elements.size() != 0) {
             for (int i = 0; i < elements.size(); i++) {
                 if (elements.get(i).getCity().equals(city)) {
 
                     long id = elements.get(i).getId();
                     notesDataSource.editNote(id,
-                           city,
+                            city,
                             weatherInfoFragment.getTemperature(),
                             weatherInfoFragment.getPressure(),
                             weatherInfoFragment.getHumidity(),
@@ -271,8 +270,8 @@ public class MainActivity extends AppCompatActivity
 
                     );
                     isExist = true;
-                    Toast.makeText(MainActivity.this, "Exist and edited" , Toast.LENGTH_SHORT).show();
-                    Log.d("dbUpdate", "Exist and edited "+city);
+                    Toast.makeText(MainActivity.this, "Exist and edited", Toast.LENGTH_SHORT).show();
+                    Log.d("dbUpdate", "Exist and edited " + city);
                     // изменил базу ,прерываю цикл
                     break;
                 }
@@ -287,7 +286,7 @@ public class MainActivity extends AppCompatActivity
                         time
                 );
                 Toast.makeText(MainActivity.this, "Not exist, created new", Toast.LENGTH_SHORT).show();
-                Log.d("dbUpdate", "Not exist, created new "+city);
+                Log.d("dbUpdate", "Not exist, created new " + city);
             }
 
         } else {
@@ -299,7 +298,7 @@ public class MainActivity extends AppCompatActivity
                     time
             );
             Toast.makeText(MainActivity.this, "Table is empty, created new note", Toast.LENGTH_SHORT).show();
-            Log.d("dbUpdate", "Table is empty, created new note "+city);
+            Log.d("dbUpdate", "Table is empty, created new note " + city);
         }
 
     }
