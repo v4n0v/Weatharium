@@ -37,7 +37,7 @@ public class DBListActivity extends AppCompatActivity {
         notesDataSource = new WeatherDataSource(getApplicationContext());
         notesDataSource.open();
         weatherNotese = notesDataSource.getAllNotes();
-
+//
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);

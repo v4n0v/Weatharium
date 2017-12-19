@@ -27,7 +27,7 @@ public class BingWebSearch {
 // *** Update or verify the following values. ***
 // **********************************************
 
-    // Replace the subscriptionKey string value with your valid subscription key.
+    // Replace the subscriptionKey string value with your valid subscription KEY.
     static String subscriptionKey = "664f1cc7103a4995811163b2968f16b1";
 
     // Verify the endpoint URI.  At this writing, only one endpoint is used for Bing
@@ -67,7 +67,7 @@ public class BingWebSearch {
         // extract Bing-related HTTP headers
         Map<String, List<String>> headers = connection.getHeaderFields();
         for (String header : headers.keySet()) {
-            if (header == null) continue;      // may have null key
+            if (header == null) continue;      // may have null KEY
             if (header.startsWith("BingAPIs-") || header.startsWith("X-MSEdge-")) {
                 results.relevantHeaders.put(header, headers.get(header).get(0));
             }
@@ -99,7 +99,7 @@ public class BingWebSearch {
 
     public static void main (String[] args) {
         if (subscriptionKey.length() != 32) {
-            System.out.println("Invalid Bing Search API subscription key!");
+            System.out.println("Invalid Bing Search API subscription KEY!");
             System.out.println("Please paste yours into the source code.");
             System.exit(1);
         }

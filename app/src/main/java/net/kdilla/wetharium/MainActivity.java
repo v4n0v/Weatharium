@@ -33,6 +33,7 @@ import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.fragments.LastShownFragment;
 import net.kdilla.wetharium.fragments.LatShownInterface;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
+import net.kdilla.wetharium.utils.GoogleSearch;
 import net.kdilla.wetharium.utils.Preferences;
 
 import org.json.JSONObject;
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity
         notesDataSource.open();
 
         elements = notesDataSource.getAllNotes();
+
+        String jsonImg = GoogleSearch.getJson("moscow");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
