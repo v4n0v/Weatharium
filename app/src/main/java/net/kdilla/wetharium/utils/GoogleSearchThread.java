@@ -86,16 +86,10 @@ public class GoogleSearchThread {
                     System.out.println("Error1 " + e.getMessage());
                     Log.e("ERORO", e.getMessage());
                 }
-
             }
-
-
-
         });
 
         thread.start();
-
-
     }
 
     private static void saveJson(String json) {
@@ -106,67 +100,4 @@ public class GoogleSearchThread {
         Log.d("IMAGE", image.getLink());
     }
 
-    private static String httpGet(String urlStr) throws IOException {
-
-        URL url = new URL(urlStr);
-
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-        if (conn.getResponseCode() != 200) {
-            throw new IOException(conn.getResponseMessage());
-        }
-
-        Log.d("search", "Connection status = " + conn.getResponseMessage());
-
-        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String line;
-
-        while ((line = rd.readLine()) != null) {
-
-            Log.d("search", "Line =" + rd.readLine());
-            sb.append(line + "\n");
-
-        }
-        rd.close();
-
-        conn.disconnect();
-        return sb.toString();
-    }
 }
-
-//
-//        String strNoSpaces = str.replace(" ", "+");
-//
-//        String url2 = "https://www.googleapis.com/customsearch/v1?q=" + strNoSpaces + "&KEY=" + KEY + "&CX=" + CX + "&alt=json";
-//        Log.d("GCsearch", "Url = " + url2);
-//        //    String result2 =
-//
-//        try {
-////            URL url = new URL(url2);
-//            URL url = new URL(String.format(url2));
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//
-//            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//            StringBuilder sb = new StringBuilder(1024);
-//            String line;
-//
-//            while ((line = rd.readLine()) != null) {
-//
-//                Log.d("GCsearch", "Line =" + rd.readLine());
-//                sb.append(line + "\n");
-//
-//            }
-//            rd.close();
-//
-//          //  JSONObject jsonObject = new JSONObject(sb.toString());
-//
-//            conn.disconnect();
-//            return sb.toString();
-//        } catch (Exception e) {
-//            System.out.println("Error1 " + e.getMessage());
-//            return null;
-//
-//        }
-
-
