@@ -1,6 +1,5 @@
 package net.kdilla.wetharium.fragments;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -17,9 +16,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.kdilla.wetharium.MainActivity;
 import net.kdilla.wetharium.R;
-import net.kdilla.wetharium.utils.GoogleSearch;
 import net.kdilla.wetharium.utils.WeatherDataLoader;
 import net.kdilla.wetharium.utils.gson.Weather;
 import net.kdilla.wetharium.utils.gson.WeatherDeserializer;
@@ -27,8 +24,6 @@ import net.kdilla.wetharium.utils.gson.WeatherMain;
 import net.kdilla.wetharium.utils.gson.WeatherMainDeserializer;
 
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 
 public class WeatherInfoFragment extends Fragment {
@@ -75,30 +70,7 @@ public class WeatherInfoFragment extends Fragment {
 
         initViews(view);
         getWeather(city);
-//
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                JSONObject jsonObject =null;
-//                try {
-//                    jsonObject = GoogleSearch.getSearch("moscow city");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                if (jsonObject != null) {
-//                    final JSONObject finalOnj = jsonObject;
-//                    Log.d("SEARCH_JSON", jsonObject.toString());
-//                    handler.post(new Runnable() {
-//                        public void run() {
-//                            temperatureTextView.setText(finalOnj.toString());
-//
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//
-//        thread.start();
+
         return view;
     }
 

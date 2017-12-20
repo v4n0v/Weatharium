@@ -1,44 +1,52 @@
 package net.kdilla.wetharium.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import net.kdilla.wetharium.utils.gson.Image;
-import net.kdilla.wetharium.utils.gson.ImagesDeserializer;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by avetc on 19.12.2017.
  */
 
-public class GoogleSearchThread {
+public class GoogleSearchThread   {
 
-    static final Handler handler = new Handler();
+    final Handler handler = new Handler();
 
-    public static String getJson() {
-        return json;
+    public ArrayList<String> getImageLinks() {
+        return imageLinks;
     }
 
-    static  String json;
+    ArrayList<String> imageLinks;
 
-    public static synchronized void getJson(final String str) {
+    public GoogleSearchThread(String city) {
+        getJson(city);
+    }
+    // static String json;
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
+    private void getJson(final String str) {
+
+        new Thread() {
             public void run() {
 
                 try {
                     // looking for
+
                     String strNoSpaces = str.replace(" ", "+");
 
                     // Your API key
@@ -47,15 +55,9 @@ public class GoogleSearchThread {
                     // Your Search Engine ID
                     String cx = "000850301007932783959:fyxoabpdp2e";
 
-                    String url2 = "https://www.googleapis.com/customsearch/v1?q=" + strNoSpaces + "&key=" + key + "&cx=" + cx + "&searchType=image&alt=json";
-                    Log.d("search_result", "Url = " + url2);
-                   // json = httpGet(url2);
-//                    handler.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            saveJson(json);
-//                        }
-//                    });
+                    String url2 = "https://www.googleapis.com/customsearch/v1?q=" + strNoSpaces+"+attractions+pictures"+ "&key=" + key + "&cx=" + cx + "&searchType=image&alt=json";
+                    Log.d("URL_GET", "Url = " + url2);
+
 
                     URL url = new URL(url2);
 
@@ -77,27 +79,68 @@ public class GoogleSearchThread {
                         sb.append(line + "\n");
 
                     }
+
+//                    final  JSONObject jsonObject = new JSONObject(sb.toString());
+
+                    String json=sb.toString();
+                    imageLinks = getImagesArray(json);
+                //    Log.d("search", jsonObject.toString());
+//                    handler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            getImageFromJson(jsonObject);
+//                        }
+//                    });
+                    Log.d("search_result", "Image links count: "+imageLinks.size());
                     rd.close();
                     conn.disconnect();
-
-                    JSONObject jsonObject = new JSONObject(sb.toString());
-                    Log.d("search", json);
                 } catch (Exception e) {
                     System.out.println("Error1 " + e.getMessage());
-                    Log.e("ERORO", e.getMessage());
+                    e.printStackTrace();
                 }
+
             }
-        });
 
-        thread.start();
+        }.start();
     }
 
-    private static void saveJson(String json) {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Image.class, new ImagesDeserializer())
-                .create();
-        Image image = gson.fromJson(json, Image.class);
-        Log.d("IMAGE", image.getLink());
+    private ArrayList<String> getImagesArray(String json){
+        ArrayList<String> links = new ArrayList<>();
+        String[] lines = json.split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("\"link\": \"")){
+                String[] tempString = lines[i].split("://");
+                tempString[1]= tempString[1].replace("\",", "");
+                if (tempString[1].contains("?")){
+                    String[] tempString2 = tempString[1].split("\\?");
+                    tempString[1]=tempString2[0];
+                }
+                links.add("https://"+tempString[1]);
+            }
+        }
+        return links;
     }
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
 
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+               Log.e("ERROR", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+
+    }
 }
+

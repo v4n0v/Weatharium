@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,21 +26,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.fragments.LastShownFragment;
 import net.kdilla.wetharium.fragments.LatShownInterface;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
-import net.kdilla.wetharium.utils.GoogleSearch;
 import net.kdilla.wetharium.utils.GoogleSearchThread;
 import net.kdilla.wetharium.utils.Preferences;
-import net.kdilla.wetharium.utils.WeatherDataLoader;
 
-import org.json.JSONObject;
-
+import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -73,6 +77,8 @@ public class MainActivity extends AppCompatActivity
 
     WeatherInfoFragment weatherInfoFragment;
     Typeface font;
+    ImageView toolbarImage;
+
 
     private final Handler handler = new Handler();
 
@@ -80,7 +86,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        toolbarImage = (ImageView) findViewById(R.id.header);
 
         //  this.deleteDatabase("weather.db");
         notesDataSource = new WeatherDataSource(getApplicationContext());
@@ -99,20 +105,19 @@ public class MainActivity extends AppCompatActivity
 //        }.start();
 
         // так получается
-        GoogleSearchThread.getJson("moscow city");
 
 
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-            setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
 
-            {
-                @Override
-                public void onClick (View view){
+        {
+            @Override
+            public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TEXT, weatherInfoFragment.getCity() + " " + weatherInfoFragment.getTemperature());
@@ -120,42 +125,125 @@ public class MainActivity extends AppCompatActivity
                 Intent chosenIntent = Intent.createChooser(intent, "Select app");
                 startActivity(chosenIntent);
             }
-            });
+        });
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-            weatherInfoFragment =new
+        weatherInfoFragment = new
 
-            WeatherInfoFragment();
+                WeatherInfoFragment();
 
-            loadPreferences();
-
-            fillFragment(weatherInfoFragment);
-
+        loadPreferences();
+        // создаю экземпляк класса поиска картиноки возвращаю список из 5 картинок города
+        GoogleSearchThread imageSearch = new GoogleSearchThread(city);
+        ArrayList<String> images = null;
+        // костыль для ожидания потока
+        while (images == null) {
+            images = imageSearch.getImageLinks();
         }
+ //       Picasso.with(getApplicationContext()).load(images.get(0)).into(toolbarImage);
+        String firstLink = images.get(2);
+        setCityImageToolbar(firstLink);
 
-        @Override
-        public void onBackPressed () {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
+        fillFragment(weatherInfoFragment);
+
+    }
+
+    private void setCityImageToolbar(final String url){
+
+        final Handler handler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try                {
+                    URL newUrl = new URL(url);
+                    //final Bitmap mIcon_val = BitmapFactory.decodeStream(newUrl.openConnection().getInputStream());
+                    Log.d("BITMAP", newUrl.toString());
+                    InputStream in = newUrl.openStream();
+                    if (in==null){
+                        Log.d("BITMAP", "Wrong InputStream link");
+                    }
+                    final Bitmap mIcon11 = BitmapFactory.decodeStream(in);
+                    if (mIcon11==null){
+                        Log.d("BITMAP", "Wrong bitmap link");
+                    }
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            toolbarImage.setImageBitmap(mIcon11);
+                        }
+                    });
+
+                } catch (Exception e){
+                    Log.e("BITMAP", e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    private Bitmap getBmp(final String url){
+        final Bitmap[] bmp = {null};
+        synchronized (this) {
+
+            try {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            URL newUrl = new URL(url);
+                            //final Bitmap mIcon_val = BitmapFactory.decodeStream(newUrl.openConnection().getInputStream());
+                            Log.d("BITMAP", newUrl.toString());
+                            InputStream in = newUrl.openStream();
+                            if (in == null) {
+                                Log.d("BITMAP", "Wrong InputStream link");
+                            }
+                            final Bitmap mIcon11 = BitmapFactory.decodeStream(in);
+                            if (mIcon11 == null) {
+                                Log.d("BITMAP", "Wrong bitmap link");
+                            }
+
+//                        handler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+                            bmp[0] = mIcon11;
+//                            }
+//                        });
+
+                        } catch (Exception e) {
+                            Log.e("BITMAP", e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                }.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-
-        @Override
-        public boolean onCreateOptionsMenu (Menu menu){
-            // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.main, menu);
-            return true;
+        return bmp[0];
+    }
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
     public void clearBase(MenuItem item) {
         notesDataSource.deleteAll();
@@ -238,6 +326,15 @@ public class MainActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
 
                 weatherInfoFragment.getWeather(input.getText().toString());
+
+                GoogleSearchThread imageSearch = new GoogleSearchThread(input.getText().toString());
+                ArrayList<String> images = null;
+                // костыль для ожидания потока
+                while (images == null) {
+                    images = imageSearch.getImageLinks();
+                }
+
+                setCityImageToolbar(images.get(3));
                 fillFragment(weatherInfoFragment);
                 dbUpdate(elements, input.getText().toString());
 
