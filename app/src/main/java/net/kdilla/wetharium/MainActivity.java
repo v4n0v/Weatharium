@@ -29,14 +29,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.fragments.LastShownFragment;
 import net.kdilla.wetharium.fragments.LatShownInterface;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
+import net.kdilla.wetharium.utils.FlickrSearch;
 import net.kdilla.wetharium.utils.GoogleSearchThread;
+
 import net.kdilla.wetharium.utils.Preferences;
 
 import java.io.InputStream;
@@ -78,9 +78,10 @@ public class MainActivity extends AppCompatActivity
     WeatherInfoFragment weatherInfoFragment;
     Typeface font;
     ImageView toolbarImage;
-
-
+    FlickrSearch flickrImage;
+    ArrayList<Bitmap> cityImages;
     private final Handler handler = new Handler();
+    GoogleSearchThread imageSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,17 +96,16 @@ public class MainActivity extends AppCompatActivity
 
         elements = notesDataSource.getAllNotes();
 
-//        String jsonImg = GoogleSearchThread.getJson("moscow city");
+//        String jsonImg = GoogleSearchThread.getAndSetImage("moscow city");
 
         // так не получается запустить
 //        new Thread() {
 //            public void run() {
-//                GoogleSearch.getJson("moscow city");
+//                GoogleSearch.getAndSetImage("moscow city");
 //            }
 //        }.start();
 
         // так получается
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -135,42 +135,50 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        weatherInfoFragment = new
-
-                WeatherInfoFragment();
+        weatherInfoFragment = new WeatherInfoFragment();
+        weatherInfoFragment.setCityImageView(toolbarImage);
 
         loadPreferences();
         // создаю экземпляк класса поиска картиноки возвращаю список из 5 картинок города
-        GoogleSearchThread imageSearch = new GoogleSearchThread(city);
-        ArrayList<String> images = null;
-        // костыль для ожидания потока
-        while (images == null) {
-            images = imageSearch.getImageLinks();
-        }
- //       Picasso.with(getApplicationContext()).load(images.get(0)).into(toolbarImage);
-        String firstLink = images.get(2);
-        setCityImageToolbar(firstLink);
+//
+//        flickrImage = new FlickrSearch(toolbarImage);
+//
+//        flickrImage.downloadAndSetImage(city);
+//        imageSearch = new GoogleSearchThread(toolbarImage);
+//        imageSearch.getAndSetImage(city);
+//        ArrayList<String> images = null;
+//
+//
+//        // костыль для ожидания потока
+//        while (images == null) {
+//            images = imageSearch.getImageLinks();
+//        }
+
+        //   BitmapDownLoader.execute(images);
+        //       Picasso.with(getApplicationContext()).load(images.get(0)).into(toolbarImage);
+//        String firstLink = images.get(3);
+//        setCityImageToolbar(firstLink);
 
         fillFragment(weatherInfoFragment);
 
     }
 
-    private void setCityImageToolbar(final String url){
+    private void setCityImageToolbar(final String url) {
 
         final Handler handler = new Handler();
         new Thread() {
             @Override
             public void run() {
-                try                {
+                try {
                     URL newUrl = new URL(url);
                     //final Bitmap mIcon_val = BitmapFactory.decodeStream(newUrl.openConnection().getInputStream());
                     Log.d("BITMAP", newUrl.toString());
                     InputStream in = newUrl.openStream();
-                    if (in==null){
+                    if (in == null) {
                         Log.d("BITMAP", "Wrong InputStream link");
                     }
                     final Bitmap mIcon11 = BitmapFactory.decodeStream(in);
-                    if (mIcon11==null){
+                    if (mIcon11 == null) {
                         Log.d("BITMAP", "Wrong bitmap link");
                     }
                     handler.post(new Runnable() {
@@ -180,7 +188,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     });
 
-                } catch (Exception e){
+                } catch (Exception e) {
                     Log.e("BITMAP", e.getMessage());
                     e.printStackTrace();
                 }
@@ -188,7 +196,7 @@ public class MainActivity extends AppCompatActivity
         }.start();
     }
 
-    private Bitmap getBmp(final String url){
+    private Bitmap getBmp(final String url) {
         final Bitmap[] bmp = {null};
         synchronized (this) {
 
@@ -228,6 +236,7 @@ public class MainActivity extends AppCompatActivity
         }
         return bmp[0];
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -324,19 +333,21 @@ public class MainActivity extends AppCompatActivity
         builder.setPositiveButton("Show me the weather", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                city = input.getText().toString();
+                weatherInfoFragment.getWeather(city);
+//
+//                GoogleSearchThread imageSearch = new GoogleSearchThread(city, toolbarImage);
+//                ArrayList<String> images = null;
+//                // костыль для ожидания потока
+//                while (images == null) {
+//                    images = imageSearch.getImageLinks();
+//                }
+                //   imageSearch.getAndSetImage(city);
+                //setCityImageToolbar(images.get(3));
 
-                weatherInfoFragment.getWeather(input.getText().toString());
-
-                GoogleSearchThread imageSearch = new GoogleSearchThread(input.getText().toString());
-                ArrayList<String> images = null;
-                // костыль для ожидания потока
-                while (images == null) {
-                    images = imageSearch.getImageLinks();
-                }
-
-                setCityImageToolbar(images.get(3));
+                //     flickrImage.downloadAndSetImage(city);
                 fillFragment(weatherInfoFragment);
-                dbUpdate(elements, input.getText().toString());
+                dbUpdate(elements, city);
 
                 elements.clear();
                 elements = notesDataSource.getAllNotes();
@@ -362,6 +373,7 @@ public class MainActivity extends AppCompatActivity
                             weatherInfoFragment.getTemperature(),
                             weatherInfoFragment.getPressure(),
                             weatherInfoFragment.getHumidity(),
+
                             weatherInfoFragment.getWind(),
                             time
 
@@ -482,5 +494,6 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
 
     }
+
 
 }

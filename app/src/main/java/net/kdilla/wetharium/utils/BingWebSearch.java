@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -35,22 +36,30 @@ public class BingWebSearch {
     // encounter unexpected authorization errors, double-check this value against
     // the endpoint for your Bing Web search instance in your Azure dashboard.
     static String host = "https://api.cognitive.microsoft.com";
-//    static String host = "https://api.cognitive.microsoft.com";
+    //    static String host = "https://api.cognitive.microsoft.com";
     static String path = "/bing/v7.0/images";
 
     static String searchTerm = "Microsoft Cognitive Services";
 
-     public static SearchResults SearchWeb (String searchQuery) throws Exception {
+    public static SearchResults SearchWeb(final String searchQuery) throws Exception {
 //    public static String SearchWeb (String searchQuery) throws Exception {
         // construct URL of search request (endpoint + query string)
-        URL url = new URL(host + path + "?q=" +  URLEncoder.encode(searchQuery, "UTF-8"));
-        HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
-//        connection.addRequestProperty("Ocp-Apim-Subscription-Key", subscriptionKey);
-        connection.setRequestProperty("Ocp-Apim-Subscription-Key", subscriptionKey);
 
-        // receive JSON body
-        InputStream stream = connection.getInputStream();
-        String response = new Scanner(stream).useDelimiter("\\A").next();
+        new Thread() {
+            @Override
+            public void run() {
+
+                try {
+                    URL url = new URL(host + path + "?q=" + URLEncoder.encode(searchQuery, "UTF-8"));
+                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+//        connection.addRequestProperty("Ocp-Apim-Subscription-Key", subscriptionKey);
+                    connection.setRequestProperty("Ocp-Apim-Subscription-Key", subscriptionKey);
+
+                    // receive JSON body
+
+                    InputStream stream = connection.getInputStream();
+
+                    String response = new Scanner(stream).useDelimiter("\\A").next();
 
 //         BufferedReader reader = new BufferedReader((new InputStreamReader(connection.getInputStream())));
 //         StringBuilder rawData = new StringBuilder(1024);
@@ -61,28 +70,36 @@ public class BingWebSearch {
 //         }
 //
 
-        // construct result object for return
-        SearchResults results = new SearchResults(new HashMap<String, String>(), response);
+                    // construct result object for return
+                    SearchResults results = new SearchResults(new HashMap<String, String>(), response);
 
-        // extract Bing-related HTTP headers
-        Map<String, List<String>> headers = connection.getHeaderFields();
-        for (String header : headers.keySet()) {
-            if (header == null) continue;      // may have null KEY
-            if (header.startsWith("BingAPIs-") || header.startsWith("X-MSEdge-")) {
-                results.relevantHeaders.put(header, headers.get(header).get(0));
-            }
-        }
+                    // extract Bing-related HTTP headers
+                    Map<String, List<String>> headers = connection.getHeaderFields();
+                    for (
+                            String header : headers.keySet())
+
+                    {
+                        if (header == null) continue;      // may have null KEY
+                        if (header.startsWith("BingAPIs-") || header.startsWith("X-MSEdge-")) {
+                            results.relevantHeaders.put(header, headers.get(header).get(0));
+                        }
+                    }
 
 //        reader.close();
-        stream.close();
-       return results;
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+        return null;
 
     }
 
-    public static String getSearchJson(String query){
-        String json=null;
-         try {
-             json = SearchWeb(query).jsonResponse;
+    public static String getSearchJson(String query) {
+        String json = null;
+        try {
+            json = SearchWeb(query).jsonResponse;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,7 +114,7 @@ public class BingWebSearch {
         return gson.toJson(json);
     }
 
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         if (subscriptionKey.length() != 32) {
             System.out.println("Invalid Bing Search API subscription KEY!");
             System.out.println("Please paste yours into the source code.");
@@ -115,8 +132,7 @@ public class BingWebSearch {
 
             System.out.println("\nJSON Response:\n");
             System.out.println(prettify(result.jsonResponse));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
             System.exit(1);
         }
@@ -124,9 +140,10 @@ public class BingWebSearch {
 }
 
 // Container class for search results encapsulates relevant headers and JSON data
-class SearchResults{
+class SearchResults {
     HashMap<String, String> relevantHeaders;
     String jsonResponse;
+
     SearchResults(HashMap<String, String> headers, String json) {
         relevantHeaders = headers;
         jsonResponse = json;

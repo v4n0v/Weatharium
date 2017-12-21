@@ -14,7 +14,7 @@ import java.util.Locale;
  * Created by avetc on 08.12.2017.
  */
 
-public class WeatherDeserializer implements JsonDeserializer<Weather> {
+public class  WeatherDeserializer implements JsonDeserializer<Weather> {
     @Override
     public Weather deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();

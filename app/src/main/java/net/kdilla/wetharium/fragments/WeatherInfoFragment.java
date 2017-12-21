@@ -17,6 +17,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.kdilla.wetharium.R;
+import net.kdilla.wetharium.utils.FlickrSearch;
+import net.kdilla.wetharium.utils.FlickrSearchThread;
 import net.kdilla.wetharium.utils.WeatherDataLoader;
 import net.kdilla.wetharium.utils.gson.Weather;
 import net.kdilla.wetharium.utils.gson.WeatherDeserializer;
@@ -53,22 +55,25 @@ public class WeatherInfoFragment extends Fragment {
     TextView descriptionTextView;
     Drawable icon;
 
-    ImageView weatherImage;
-//
-//    public void setParams(String city,  float temperature, String additionalInfo, String description, Drawable icon) {
-//        this.temperature = temperature;
-//        this.additionalInfo = additionalInfo;
-//        this.city = city;
-//        this.icon=icon;
-//        this.description=description;
-//    }
+    public void setCityImageView(ImageView cityImageView) {
+        this.cityImageView = cityImageView;
+    }
 
+    ImageView cityImageView;
+    ImageView weatherImage;
+
+    FlickrSearch flickrSearch;
+    FlickrSearchThread flickrSearchThread;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weather_info, container, false);
 
+
+       // cityImageView = view.findViewById(R.id.header);
         initViews(view);
+        flickrSearch = new FlickrSearch(cityImageView);
+      ///  flickrSearchThread = new FlickrSearchThread(cityImageView);
         getWeather(city);
 
         return view;
@@ -142,7 +147,14 @@ public class WeatherInfoFragment extends Fragment {
 
     public void getWeather(final String city) {
         this.city=city;
-        new Thread() {
+        flickrSearch.downloadAndSetImage(city);
+//
+//        flickrSearchThread.setCity(city);
+//
+//            flickrSearchThread.start();
+
+        Thread jsonWeatherThread = new Thread(new Runnable() {
+            @Override
             public void run() {
                 final JSONObject jsonObject = WeatherDataLoader.getJSONData(getActivity().getApplicationContext(), city);
 
@@ -156,7 +168,26 @@ public class WeatherInfoFragment extends Fragment {
                     });
                 }
             }
-        }.start();
+        });
+
+            jsonWeatherThread.start();
+
+
+//                public void run() {
+//                final JSONObject jsonObject = WeatherDataLoader.getJSONData(getActivity().getApplicationContext(), city);
+//
+//                if (jsonObject != null) {
+//                    Log.d("TAG", jsonObject.toString());
+//                    handler.post(new Runnable() {
+//                        public void run() {
+//                            renderWeather(jsonObject);
+//
+//                        }
+//                    });
+//                }
+//            }
+//        }.start();
+
     }
 
     private Drawable getWeatherIcon(int id) {

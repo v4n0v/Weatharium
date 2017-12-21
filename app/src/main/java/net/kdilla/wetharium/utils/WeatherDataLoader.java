@@ -1,6 +1,7 @@
 package net.kdilla.wetharium.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -27,7 +28,7 @@ public class WeatherDataLoader {
         try {
             URL url = new URL(String.format(OPEN_API_MAP, city));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
+            Log.d("BITMAP", "Start weather download");
 
             connection.addRequestProperty(KEY, OPEN_API_KEY);
 
@@ -44,6 +45,7 @@ public class WeatherDataLoader {
             if (jsonObject.getInt(RESPONSE) != ALL_GOOD) {
                 return null;
             }
+            Log.d("BITMAP", "Finish weather download");
             return jsonObject;
         } catch (Exception e) {
             e.printStackTrace();

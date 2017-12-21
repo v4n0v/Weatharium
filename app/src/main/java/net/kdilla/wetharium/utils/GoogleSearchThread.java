@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -33,13 +34,14 @@ public class GoogleSearchThread   {
     }
 
     ArrayList<String> imageLinks;
-
-    public GoogleSearchThread(String city) {
-        getJson(city);
+    ImageView imageView;
+    public GoogleSearchThread(ImageView imageView) {
+        this.imageView=imageView;
+        //getAndSetImage(city);
     }
     // static String json;
 
-    private void getJson(final String str) {
+    public void getAndSetImage(final String str) {
 
         new Thread() {
             public void run() {
@@ -57,13 +59,14 @@ public class GoogleSearchThread   {
 
                     String url2 = "https://www.googleapis.com/customsearch/v1?q=" + strNoSpaces+"+attractions+pictures"+ "&key=" + key + "&cx=" + cx + "&searchType=image&alt=json";
                     Log.d("URL_GET", "Url = " + url2);
-
-
+    //  https://www.googleapis.com/customsearch/v1?q="city"+attractions+pictures"+ "&key="AIzaSyC_Hwm1br7QVYIQM1XykIIPeEnpT3CWQ08"&cx="000850301007932783959:fyxoabpdp2e"&searchType=image&alt=json
                     URL url = new URL(url2);
 
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
                     if (conn.getResponseCode() != 200) {
+                        Log.e("search_result",
+                                "Exception: "+conn.getResponseMessage()+", code "+conn.getResponseCode());
                         throw new IOException(conn.getResponseMessage());
                     }
 
@@ -94,6 +97,7 @@ public class GoogleSearchThread   {
                     Log.d("search_result", "Image links count: "+imageLinks.size());
                     rd.close();
                     conn.disconnect();
+                    new BitmapDownLoader().execute(imageLinks);
                 } catch (Exception e) {
                     System.out.println("Error1 " + e.getMessage());
                     e.printStackTrace();
@@ -120,27 +124,51 @@ public class GoogleSearchThread   {
         }
         return links;
     }
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
 
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
 
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-               Log.e("ERROR", e.getMessage());
-                e.printStackTrace();
+    class BitmapDownLoader extends AsyncTask<ArrayList<String>, Void, ArrayList<Bitmap>> {
+        int IMAGE_COUNT = 3;
+
+        @Override
+        protected ArrayList<Bitmap> doInBackground(ArrayList<String>[] arrayLists) {
+            publishProgress(new Void[]{});
+            ArrayList<Bitmap> images = new ArrayList<>();
+            ArrayList<String> links = new ArrayList<>();
+            if (arrayLists.length > 0) {
+                links = arrayLists[0];
             }
-            return mIcon11;
+            for (int i = 0; i < IMAGE_COUNT; i++) {
+                try {
+                    URL newUrl = new URL(links.get(i));
+                    //final Bitmap mIcon_val = BitmapFactory.decodeStream(newUrl.openConnection().getInputStream());
+                    Log.d("BITMAP", newUrl.toString());
+                    InputStream in = newUrl.openStream();
+                    final Bitmap bmp = BitmapFactory.decodeStream(in);
+                    images.add(bmp);
+                } catch (Exception e) {
+                    Log.d("BITMAP", "Wrong link");
+
+                    e.printStackTrace();
+                }
+
+            }
+            for (int i = 0; i < images.size(); i++) {
+                if (images.get(i)==null) images.remove(i);
+            }
+            return images;
         }
 
-
+        @Override
+        protected void onPostExecute(ArrayList<Bitmap> bitmaps) {
+            super.onPostExecute(bitmaps);
+            int max=bitmaps.size()-1;
+            int id = (int)(Math.random()*++max);
+            id = 0;
+            if (id>IMAGE_COUNT)id=IMAGE_COUNT;
+            Log.d("BITMAP", String.valueOf(id));
+            Bitmap img = bitmaps.get(id) ;
+            imageView.setImageBitmap(img);
+        }
     }
 }
 
