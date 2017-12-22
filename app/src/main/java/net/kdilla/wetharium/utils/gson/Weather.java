@@ -14,6 +14,26 @@ public class Weather {
     private  String mainInfo;
     private int id;
 
+    public float getLat() {
+        return lat;
+    }
+
+    public void setLat(float lat) {
+        this.lat = lat;
+    }
+
+    private float lat;
+
+    public float getLon() {
+        return lon;
+    }
+
+    public void setLon(float lon) {
+        this.lon = lon;
+    }
+
+    private float lon;
+
     public void setCity(String city) {
         this.city = city;
     }

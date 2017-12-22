@@ -34,6 +34,7 @@ import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.fragments.LastShownFragment;
 import net.kdilla.wetharium.fragments.LatShownInterface;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
+import net.kdilla.wetharium.utils.FileManager;
 import net.kdilla.wetharium.utils.FlickrSearch;
 import net.kdilla.wetharium.utils.GoogleSearchThread;
 
@@ -162,6 +163,12 @@ public class MainActivity extends AppCompatActivity
         fillFragment(weatherInfoFragment);
 
     }
+
+    public void reloadPicture(MenuItem item){
+        FileManager.deleteBitmap(getApplicationContext(), city);
+        weatherInfoFragment.getAindSetToolbarImage();
+    }
+
 
     private void setCityImageToolbar(final String url) {
 

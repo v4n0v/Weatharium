@@ -21,4 +21,10 @@
         android:title="@string/clear_base"
         android:onClick="clearBase"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_change_pic"
+        android:orderInCategory="100"
+        android:title="@string/reload_picture"
+        android:onClick="reloadPicture"
+        app:showAsAction="never" />
 </menu>

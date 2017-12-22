@@ -36,6 +36,11 @@ public class  WeatherDeserializer implements JsonDeserializer<Weather> {
         weather.setId(detailsObject.get("id").getAsInt());
         weather.setDescription(detailsObject.get("description").getAsString());
         weather.setMainInfo(detailsObject.get("main").getAsString());
+
+        WeatherCoord weatherCoord = (WeatherCoord) context.deserialize(jsonObject.get("coord"), WeatherCoord.class);
+        weather.setLat(weatherCoord.getLat());
+        weather.setLon(weatherCoord.getLon());
+
         return weather;
     }
 }

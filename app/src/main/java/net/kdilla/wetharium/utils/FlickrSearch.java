@@ -1,14 +1,20 @@
 package net.kdilla.wetharium.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,20 +33,41 @@ public class FlickrSearch {
     //https://api.flickr.com/services/rest/?safe_search=safe&api_key=9c6b4a5f6ad93dafa5a5ca0ef3b2f864&format=json&text="kursk+city"&method=flickr.photos.search&media=photos&extras=url_m
 
     ImageView toolbarImage;
-
-    public FlickrSearch(ImageView toolbarImage) {
+    Context context;
+    String city;
+    public FlickrSearch(ImageView toolbarImage, Context context) {
+        this.context=context;
         this.toolbarImage = toolbarImage;
+
     }
 
-    public void downloadAndSetImage(final String city) {
+    String lat; String lon;
+    public void setLatAndLon(final String lat, final String lon){
+        this.lat= lat;
+        this.lon=lon;
+    }
+    public FlickrSearch(){
 
+    }
+    public void downloadAndSetImage(final String city) {
+        this.city=city;
         new Thread() {
             @Override
             public void run() {
                 try {
                     String strNoSpaces = city.replace(" ", "+");
-                    String link = "https://api.flickr.com/services/rest/?safe_search=safe&api_key=" + KEY + "&format=json&text=" + strNoSpaces + "+city&method=flickr.photos.search&media=photos&extras="+ IMAGE_SIZE +"&per_page="+COUNT+"&content_type=1&sort=relevance";
+                    String link = "https://api.flickr.com/services/rest/?safe_search=safe&api_key="
+                            + KEY + "&format=json&method=flickr.photos.search&media=photos&extras="
+                            + IMAGE_SIZE +"&per_page="+COUNT
+                            +"&content_type=1&sort=relevance";
 
+                    //если есть координаты, то то ним, если нет, то по названию города
+                    if (lat!=null && lon!=null){
+                        link+="&lat="+lat+"&lon="+lon;
+                        Log.d("BITMAP", "lat="+lat+", lon="+lon);
+                    } else {
+                        link+="&text=" + strNoSpaces + "+city";
+                    }
                     URL url = new URL(link);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -105,6 +132,8 @@ public class FlickrSearch {
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
             toolbarImage.setImageBitmap(bitmap);
+         //  saveBitmap(bitmap);
+            FileManager.saveBitmap(bitmap, context, city);
             Log.d("BITMAP","Bitmap applied");
         }
 
@@ -125,5 +154,22 @@ public class FlickrSearch {
             }
             return images;
         }
+    }
+
+    private void saveBitmap(Bitmap bitmap) {
+
+        try {
+
+            File file = new File(context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), city.toLowerCase()+".jpg");
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+
+            out.flush();
+            out.close();
+            MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, file.getName(), file.getName()); // регистрация в фотоальбоме
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Toast.makeText( context, "Saved in storage as " + city.toLowerCase()+".jpg", Toast.LENGTH_SHORT).show();
     }
 }

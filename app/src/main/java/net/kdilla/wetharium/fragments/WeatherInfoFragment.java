@@ -1,9 +1,13 @@
 package net.kdilla.wetharium.fragments;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,11 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import net.kdilla.wetharium.MainActivity;
 import net.kdilla.wetharium.R;
+import net.kdilla.wetharium.utils.FileManager;
 import net.kdilla.wetharium.utils.FlickrSearch;
 import net.kdilla.wetharium.utils.FlickrSearchThread;
 import net.kdilla.wetharium.utils.WeatherDataLoader;
@@ -26,6 +33,9 @@ import net.kdilla.wetharium.utils.gson.WeatherMain;
 import net.kdilla.wetharium.utils.gson.WeatherMainDeserializer;
 
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 
 public class WeatherInfoFragment extends Fragment {
@@ -62,18 +72,26 @@ public class WeatherInfoFragment extends Fragment {
     ImageView cityImageView;
     ImageView weatherImage;
 
+    String lat;
+    String lon;
     FlickrSearch flickrSearch;
     FlickrSearchThread flickrSearchThread;
+    Bitmap cityBitmap;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weather_info, container, false);
 
 
-       // cityImageView = view.findViewById(R.id.header);
+        // cityImageView = view.findViewById(R.id.header);
         initViews(view);
-        flickrSearch = new FlickrSearch(cityImageView);
-      ///  flickrSearchThread = new FlickrSearchThread(cityImageView);
+
+
+
+        flickrSearch = new FlickrSearch(cityImageView, getContext());
+
+        ///  flickrSearchThread = new FlickrSearchThread(cityImageView);
         getWeather(city);
 
         return view;
@@ -114,6 +132,9 @@ public class WeatherInfoFragment extends Fragment {
             humidity = weatherForGSon.getHumidity();
             city = weatherForGSon.getCity();
 
+           lon = String.valueOf(weatherForGSon.getLon());
+           lat = String.valueOf(weatherForGSon.getLat());
+
             String additionalInfo = "";
 
             if (isPressure) {
@@ -146,12 +167,8 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     public void getWeather(final String city) {
-        this.city=city;
-        flickrSearch.downloadAndSetImage(city);
-//
-//        flickrSearchThread.setCity(city);
-//
-//            flickrSearchThread.start();
+        this.city = city;
+       // cityBitmap = loadBitmap();
 
         Thread jsonWeatherThread = new Thread(new Runnable() {
             @Override
@@ -170,8 +187,14 @@ public class WeatherInfoFragment extends Fragment {
             }
         });
 
-            jsonWeatherThread.start();
-
+        jsonWeatherThread.start();
+        cityBitmap = FileManager.loadBitmap(getContext(), city);
+        if (cityBitmap == null) {
+            getAindSetToolbarImage();
+        } else {
+            cityImageView.setImageBitmap(cityBitmap);
+            Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
+        }
 
 //                public void run() {
 //                final JSONObject jsonObject = WeatherDataLoader.getJSONData(getActivity().getApplicationContext(), city);
@@ -190,25 +213,30 @@ public class WeatherInfoFragment extends Fragment {
 
     }
 
+    public void getAindSetToolbarImage(){
+      //  flickrSearch.setLatAndLon(lat, lon);
+        flickrSearch.downloadAndSetImage(city);
+    }
+
     private Drawable getWeatherIcon(int id) {
-        id=id/100;
+        id = id / 100;
         Drawable ico = null;
         switch (id) {
             case 2:
 
-                ico =getResources().getDrawable(R.drawable.day_thunder);
+                ico = getResources().getDrawable(R.drawable.day_thunder);
                 break;
             case 3:
-                ico =getResources().getDrawable(R.drawable.day_drizzle);
+                ico = getResources().getDrawable(R.drawable.day_drizzle);
                 break;
             case 5:
                 ico = getResources().getDrawable(R.drawable.day_rainy);
                 break;
             case 6:
-                ico =getResources().getDrawable(R.drawable.day_snowie);
+                ico = getResources().getDrawable(R.drawable.day_snowie);
                 break;
             case 7:
-                ico =getResources().getDrawable(R.drawable.day_foggy);
+                ico = getResources().getDrawable(R.drawable.day_foggy);
                 break;
             case 8:
                 ico = getResources().getDrawable(R.drawable.day_cloudly);
@@ -218,6 +246,29 @@ public class WeatherInfoFragment extends Fragment {
                 break;
         }
         return ico;
+    }
+
+
+    private Bitmap loadBitmap() {
+        File file = new File(getActivity().getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), city.toLowerCase() + ".jpg");
+        return BitmapFactory.decodeFile(file.getAbsolutePath());
+    }
+
+    private void saveBitmap(Bitmap bitmap) {
+
+        try {
+
+            File file = new File(getActivity().getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), city.toLowerCase() + ".jpg");
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+
+            out.flush();
+            out.close();
+            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, file.getName(), file.getName()); // регистрация в фотоальбоме
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(getActivity(), "Saved in storage as " + city.toLowerCase() + ".jpg", Toast.LENGTH_SHORT).show();
     }
 
     public void setAdditionalParams(boolean isWind, boolean isPressure, boolean isHumidity) {
