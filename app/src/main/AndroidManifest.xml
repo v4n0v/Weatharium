@@ -21,10 +21,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DBListActivity"/>
+        <activity android:name=".DBListActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="View history"/>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <service android:name=".services.ServiceWeather"
+            android:exported="false" />
+
+
     </application>
 
 </manifest>

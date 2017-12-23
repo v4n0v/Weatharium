@@ -10,6 +10,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import net.kdilla.wetharium.utils.tasks.BitmapSetterTask;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -28,29 +30,34 @@ import java.util.ArrayList;
 
 public class FlickrSearch {
     private final String KEY = "9c6b4a5f6ad93dafa5a5ca0ef3b2f864";
-    private final int COUNT = 10;
+    private final int COUNT = 50;
     private final String IMAGE_SIZE = "url_m";
     //https://api.flickr.com/services/rest/?safe_search=safe&api_key=9c6b4a5f6ad93dafa5a5ca0ef3b2f864&format=json&text="kursk+city"&method=flickr.photos.search&media=photos&extras=url_m
 
     ImageView toolbarImage;
     Context context;
     String city;
+
     public FlickrSearch(ImageView toolbarImage, Context context) {
-        this.context=context;
+        this.context = context;
         this.toolbarImage = toolbarImage;
 
     }
 
-    String lat; String lon;
-    public void setLatAndLon(final String lat, final String lon){
-        this.lat= lat;
-        this.lon=lon;
+    String lat;
+    String lon;
+
+    public void setLatAndLon(final String lat, final String lon) {
+        this.lat = lat;
+        this.lon = lon;
     }
-    public FlickrSearch(){
+
+    public FlickrSearch() {
 
     }
+
     public void downloadAndSetImage(final String city) {
-        this.city=city;
+        this.city = city;
         new Thread() {
             @Override
             public void run() {
@@ -58,15 +65,15 @@ public class FlickrSearch {
                     String strNoSpaces = city.replace(" ", "+");
                     String link = "https://api.flickr.com/services/rest/?safe_search=safe&api_key="
                             + KEY + "&format=json&method=flickr.photos.search&media=photos&extras="
-                            + IMAGE_SIZE +"&per_page="+COUNT
-                            +"&content_type=1&sort=relevance";
+                            + IMAGE_SIZE + "&per_page=" + COUNT
+                            + "&content_type=1&sort=relevance";
 
                     //если есть координаты, то то ним, если нет, то по названию города
-                    if (lat!=null && lon!=null){
-                        link+="&lat="+lat+"&lon="+lon;
-                        Log.d("BITMAP", "lat="+lat+", lon="+lon);
+                    if (lat != null && lon != null) {
+                        link += "&lat=" + lat + "&lon=" + lon;
+                        Log.d("BITMAP", "lat=" + lat + ", lon=" + lon);
                     } else {
-                        link+="&text=" + strNoSpaces + "+city";
+                        link += "&text=" + strNoSpaces + "+city";
                     }
                     URL url = new URL(link);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -97,9 +104,10 @@ public class FlickrSearch {
                     rd.close();
                     conn.disconnect();
 
-                    int id = (int)(Math.random()*COUNT);
-                    Log.d("BITMAP", "id="+id);
-                    new BitmapDownLoader().execute(imageLinks.get(id));
+                    int id = (int) (Math.random() * COUNT);
+                    Log.d("BITMAP", "id=" + id);
+                    new BitmapSetterTask(city, context, toolbarImage).execute(imageLinks.get(id));
+                  //  new BitmapDownLoader(city,context).execute(imageLinks.get(id));
                 } catch (Exception e) {
                     System.out.println("BITMAP" + e.getMessage());
                     e.printStackTrace();
@@ -113,8 +121,8 @@ public class FlickrSearch {
         ArrayList<String> links = new ArrayList<>();
         String[] lines = json.split(",");
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].contains("\""+ IMAGE_SIZE +"\":")) {
-                String[] tempString = lines[i].split("\""+ IMAGE_SIZE +"\":");
+            if (lines[i].contains("\"" + IMAGE_SIZE + "\":")) {
+                String[] tempString = lines[i].split("\"" + IMAGE_SIZE + "\":");
                 String tmp = tempString[1];
                 tmp = tmp.replace("\"", "");
                 links.add(tmp);
@@ -125,51 +133,4 @@ public class FlickrSearch {
     }
 
 
-    class BitmapDownLoader extends AsyncTask<String, Void, Bitmap> {
-
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            toolbarImage.setImageBitmap(bitmap);
-         //  saveBitmap(bitmap);
-            FileManager.saveBitmap(bitmap, context, city);
-            Log.d("BITMAP","Bitmap applied");
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... strings) {
-            Bitmap images = null;
-            try {
-                URL newUrl = new URL(strings[0]);
-                //final Bitmap mIcon_val = BitmapFactory.decodeStream(newUrl.openConnection().getInputStream());
-                Log.d("BITMAP", newUrl.toString());
-                InputStream in = newUrl.openStream();
-                images = BitmapFactory.decodeStream(in);
-                Log.d("BITMAP","Bitmap downloaded");
-            } catch (Exception e) {
-                Log.d("BITMAP", "Wrong link");
-
-                e.printStackTrace();
-            }
-            return images;
-        }
-    }
-
-    private void saveBitmap(Bitmap bitmap) {
-
-        try {
-
-            File file = new File(context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), city.toLowerCase()+".jpg");
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-
-            out.flush();
-            out.close();
-            MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, file.getName(), file.getName()); // регистрация в фотоальбоме
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Toast.makeText( context, "Saved in storage as " + city.toLowerCase()+".jpg", Toast.LENGTH_SHORT).show();
-    }
 }

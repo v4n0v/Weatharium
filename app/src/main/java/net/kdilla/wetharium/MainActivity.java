@@ -1,14 +1,20 @@
 package net.kdilla.wetharium;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -34,6 +40,7 @@ import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.fragments.LastShownFragment;
 import net.kdilla.wetharium.fragments.LatShownInterface;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
+import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.FileManager;
 import net.kdilla.wetharium.utils.FlickrSearch;
 import net.kdilla.wetharium.utils.GoogleSearchThread;
@@ -84,13 +91,47 @@ public class MainActivity extends AppCompatActivity
     private final Handler handler = new Handler();
     GoogleSearchThread imageSearch;
 
+
+    BroadcastReceiver br;
+    int temperature;
+    int pressure;
+    int wind;
+    int humidity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        //serviceWeather=new ServiceWeather();
+
+
+
+
+
+        sConn= new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Toast.makeText(getBaseContext(),"Service connected", Toast.LENGTH_SHORT).show();
+                Log.d("ServiceWeather", "Service connected");
+                serviceWeather = ((ServiceWeather.WeatherBinder) service).getService();
+                serviceWeather.changeCity(city);
+                bind = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                bind = false;
+            }
+        };
+
+        Intent intent = new Intent(getBaseContext(), ServiceWeather.class);
+        bindService(intent, sConn, BIND_AUTO_CREATE);
+
         toolbarImage = (ImageView) findViewById(R.id.header);
 
-        //  this.deleteDatabase("weather.db");
+      //  this.deleteDatabase("weather.db");
         notesDataSource = new WeatherDataSource(getApplicationContext());
 
         notesDataSource.open();
@@ -136,6 +177,47 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+
+
+
+        br = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int temp = intent.getIntExtra(Preferences.ADD_TEMP, 0);
+                int hum = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
+                int wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
+                int press = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+                String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
+                String additionalInfo = "";
+
+                if (isPressure) {
+                    additionalInfo += "Pressure: " + press + " " + getString(R.string.pressure_dim) + "\n";
+                }
+                if (isWind) {
+                    additionalInfo += "Wind: " + wind + " " + getString(R.string.wind_dim) + "\n";
+                }
+                if (isHumidity) {
+                    additionalInfo += "Humidity: " + hum + " " + getString(R.string.humidity_dim) + "\n";
+                }
+
+
+                weatherInfoFragment.setCity(city);
+                weatherInfoFragment.setAdditionalParams(additionalInfo);
+                weatherInfoFragment.setTemperature(temp);
+                weatherInfoFragment.setDescription(decription);
+            }
+        };
+
+
+        IntentFilter intFilt = new IntentFilter(Preferences.BROADCAST_ACTION);
+        // регистрируем (включаем) BroadcastReceiver
+        registerReceiver(br, intFilt);
+
+
+
+
         weatherInfoFragment = new WeatherInfoFragment();
         weatherInfoFragment.setCityImageView(toolbarImage);
 
@@ -164,11 +246,18 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void reloadPicture(MenuItem item){
+    public void reloadPicture(MenuItem item) {
+        reloadPicture();
+    }
+
+    public void reloadPicture() {
         FileManager.deleteBitmap(getApplicationContext(), city);
         weatherInfoFragment.getAindSetToolbarImage();
     }
 
+    public void reloadPicture(View view) {
+        reloadPicture();
+    }
 
     private void setCityImageToolbar(final String url) {
 
@@ -324,7 +413,9 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
     }
 
-
+    ServiceConnection sConn;
+    boolean bind;
+    ServiceWeather serviceWeather;
     public void showInputDialog(MenuItem item) {
         selectCityDialog();
     }
@@ -341,7 +432,24 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 city = input.getText().toString();
-                weatherInfoFragment.getWeather(city);
+                Intent intent = new Intent(Preferences.BROADCAST_ACTION);
+                weatherInfoFragment.setCity(city);
+                serviceWeather.changeCity(city);
+//
+//         sConn= new ServiceConnection() {
+//             @Override
+//             public void onServiceConnected(ComponentName name, IBinder service) {
+//                 serviceWeather = ((ServiceWeather.WeatherBinder) service).getService();
+//                 serviceWeather.changeCity(city);
+//                 bind = true;
+//             }
+//
+//             @Override
+//             public void onServiceDisconnected(ComponentName name) {
+//                 bind = false;
+//             }
+//         };
+               // weatherInfoFragment.getWeather(city);
 //
 //                GoogleSearchThread imageSearch = new GoogleSearchThread(city, toolbarImage);
 //                ArrayList<String> images = null;
@@ -353,6 +461,7 @@ public class MainActivity extends AppCompatActivity
                 //setCityImageToolbar(images.get(3));
 
                 //     flickrImage.downloadAndSetImage(city);
+
                 fillFragment(weatherInfoFragment);
                 dbUpdate(elements, city);
 
@@ -447,8 +556,9 @@ public class MainActivity extends AppCompatActivity
                 if (humidityCheckBox.isChecked()) isHumidity = true;
                 else isHumidity = false;
                 //Toast.makeText(MainActivity.this, "Ok", Toast.LENGTH_SHORT).show();
-                weatherInfoFragment.setAdditionalParams(isWind, isPressure, isHumidity);
-                weatherInfoFragment.getWeather(weatherInfoFragment.getCity());
+                weatherInfoFragment.setOptions(isWind, isPressure, isHumidity);
+             //   weatherInfoFragment.setCity(weatherInfoFragment.getCity());
+                serviceWeather.changeCity(weatherInfoFragment.getCity());
 
                 // fillFragment(weatherInfoFragment);
             }
@@ -466,6 +576,7 @@ public class MainActivity extends AppCompatActivity
         weatherInfoFragment.setHumidity(preferences.getBoolean(Preferences.SAVED_HUMIDITY, true));
         if (savedCity.equals("") || savedCity == null) savedCity = "Moscow";
         city = savedCity;
+      //  serviceWeather.setCity(city);
         weatherInfoFragment.setCity(city);
     }
 

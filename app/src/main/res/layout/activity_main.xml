@@ -40,6 +40,7 @@
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
                     android:src="@drawable/msc"
+                    android:onClick="reloadPicture"
                     app:layout_collapseMode="parallax" />
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"

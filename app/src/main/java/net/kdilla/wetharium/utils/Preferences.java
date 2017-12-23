@@ -22,12 +22,13 @@ public class Preferences {
     public static final String ADD_WIND = "add wind";
     public static final String ADD_PRESSURE = "add pressure";
     public static final String ADD_HUMIDITY = "add humidity";
+    public static final String ADD_IMAGE_ID = "add image id";
     public static final String ADD_IS_WIND = "add is wind";
     public static final String ADD_IS_PRESSURE = "add is pressure";
     public static final String ADD_IS_HUMIDITY = "add is humidity";
     public static final String ADD_DESCRIPTION = "add description";
     public final static String ADD_ICON = "add icon";
-
+    public final static String BROADCAST_ACTION = "net.kdilla.wetharium.p0961servicebackbroadcast";
     public final static String TAG_1 = "FRAGMENT_1";
 
     public static final int REQUEST_CODE_WEATHER = 1;

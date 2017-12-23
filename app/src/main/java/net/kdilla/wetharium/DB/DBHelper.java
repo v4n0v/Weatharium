@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXISTS "+ TABLE_NOTES);
+        //db.execSQL("DROP TABLE IF EXISTS "+ TABLE_NOTES);
         db.execSQL("CREATE TABLE " + TABLE_NOTES + " ("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
                 + COLUMN_CITY + " TEXT,"

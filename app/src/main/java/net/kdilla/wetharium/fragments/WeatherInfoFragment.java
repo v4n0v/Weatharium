@@ -1,5 +1,9 @@
 package net.kdilla.wetharium.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,12 +25,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.kdilla.wetharium.MainActivity;
 import net.kdilla.wetharium.R;
 import net.kdilla.wetharium.utils.FileManager;
 import net.kdilla.wetharium.utils.FlickrSearch;
-import net.kdilla.wetharium.utils.FlickrSearchThread;
-import net.kdilla.wetharium.utils.WeatherDataLoader;
+import net.kdilla.wetharium.utils.Preferences;
 import net.kdilla.wetharium.utils.gson.Weather;
 import net.kdilla.wetharium.utils.gson.WeatherDeserializer;
 import net.kdilla.wetharium.utils.gson.WeatherMain;
@@ -53,7 +55,7 @@ public class WeatherInfoFragment extends Fragment {
     int pressure;
     int wind;
     int humidity;
-
+    String additionInfo;
     //    private String additionalInfo;
     private String description;
 
@@ -75,24 +77,69 @@ public class WeatherInfoFragment extends Fragment {
     String lat;
     String lon;
     FlickrSearch flickrSearch;
-    FlickrSearchThread flickrSearchThread;
+
     Bitmap cityBitmap;
+    BroadcastReceiver br;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weather_info, container, false);
-
+        flickrSearch = new FlickrSearch(cityImageView, getContext());
 
         // cityImageView = view.findViewById(R.id.header);
         initViews(view);
 
 
+        br = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+              //  flickrSearch.downloadAndSetImage(city);
+                int temp = intent.getIntExtra(Preferences.ADD_TEMP, 0);
+                int hum = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
+                int wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
+                int press = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+                String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
+                String additionalInfo = "";
 
-        flickrSearch = new FlickrSearch(cityImageView, getContext());
+                if (isPressure) {
+                    additionalInfo += "Pressure: " + press + " " + getString(R.string.pressure_dim) + "\n";
+                }
+                if (isWind) {
+                    additionalInfo += "Wind: " + wind + " " + getString(R.string.wind_dim) + "\n";
+                }
+                if (isHumidity) {
+                    additionalInfo += "Humidity: " + hum + " " + getString(R.string.humidity_dim) + "\n";
+                }
+
+                cityBitmap = FileManager.loadBitmap(getContext(), city);
+                if (cityBitmap == null) {
+                    getAindSetToolbarImage();
+                } else {
+                    cityImageView.setImageBitmap(cityBitmap);
+                    Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
+                }
+
+                cityTextView.setText(city);
+                additionalTextView.setText(additionalInfo);
+                temperatureTextView.setText(temperatureFormat(temp));
+                descriptionTextView.setText(decription);
+                weatherImage.setImageDrawable(getWeatherIcon(intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0)));
+
+
+            }
+
+        };
+
+        IntentFilter intFilt = new IntentFilter(Preferences.BROADCAST_ACTION);
+        // регистрируем (включаем) BroadcastReceiver
+        getActivity().registerReceiver(br, intFilt);
+
+
+
 
         ///  flickrSearchThread = new FlickrSearchThread(cityImageView);
-        getWeather(city);
+//        getWeather(city);
 
         return view;
     }
@@ -132,8 +179,8 @@ public class WeatherInfoFragment extends Fragment {
             humidity = weatherForGSon.getHumidity();
             city = weatherForGSon.getCity();
 
-           lon = String.valueOf(weatherForGSon.getLon());
-           lat = String.valueOf(weatherForGSon.getLat());
+            lon = String.valueOf(weatherForGSon.getLon());
+            lat = String.valueOf(weatherForGSon.getLat());
 
             String additionalInfo = "";
 
@@ -166,37 +213,13 @@ public class WeatherInfoFragment extends Fragment {
 
     }
 
-    public void getWeather(final String city) {
-        this.city = city;
-       // cityBitmap = loadBitmap();
-
-        Thread jsonWeatherThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final JSONObject jsonObject = WeatherDataLoader.getJSONData(getActivity().getApplicationContext(), city);
-
-                if (jsonObject != null) {
-                    Log.d("TAG", jsonObject.toString());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            renderWeather(jsonObject);
-
-                        }
-                    });
-                }
-            }
-        });
-
-        jsonWeatherThread.start();
-        cityBitmap = FileManager.loadBitmap(getContext(), city);
-        if (cityBitmap == null) {
-            getAindSetToolbarImage();
-        } else {
-            cityImageView.setImageBitmap(cityBitmap);
-            Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
-        }
-
-//                public void run() {
+//    public void getWeather(final String city) {
+//        this.city = city;
+//        // cityBitmap = loadBitmap();
+//
+//        Thread jsonWeatherThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
 //                final JSONObject jsonObject = WeatherDataLoader.getJSONData(getActivity().getApplicationContext(), city);
 //
 //                if (jsonObject != null) {
@@ -209,12 +232,36 @@ public class WeatherInfoFragment extends Fragment {
 //                    });
 //                }
 //            }
-//        }.start();
+//        });
+//
+//        jsonWeatherThread.start();
+//        cityBitmap = FileManager.loadBitmap(getContext(), city);
+//        if (cityBitmap == null) {
+//            getAindSetToolbarImage();
+//        } else {
+//            cityImageView.setImageBitmap(cityBitmap);
+//            Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
+//        }
+//
+////                public void run() {
+////                final JSONObject jsonObject = WeatherDataLoader.getJSONData(getActivity().getApplicationContext(), city);
+////
+////                if (jsonObject != null) {
+////                    Log.d("TAG", jsonObject.toString());
+////                    handler.post(new Runnable() {
+////                        public void run() {
+////                            renderWeather(jsonObject);
+////
+////                        }
+////                    });
+////                }
+////            }
+////        }.start();
+//
+//    }
 
-    }
-
-    public void getAindSetToolbarImage(){
-      //  flickrSearch.setLatAndLon(lat, lon);
+    public void getAindSetToolbarImage() {
+        //  flickrSearch.setLatAndLon(lat, lon);
         flickrSearch.downloadAndSetImage(city);
     }
 
@@ -271,12 +318,14 @@ public class WeatherInfoFragment extends Fragment {
         Toast.makeText(getActivity(), "Saved in storage as " + city.toLowerCase() + ".jpg", Toast.LENGTH_SHORT).show();
     }
 
-    public void setAdditionalParams(boolean isWind, boolean isPressure, boolean isHumidity) {
-        this.isHumidity = isHumidity;
-        this.isPressure = isPressure;
-        this.isWind = isWind;
+    public void setAdditionalParams(String additionInfo) {
+        this.additionInfo = additionInfo;
     }
-
+    public void setOptions(boolean isHumidity, boolean isWind, boolean isPressure){
+        setHumidity(isHumidity);
+        setWind(isWind);
+        setPressure(isPressure);
+    }
     public boolean isWind() {
         return isWind;
     }
@@ -340,5 +389,9 @@ public class WeatherInfoFragment extends Fragment {
 
     public String getCity() {
         return city;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
