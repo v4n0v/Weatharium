@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,11 +34,13 @@ import net.kdilla.wetharium.utils.gson.Weather;
 import net.kdilla.wetharium.utils.gson.WeatherDeserializer;
 import net.kdilla.wetharium.utils.gson.WeatherMain;
 import net.kdilla.wetharium.utils.gson.WeatherMainDeserializer;
+import net.kdilla.wetharium.utils.tasks.LastUpdateTask;
 
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Date;
 
 
 public class WeatherInfoFragment extends Fragment {
@@ -56,17 +59,30 @@ public class WeatherInfoFragment extends Fragment {
     int wind;
     int humidity;
     String additionInfo;
+
+    public int getWeatherId() {
+        return weatherId;
+    }
+
+    int weatherId;
     //    private String additionalInfo;
     private String description;
 
     private String city;
 
-    TextView cityTextView;
+//    TextView cityTextView;
     TextView additionalTextView;
     TextView temperatureTextView;
     TextView descriptionTextView;
+    TextView lastUpdTextView;
     Drawable icon;
+    private long date;
 
+    public void setLastDate(long lastDate) {
+        this.lastDate = lastDate;
+    }
+
+    private long lastDate;
     public void setCityImageView(ImageView cityImageView) {
         this.cityImageView = cityImageView;
     }
@@ -81,6 +97,16 @@ public class WeatherInfoFragment extends Fragment {
     Bitmap cityBitmap;
     BroadcastReceiver br;
 
+    public void setToolbarLayout(CollapsingToolbarLayout collapsingToolbarLayout) {
+        this.toolbarLayout = collapsingToolbarLayout;
+    }
+
+    CollapsingToolbarLayout toolbarLayout;
+
+    public void setMainActivity(OnFragmentClickListener mainActivity) {
+        this.mainActivity = mainActivity;
+    }
+
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -94,14 +120,14 @@ public class WeatherInfoFragment extends Fragment {
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-              //  flickrSearch.downloadAndSetImage(city);
+                //  flickrSearch.downloadAndSetImage(city);
                 int temp = intent.getIntExtra(Preferences.ADD_TEMP, 0);
                 int hum = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
                 int wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
                 int press = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
                 String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
                 String additionalInfo = "";
-
+                weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
                 if (isPressure) {
                     additionalInfo += "Pressure: " + press + " " + getString(R.string.pressure_dim) + "\n";
                 }
@@ -119,13 +145,30 @@ public class WeatherInfoFragment extends Fragment {
                     cityImageView.setImageBitmap(cityBitmap);
                     Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
                 }
+                toolbarLayout.setTitle(city);
+//                date = System.currentTimeMillis();
+//                long agoTime=(date-lastDate)/1000;
+//
+//                String timeMetric = "seconds";
+//                if (agoTime>60*60*24) {
+//                    timeMetric = "days";
+//                    agoTime /= 60*60*24;
+//                }if (agoTime>60*60){
+//                    timeMetric = "hours";
+//                    agoTime/=60*60;
+//                }else if (agoTime>60){
+//                    timeMetric = "minutes";
+//                    agoTime/=60;
+//                }
+//
+//                lastUpdTextView.setText("Updated: "+String.valueOf(agoTime)+" "+timeMetric+" ago");
+            //    cityTextView.setText(city);
 
-                cityTextView.setText(city);
                 additionalTextView.setText(additionalInfo);
                 temperatureTextView.setText(temperatureFormat(temp));
                 descriptionTextView.setText(decription);
-                weatherImage.setImageDrawable(getWeatherIcon(intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0)));
-
+                weatherImage.setImageDrawable(getWeatherIcon(weatherId));
+                // TODO запилить обновление ячейки времени в базу
 
             }
 
@@ -150,10 +193,11 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     void initViews(View view) {
-        cityTextView = view.findViewById(R.id.info_city_tv);
+     //   cityTextView = view.findViewById(R.id.info_city_tv);
         additionalTextView = view.findViewById(R.id.info_additional_info_tv);
         temperatureTextView = view.findViewById(R.id.info_temperature_tv);
         descriptionTextView = view.findViewById(R.id.info_description_tv);
+        lastUpdTextView = view.findViewById(R.id.tv_last_update);
 
 //        descriptionTextView.setTypeface(Preferences.fontOswaldLight(getActivity().getAssets()));
 //        additionalTextView.setTypeface(Preferences.fontOswaldLight(getActivity().getAssets()));
@@ -198,9 +242,7 @@ public class WeatherInfoFragment extends Fragment {
 //            description=weatherForGSon.getMainInfo();
 //            Drawable weatherIcon = getWeatherIcon(weatherForGSon.getId());
 
-            Log.i("GSON", gson.toJson(weatherForGSon));
-
-            cityTextView.setText(weatherForGSon.getCity());
+         //   cityTextView.setText(weatherForGSon.getCity());
             additionalTextView.setText(additionalInfo);
             temperatureTextView.setText(temperatureFormat(weatherForGSon.getTemperature()));
             descriptionTextView.setText(weatherForGSon.getMainInfo());
@@ -322,15 +364,15 @@ public class WeatherInfoFragment extends Fragment {
         this.additionInfo = additionInfo;
     }
     public void setOptions(boolean isHumidity, boolean isWind, boolean isPressure){
-        setHumidity(isHumidity);
-        setWind(isWind);
-        setPressure(isPressure);
+        setIsHumidity(isHumidity);
+        setIsWind(isWind);
+        setIsPressure(isPressure);
     }
     public boolean isWind() {
         return isWind;
     }
 
-    public void setWind(boolean wind) {
+    public void setIsWind(boolean wind) {
         isWind = wind;
     }
 
@@ -338,7 +380,7 @@ public class WeatherInfoFragment extends Fragment {
         return isPressure;
     }
 
-    public void setPressure(boolean pressure) {
+    public void setIsPressure(boolean pressure) {
         isPressure = pressure;
     }
 
@@ -346,7 +388,7 @@ public class WeatherInfoFragment extends Fragment {
         return isHumidity;
     }
 
-    public void setHumidity(boolean humidity) {
+    public void setIsHumidity(boolean humidity) {
         isHumidity = humidity;
     }
 
@@ -371,7 +413,7 @@ public class WeatherInfoFragment extends Fragment {
         return wind;
     }
 
-    public void setWind(int wind) {
+    public void setIsWind(int wind) {
         this.wind = wind;
     }
 
@@ -379,7 +421,7 @@ public class WeatherInfoFragment extends Fragment {
         return humidity;
     }
 
-    public void setHumidity(int humidity) {
+    public void setIsHumidity(int humidity) {
         this.humidity = humidity;
     }
 
@@ -393,5 +435,9 @@ public class WeatherInfoFragment extends Fragment {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
     }
 }

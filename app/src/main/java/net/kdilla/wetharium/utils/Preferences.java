@@ -14,7 +14,7 @@ public class Preferences {
     public static final String SAVED_WIND = "saved_wind";
     public static final String SAVED_PRESSURE = "saved_pressure";
     public static final String SAVED_HUMIDITY = "saved_storm";
-
+    public static final String SAVED_LAST_UPD= "saved last upd";
     public static final String WEATHER_POS = "message tag";
 
     public static final String ADD_CITY = "add city";
@@ -53,6 +53,6 @@ public class Preferences {
     public final static int VERTICAL = 1;
 
 
-
+    public static final String ADD_IS_BIND = "add is bind";
 
 }

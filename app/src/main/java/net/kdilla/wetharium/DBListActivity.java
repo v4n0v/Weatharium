@@ -1,5 +1,6 @@
 package net.kdilla.wetharium;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,10 +13,8 @@ import android.widget.TextView;
 
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
-import net.kdilla.wetharium.fragments.LastShownFragment;
 import net.kdilla.wetharium.utils.RecyclerAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,9 +37,16 @@ public class DBListActivity extends AppCompatActivity {
         notesDataSource.open();
         weatherNotese = notesDataSource.getAllNotes();
 //
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
@@ -98,7 +104,6 @@ public class DBListActivity extends AppCompatActivity {
 //    }
 
     private class       MyAdapter extends RecyclerView.Adapter< MyViewHolder> {
-
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(DBListActivity.this);
@@ -109,11 +114,14 @@ public class DBListActivity extends AppCompatActivity {
         public void onBindViewHolder( MyViewHolder holder, int position) {
             holder.bind(position);
         }
-
-
         public int getItemCount() {
-
             return weatherNotese.size();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(DBListActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 }

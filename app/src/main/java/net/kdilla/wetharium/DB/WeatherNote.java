@@ -13,6 +13,13 @@ public class WeatherNote {
     private int pressure;
     private int humidity;
     private String time;
+    private int weatherID;
+
+    public long getDate() {
+        return date;
+    }
+
+    private long date;
 
     public String getTime() {
         return time;
@@ -71,5 +78,13 @@ public class WeatherNote {
     }
     public String toString() {
         return city;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
+    }
+
+    public void setWeatherID(int weatherID) {
+        this.weatherID = weatherID;
     }
 }

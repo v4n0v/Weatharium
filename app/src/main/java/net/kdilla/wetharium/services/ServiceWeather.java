@@ -44,7 +44,7 @@ public class ServiceWeather extends Service{
     String lon;
     String description;
     // обновляю каждые 10 минут
-    private long interval = 600_000;
+    private long interval = 60_000;
 
     WeatherBinder binder = new WeatherBinder();
 
@@ -77,47 +77,39 @@ public class ServiceWeather extends Service{
             tTask = new TimerTask() {
                 public void run() {
                     Log.d("ServiceWeather", " " + interval);
+                    if (city!=null) {
+                        if (isComplete == false) {
+                            loagWeatherJson();
+                        }
+                    }
                 }
             };
             timer.schedule(tTask, 1000, interval);
-            if (city!=null) {
-                if (isComplete==false) {
 
-                    WeatherGetTask tak = (WeatherGetTask) new WeatherGetTask(getApplicationContext()).execute(city);
-
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = tak.get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                    if (jsonObject != null) {
-                        renderWeather(jsonObject);
-
-                    } else {
-                        Log.d("ServiceWeather", "jsonObject=null ");
-                    }
-                    isComplete = true;
-                }
-
-//            Thread jsonWeatherThread = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    final JSONObject jsonObject = WeatherDataLoader.getJSONData(getApplicationContext(), city);
-//
-//                                renderWeather(jsonObject);
-//
-//                }
-//            });
-//
-//
-//            jsonWeatherThread.start();
-
-            }
         }
     }
+
+    private void loagWeatherJson(){
+        WeatherGetTask tak = (WeatherGetTask) new WeatherGetTask(getApplicationContext()).execute(city);
+
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = tak.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        if (jsonObject != null) {
+            renderWeather(jsonObject);
+
+        } else {
+            Log.d("ServiceWeather", "jsonObject=null ");
+        }
+        isComplete = true;
+        Log.d("ServiceWeather", "jsonObject load complete");
+    }
+
     private void renderWeather(JSONObject json) {
         try {
 
@@ -192,7 +184,6 @@ public class ServiceWeather extends Service{
         Drawable ico = null;
         switch (id) {
             case 2:
-
                 ico = getResources().getDrawable(R.drawable.day_thunder);
                 break;
             case 3:

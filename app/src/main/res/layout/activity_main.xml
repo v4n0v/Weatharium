@@ -27,21 +27,51 @@
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:toolbarId="@+id/toolbar">
-                <ImageView
-                    android:id="@+id/header"
+
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/colorPrimary"
-                    android:contentDescription="Parallax"
-                    android:fitsSystemWindows="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/msc"
-                    android:onClick="reloadPicture"
-                    app:layout_collapseMode="parallax" />
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/header"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:contentDescription="Parallax"
+                        android:fitsSystemWindows="true"
+                        android:onClick="reloadPicture"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/msc"
+                        app:layout_collapseMode="parallax" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="88dp"
+
+                        android:layout_alignBottom="@+id/header"
+                        android:background="@drawable/scrim_bottom" />
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/shadow"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+
+                        <!--android:layout_alignParentStart="true"-->
+
+                        <!--android:layout_marginTop="140dp"-->
+                        <!--android:adjustViewBounds="false"-->
+                        <!--android:cropToPadding="false"-->
+                        <!--android:scaleType="fitXY"-->
+                        <!--android:src="@drawable/shadow" />-->
+                </RelativeLayout>
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
@@ -59,7 +89,7 @@
             android:layout_margin="@dimen/fab_margin"
             app:layout_anchor="@id/app_bar"
             app:layout_anchorGravity="bottom|end"
-            app:srcCompat="@android:drawable/ic_dialog_email" />
+            app:srcCompat="@android:drawable/ic_menu_share" />
         <include layout="@layout/content_main" />
 
     </android.support.design.widget.CoordinatorLayout>
@@ -70,7 +100,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-
         app:menu="@menu/activity_main_drawer" />
 
 

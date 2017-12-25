@@ -8,6 +8,6 @@ import java.util.List;
  * Created by avetc on 12.12.2017.
  */
 
-public interface LatShownInterface{
-    void getElements(List<WeatherNote> elements);
+public interface ChangeTitleListener {
+    void changeTitle(String title);
 }

@@ -26,7 +26,9 @@ public class WeatherDataSource {
             DBHelper.COLUMN_PRESSURE,
             DBHelper.COLUMN_HUMIDITY,
             DBHelper.COLUMN_WIND,
-            DBHelper.COLUMN_TIME
+            DBHelper.COLUMN_TIME,
+            DBHelper.COLUMN_DATE,
+            DBHelper.COLUMN_WEATHER_ID
     };
 
     public WeatherDataSource(Context context) {
@@ -42,35 +44,40 @@ public class WeatherDataSource {
         dbHelper.close();
     }
 
-    public WeatherNote addNote(String city, int temperature, int pressure, int humidity, int wind, String time) {
+    public WeatherNote addNote(String city, int temperature,
+                               int pressure, int humidity, int wind, String time, long date, int wId) {
 
         WeatherNote newNote = new WeatherNote();
 
-            ContentValues values = new ContentValues();
-            values.put(DBHelper.COLUMN_CITY, city);
-            values.put(DBHelper.COLUMN_TEMPERATURE, temperature);
-            values.put(DBHelper.COLUMN_PRESSURE, pressure);
-            values.put(DBHelper.COLUMN_HUMIDITY, humidity);
-            values.put(DBHelper.COLUMN_WIND, wind);
-            values.put(DBHelper.COLUMN_TIME, time);
-            long insertId = database.insert(DBHelper.TABLE_NOTES, null,
-                    values);
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.COLUMN_CITY, city);
+        values.put(DBHelper.COLUMN_TEMPERATURE, temperature);
+        values.put(DBHelper.COLUMN_PRESSURE, pressure);
+        values.put(DBHelper.COLUMN_HUMIDITY, humidity);
+        values.put(DBHelper.COLUMN_WIND, wind);
+        values.put(DBHelper.COLUMN_TIME, time);
+        values.put(DBHelper.COLUMN_DATE, date);
+        values.put(DBHelper.COLUMN_WEATHER_ID, wId);
+        long insertId = database.insert(DBHelper.TABLE_NOTES, null,
+                values);
 
 
-            newNote.setCity(city);
-            newNote.setTemperature(temperature);
-            newNote.setPressure(pressure);
-            newNote.setHumidity(humidity);
-            newNote.setWind(wind);
-            newNote.setTime(time);
-
-            newNote.setId(insertId);
+        newNote.setCity(city);
+        newNote.setTemperature(temperature);
+        newNote.setPressure(pressure);
+        newNote.setHumidity(humidity);
+        newNote.setWind(wind);
+        newNote.setTime(time);
+        newNote.setDate(date);
+        newNote.setWeatherID(wId);
+        newNote.setId(insertId);
 
         return newNote;
     }
 
 
-    public void editNote(long id, String city, int temperature, int pressure, int humidity, int wind, String time) {
+    public void editNote(long id, String city, int temperature, int pressure,
+                         int humidity, int wind, String time, long date, int wId) {
         ContentValues editedNote = new ContentValues();
         editedNote.put(dbHelper.COLUMN_ID, id);
 
@@ -80,7 +87,8 @@ public class WeatherDataSource {
         editedNote.put(DBHelper.COLUMN_HUMIDITY, humidity);
         editedNote.put(DBHelper.COLUMN_WIND, wind);
         editedNote.put(DBHelper.COLUMN_TIME, time);
-
+        editedNote.put(DBHelper.COLUMN_DATE, date);
+        editedNote.put(DBHelper.COLUMN_WEATHER_ID, wId);
         database.update(DBHelper.TABLE_NOTES,
                 editedNote,
                 DBHelper.COLUMN_ID + "=" + id,
@@ -111,7 +119,7 @@ public class WeatherDataSource {
         }
         // make sure to close the cursor
         cursor.close();
-        return  notes;
+        return notes;
     }
 
     private WeatherNote cursorToNote(Cursor cursor) {
@@ -123,6 +131,8 @@ public class WeatherDataSource {
         note.setHumidity(cursor.getInt(4));
         note.setWind(cursor.getInt(5));
         note.setTime(cursor.getString(6));
+        note.setDate(cursor.getLong(7));
+        note.setWeatherID(cursor.getInt(8));
         return note;
     }
 }

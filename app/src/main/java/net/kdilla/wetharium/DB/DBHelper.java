@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "weather.db"; // название бд
-    public static final int DATABASE_VERSION =1; // версия базы данных
+    public static final int DATABASE_VERSION =3; // версия базы данных
     public static final String TABLE_NOTES = "weather_info"; // название таблицы в бд
     // названия столбцов
     public static final String COLUMN_ID = "id";
@@ -17,7 +17,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_HUMIDITY = "humidity";
     public static final String COLUMN_WIND = "wind";
     public static final String COLUMN_TIME = "time";
-
+    public static final String COLUMN_DATE = "date";
+    public static final String COLUMN_WEATHER_ID = "weatherId";
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -32,17 +33,24 @@ public class DBHelper extends SQLiteOpenHelper {
                 + COLUMN_PRESSURE + " INTEGER,"
                 + COLUMN_HUMIDITY + " INTEGER,"
                 + COLUMN_WIND + " INTEGER,"
-                + COLUMN_TIME + " TEXT" +
+                + COLUMN_TIME + " TEXT,"
+                + COLUMN_DATE + " LONG,"
+                + COLUMN_WEATHER_ID + " INTEGER" +
                 ");");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//            if ((oldVersion == 1) && (newVersion == 2)) {
-//                String upgradeQuery = "ALTER TABLE " + TABLE_NOTES + " ADD COLUMN " + COLUMN_TIME + " TEXT DEFAULT Title";
-//                db.execSQL(upgradeQuery);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
-            onCreate(db);
+            if ((oldVersion == 1) && (newVersion == 2)) {
+                String upgradeQuery = "ALTER TABLE " + TABLE_NOTES + " ADD COLUMN " + COLUMN_DATE + " LONG DEFAULT 0";
+                db.execSQL(upgradeQuery);
+            }
+        if ((oldVersion == 2) && (newVersion == 3)) {
+            String upgradeQuery = "ALTER TABLE " + TABLE_NOTES + " ADD COLUMN " + COLUMN_WEATHER_ID + " INTEGER DEFAULT 0";
+            db.execSQL(upgradeQuery);
+        }
+//            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
+//            onCreate(db);
 //         }
     }
 }

@@ -10,11 +10,11 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -37,8 +37,9 @@ import android.widget.Toast;
 
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
-import net.kdilla.wetharium.fragments.LastShownFragment;
-import net.kdilla.wetharium.fragments.LatShownInterface;
+
+import net.kdilla.wetharium.fragments.OnFragmentClickListener;
+import net.kdilla.wetharium.fragments.SplashFragment;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
 import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.FileManager;
@@ -47,21 +48,17 @@ import net.kdilla.wetharium.utils.GoogleSearchThread;
 
 import net.kdilla.wetharium.utils.Preferences;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentClickListener{
 
     List<WeatherNote> elements;
     WeatherDataSource notesDataSource;
 
-    LatShownInterface lisetener;
-
-    LastShownFragment lastShownFragment;
 
     public void setWind(boolean wind) {
         isWind = wind;
@@ -84,6 +81,8 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences preferences;
 
     WeatherInfoFragment weatherInfoFragment;
+    SplashFragment splashFragment;
+
     Typeface font;
     ImageView toolbarImage;
     FlickrSearch flickrImage;
@@ -97,6 +96,12 @@ public class MainActivity extends AppCompatActivity
     int pressure;
     int wind;
     int humidity;
+    long lastUpd;
+    Toolbar toolbar;
+    ServiceConnection sConn;
+    boolean bind;
+    ServiceWeather serviceWeather;
+    CollapsingToolbarLayout toolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,9 +111,18 @@ public class MainActivity extends AppCompatActivity
 
         //serviceWeather=new ServiceWeather();
 
+//        splashFragment=new SplashFragment();
+//        fillFragment(splashFragment);
 
+//        // получаем информацию из интента
+//        isHumidity = savedInstanceState.getBoolean(Preferences.ADD_IS_HUMIDITY);
+//        isWind = savedInstanceState.getBoolean(Preferences.ADD_IS_WIND);
+//        isPressure = savedInstanceState.getBoolean(Preferences.ADD_IS_PRESSURE);
+//        city = savedInstanceState.getString(Preferences.ADD_CITY);
+//        bind = savedInstanceState.getBoolean(Preferences.ADD_IS_BIND);
+        weatherInfoFragment = new WeatherInfoFragment();
 
-
+        date = new Date();
 
         sConn= new ServiceConnection() {
             @Override
@@ -129,9 +143,13 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(getBaseContext(), ServiceWeather.class);
         bindService(intent, sConn, BIND_AUTO_CREATE);
 
+
+
+
+
         toolbarImage = (ImageView) findViewById(R.id.header);
 
-      //  this.deleteDatabase("weather.db");
+        //  this.deleteDatabase("weather.db");
         notesDataSource = new WeatherDataSource(getApplicationContext());
 
         notesDataSource.open();
@@ -149,20 +167,22 @@ public class MainActivity extends AppCompatActivity
 
         // так получается
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+     toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
-
+        toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
-
-        {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, weatherInfoFragment.getCity() + " " + weatherInfoFragment.getTemperature());
+                char c = 167;
+                String share= "Temperature in "+weatherInfoFragment.getCity()+" is "+weatherInfoFragment.getTemperature()+c+"\n";
+                share+="Powered by Weatharium";
+
+                intent.putExtra(Intent.EXTRA_TEXT, share);
 
                 Intent chosenIntent = Intent.createChooser(intent, "Select app");
                 startActivity(chosenIntent);
@@ -178,69 +198,54 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+//
+//        br = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                int temp = intent.getIntExtra(Preferences.ADD_TEMP, 0);
+//                int hum = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
+//                int wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
+//                int press = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+//                String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
+//                String additionalInfo = "";
+//
+//                if (isPressure) {
+//                    additionalInfo += "Pressure: " + press + " " + getString(R.string.pressure_dim) + "\n";
+//                }
+//                if (isWind) {
+//                    additionalInfo += "Wind: " + wind + " " + getString(R.string.wind_dim) + "\n";
+//                }
+//                if (isHumidity) {
+//                    additionalInfo += "Humidity: " + hum + " " + getString(R.string.humidity_dim) + "\n";
+//                }
+//
+//
+//                weatherInfoFragment.setCity(city);
+//                weatherInfoFragment.setAdditionalParams(additionalInfo);
+//                weatherInfoFragment.setTemperature(temp);
+//                weatherInfoFragment.setDescription(decription);
+//            }
+//        };
+//
+//
+//        IntentFilter intFilt = new IntentFilter(Preferences.BROADCAST_ACTION);
+//        // регистрируем (включаем) BroadcastReceiver
+//        registerReceiver(br, intFilt);
 
 
-
-
-        br = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int temp = intent.getIntExtra(Preferences.ADD_TEMP, 0);
-                int hum = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
-                int wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
-                int press = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
-                String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
-                String additionalInfo = "";
-
-                if (isPressure) {
-                    additionalInfo += "Pressure: " + press + " " + getString(R.string.pressure_dim) + "\n";
-                }
-                if (isWind) {
-                    additionalInfo += "Wind: " + wind + " " + getString(R.string.wind_dim) + "\n";
-                }
-                if (isHumidity) {
-                    additionalInfo += "Humidity: " + hum + " " + getString(R.string.humidity_dim) + "\n";
-                }
-
-
-                weatherInfoFragment.setCity(city);
-                weatherInfoFragment.setAdditionalParams(additionalInfo);
-                weatherInfoFragment.setTemperature(temp);
-                weatherInfoFragment.setDescription(decription);
-            }
-        };
-
-
-        IntentFilter intFilt = new IntentFilter(Preferences.BROADCAST_ACTION);
-        // регистрируем (включаем) BroadcastReceiver
-        registerReceiver(br, intFilt);
-
-
-
-
-        weatherInfoFragment = new WeatherInfoFragment();
         weatherInfoFragment.setCityImageView(toolbarImage);
+        weatherInfoFragment.setToolbarLayout(toolbarLayout);
+        weatherInfoFragment.setIsPressure(isPressure);
+        weatherInfoFragment.setIsWind(isWind);
+        weatherInfoFragment.setIsHumidity(isHumidity);
+        weatherInfoFragment.setCity(city);
+
+        //  serviceWeather.setCity(city);
+
+
 
         loadPreferences();
-        // создаю экземпляк класса поиска картиноки возвращаю список из 5 картинок города
-//
-//        flickrImage = new FlickrSearch(toolbarImage);
-//
-//        flickrImage.downloadAndSetImage(city);
-//        imageSearch = new GoogleSearchThread(toolbarImage);
-//        imageSearch.getAndSetImage(city);
-//        ArrayList<String> images = null;
-//
-//
-//        // костыль для ожидания потока
-//        while (images == null) {
-//            images = imageSearch.getImageLinks();
-//        }
 
-        //   BitmapDownLoader.execute(images);
-        //       Picasso.with(getApplicationContext()).load(images.get(0)).into(toolbarImage);
-//        String firstLink = images.get(3);
-//        setCityImageToolbar(firstLink);
 
         fillFragment(weatherInfoFragment);
 
@@ -257,80 +262,6 @@ public class MainActivity extends AppCompatActivity
 
     public void reloadPicture(View view) {
         reloadPicture();
-    }
-
-    private void setCityImageToolbar(final String url) {
-
-        final Handler handler = new Handler();
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    URL newUrl = new URL(url);
-                    //final Bitmap mIcon_val = BitmapFactory.decodeStream(newUrl.openConnection().getInputStream());
-                    Log.d("BITMAP", newUrl.toString());
-                    InputStream in = newUrl.openStream();
-                    if (in == null) {
-                        Log.d("BITMAP", "Wrong InputStream link");
-                    }
-                    final Bitmap mIcon11 = BitmapFactory.decodeStream(in);
-                    if (mIcon11 == null) {
-                        Log.d("BITMAP", "Wrong bitmap link");
-                    }
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            toolbarImage.setImageBitmap(mIcon11);
-                        }
-                    });
-
-                } catch (Exception e) {
-                    Log.e("BITMAP", e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-    }
-
-    private Bitmap getBmp(final String url) {
-        final Bitmap[] bmp = {null};
-        synchronized (this) {
-
-            try {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            URL newUrl = new URL(url);
-                            //final Bitmap mIcon_val = BitmapFactory.decodeStream(newUrl.openConnection().getInputStream());
-                            Log.d("BITMAP", newUrl.toString());
-                            InputStream in = newUrl.openStream();
-                            if (in == null) {
-                                Log.d("BITMAP", "Wrong InputStream link");
-                            }
-                            final Bitmap mIcon11 = BitmapFactory.decodeStream(in);
-                            if (mIcon11 == null) {
-                                Log.d("BITMAP", "Wrong bitmap link");
-                            }
-
-//                        handler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-                            bmp[0] = mIcon11;
-//                            }
-//                        });
-
-                        } catch (Exception e) {
-                            Log.e("BITMAP", e.getMessage());
-                            e.printStackTrace();
-                        }
-                    }
-                }.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return bmp[0];
     }
 
     @Override
@@ -413,9 +344,6 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    ServiceConnection sConn;
-    boolean bind;
-    ServiceWeather serviceWeather;
     public void showInputDialog(MenuItem item) {
         selectCityDialog();
     }
@@ -432,53 +360,42 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 city = input.getText().toString();
-                Intent intent = new Intent(Preferences.BROADCAST_ACTION);
+              //  Intent intent = new Intent(Preferences.BROADCAST_ACTION);
                 weatherInfoFragment.setCity(city);
-                serviceWeather.changeCity(city);
-//
-//         sConn= new ServiceConnection() {
-//             @Override
-//             public void onServiceConnected(ComponentName name, IBinder service) {
-//                 serviceWeather = ((ServiceWeather.WeatherBinder) service).getService();
-//                 serviceWeather.changeCity(city);
-//                 bind = true;
-//             }
-//
-//             @Override
-//             public void onServiceDisconnected(ComponentName name) {
-//                 bind = false;
-//             }
-//         };
-               // weatherInfoFragment.getWeather(city);
-//
-//                GoogleSearchThread imageSearch = new GoogleSearchThread(city, toolbarImage);
-//                ArrayList<String> images = null;
-//                // костыль для ожидания потока
-//                while (images == null) {
-//                    images = imageSearch.getImageLinks();
-//                }
-                //   imageSearch.getAndSetImage(city);
-                //setCityImageToolbar(images.get(3));
 
-                //     flickrImage.downloadAndSetImage(city);
+                if (elements.size() != 0) {
+                    for (int i = 0; i < elements.size(); i++) {
+                        if (elements.get(i).getCity().equals(city)) {
+                            weatherInfoFragment.setLastDate(elements.get(i).getDate());
+                            Log.d("DATE", "Last date = "+elements.get(i).getDate());
+                        }
+                    }
+                }
+                lastUpd = System.currentTimeMillis();
+
+               // weatherInfoFragment.setDate(lastUpd);
+                Log.d("DATE", "Current date = "+lastUpd);
+
+                serviceWeather.changeCity(city);
 
                 fillFragment(weatherInfoFragment);
-                dbUpdate(elements, city);
+                dbUpdate(elements, city, lastUpd);
 
                 elements.clear();
                 elements = notesDataSource.getAllNotes();
                 Log.d("dbUpdate", "Elements count " + elements.size());
-
+                savePreferences();
             }
         });
         builder.show();
     }
-
-    void dbUpdate(List<WeatherNote> elements, String city) {
+    Date date;
+    void dbUpdate(List<WeatherNote> elements, String city, long dateTime) {
         boolean isExist = false;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM' at ' HH:mm:ss ");
 
         String time = dateFormat.format(System.currentTimeMillis());
+
         if (elements.size() != 0) {
             for (int i = 0; i < elements.size(); i++) {
                 if (elements.get(i).getCity().equals(city)) {
@@ -491,9 +408,12 @@ public class MainActivity extends AppCompatActivity
                             weatherInfoFragment.getHumidity(),
 
                             weatherInfoFragment.getWind(),
-                            time
+                            time,
+                            dateTime,
+                            weatherInfoFragment.getWeatherId()
 
                     );
+
                     isExist = true;
                     Toast.makeText(MainActivity.this, "Exist and edited", Toast.LENGTH_SHORT).show();
                     Log.d("dbUpdate", "Exist and edited " + city);
@@ -508,7 +428,9 @@ public class MainActivity extends AppCompatActivity
                         weatherInfoFragment.getPressure(),
                         weatherInfoFragment.getHumidity(),
                         weatherInfoFragment.getWind(),
-                        time
+                        time,
+                        dateTime,
+                        weatherInfoFragment.getWeatherId()
                 );
                 Toast.makeText(MainActivity.this, "Not exist, created new", Toast.LENGTH_SHORT).show();
                 Log.d("dbUpdate", "Not exist, created new " + city);
@@ -520,7 +442,9 @@ public class MainActivity extends AppCompatActivity
                     weatherInfoFragment.getPressure(),
                     weatherInfoFragment.getHumidity(),
                     weatherInfoFragment.getWind(),
-                    time
+                    time,
+                    dateTime,
+                    weatherInfoFragment.getWeatherId()
             );
             Toast.makeText(MainActivity.this, "Table is empty, created new note", Toast.LENGTH_SHORT).show();
             Log.d("dbUpdate", "Table is empty, created new note " + city);
@@ -557,7 +481,7 @@ public class MainActivity extends AppCompatActivity
                 else isHumidity = false;
                 //Toast.makeText(MainActivity.this, "Ok", Toast.LENGTH_SHORT).show();
                 weatherInfoFragment.setOptions(isWind, isPressure, isHumidity);
-             //   weatherInfoFragment.setCity(weatherInfoFragment.getCity());
+                //   weatherInfoFragment.setCity(weatherInfoFragment.getCity());
                 serviceWeather.changeCity(weatherInfoFragment.getCity());
 
                 // fillFragment(weatherInfoFragment);
@@ -567,16 +491,29 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+
+
     private void loadPreferences() {
         preferences = getPreferences(MODE_PRIVATE);
         String savedCity = preferences.getString(Preferences.SAVED_CITY, "Moscow");
 
-        weatherInfoFragment.setPressure(preferences.getBoolean(Preferences.SAVED_PRESSURE, true));
-        weatherInfoFragment.setWind(preferences.getBoolean(Preferences.SAVED_WIND, true));
-        weatherInfoFragment.setHumidity(preferences.getBoolean(Preferences.SAVED_HUMIDITY, true));
+        weatherInfoFragment.setIsPressure(preferences.getBoolean(Preferences.SAVED_PRESSURE, true));
+        weatherInfoFragment.setIsWind(preferences.getBoolean(Preferences.SAVED_WIND, true));
+        weatherInfoFragment.setIsHumidity(preferences.getBoolean(Preferences.SAVED_HUMIDITY, true));
+       // weatherInfoFragment.setLastDate(preferences.getLong(Preferences.SAVED_LAST_UPD, 0));
+
         if (savedCity.equals("") || savedCity == null) savedCity = "Moscow";
         city = savedCity;
-      //  serviceWeather.setCity(city);
+
+        WeatherNote note = getNoteByName(city);
+        if (note!=null) {
+            weatherInfoFragment.setLastDate(note.getDate());
+            weatherInfoFragment.setDate(System.currentTimeMillis());
+        }
+
+        // обновляю базу, обновляю время текущего элемента
+        dbUpdate(elements, city, System.currentTimeMillis());
+        toolbarLayout.setTitle(city);
         weatherInfoFragment.setCity(city);
     }
 
@@ -587,7 +524,7 @@ public class MainActivity extends AppCompatActivity
         ed.putBoolean(Preferences.SAVED_PRESSURE, weatherInfoFragment.isPressure());
         ed.putBoolean(Preferences.SAVED_WIND, weatherInfoFragment.isWind());
         ed.putBoolean(Preferences.SAVED_HUMIDITY, weatherInfoFragment.isHumidity());
-
+        ed.putLong(Preferences.SAVED_LAST_UPD, lastUpd);
         ed.commit();
     }
 
@@ -611,6 +548,38 @@ public class MainActivity extends AppCompatActivity
         notesDataSource.close();
         super.onDestroy();
 
+    }
+
+
+    @Override
+    public void onFragmentItemClick(int id) {
+        switch (id) {
+            case 1:
+             //   Toast.makeText(MainActivity.this, "Fragment Navigation 1", Toast.LENGTH_SHORT).show();
+                serviceWeather.changeCity(city);
+                fillFragment(weatherInfoFragment);
+                Log.d("Splash", "Splash end");
+                break;
+
+        }
+    }
+
+    @Override
+    public void onDbUpdateWeatherID(int id) {
+
+    }
+
+
+    private WeatherNote getNoteByName(String name){
+
+        if (elements.size() != 0) {
+            for (int i = 0; i < elements.size(); i++) {
+                if (elements.get(i).getCity().equals(city)) {
+                     return elements.get(i);
+                }
+            }
+        }
+        return null;
     }
 
 
