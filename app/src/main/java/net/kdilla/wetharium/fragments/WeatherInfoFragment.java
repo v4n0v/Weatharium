@@ -64,6 +64,10 @@ public class WeatherInfoFragment extends Fragment {
         return weatherId;
     }
 
+    public void setWeatherId(int weatherId) {
+        this.weatherId = weatherId;
+    }
+
     int weatherId;
     //    private String additionalInfo;
     private String description;
@@ -118,29 +122,32 @@ public class WeatherInfoFragment extends Fragment {
 
         // cityImageView = view.findViewById(R.id.header);
         initViews(view);
+        cityBitmap = FileManager.loadBitmap(getContext(), city);
+        if (cityBitmap == null) {
+            getAindSetToolbarImage();
+        } else {
+            cityImageView.setImageBitmap(cityBitmap);
+            Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
+            Log.d("DEBUGGG", "Picture loaded from storage");
+        }
 
+        temperatureTextView.setText(temperatureFormat(temperature));
+        descriptionTextView.setText(description);
+        additionalTextView.setText(additionInfo);
+        weatherImage.setImageDrawable(getWeatherIcon(weatherId));
+        mainActivity.onTitleUpdate(city);
+        mainActivity.onDbUpdateWeatherID(city, temperature, pressure, humidity, wind, date, weatherId);
 
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 //  flickrSearch.downloadAndSetImage(city);
-                int temp = intent.getIntExtra(Preferences.ADD_TEMP, 0);
-                int hum = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
-                int wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
-                int press = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+                temperature = intent.getIntExtra(Preferences.ADD_TEMP, 0);
+                humidity = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
+                wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
+                pressure= intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
                 String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
-                String additionalInfo = "";
                 weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
-                if (isPressure) {
-                    additionalInfo += "Pressure: " + press + " " + getString(R.string.pressure_dim) + "\n";
-                }
-                if (isWind) {
-                    additionalInfo += "Wind: " + wind + " " + getString(R.string.wind_dim) + "\n";
-                }
-                if (isHumidity) {
-                    additionalInfo += "Humidity: " + hum + " " + getString(R.string.humidity_dim) + "\n";
-                }
-
                 cityBitmap = FileManager.loadBitmap(getContext(), city);
                 if (cityBitmap == null) {
                     getAindSetToolbarImage();
@@ -148,7 +155,7 @@ public class WeatherInfoFragment extends Fragment {
                     cityImageView.setImageBitmap(cityBitmap);
                     Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
                 }
-                toolbarLayout.setTitle(city);
+                mainActivity.onTitleUpdate(city);
                  date = System.currentTimeMillis();
 //                long agoTime=(date-lastDate)/1000;
 //
@@ -167,13 +174,12 @@ public class WeatherInfoFragment extends Fragment {
 //                lastUpdTextView.setText("Updated: "+String.valueOf(agoTime)+" "+timeMetric+" ago");
             //    cityTextView.setText(city);
 
-                additionalTextView.setText(additionalInfo);
-                temperatureTextView.setText(temperatureFormat(temp));
+                additionalTextView.setText(formatAdditionInfoString());
+                temperatureTextView.setText(temperatureFormat(temperature));
                 descriptionTextView.setText(decription);
                 weatherImage.setImageDrawable(getWeatherIcon(weatherId));
-                // TODO запилить обновление ячейки времени в базу
 
-                mainActivity.onDbUpdateWeatherID(city, temp, press, hum, wind, date, weatherId);
+                mainActivity.onDbUpdateWeatherID(city, temperature, pressure, humidity, wind, date, weatherId);
 
             }
 
@@ -183,129 +189,39 @@ public class WeatherInfoFragment extends Fragment {
         // регистрируем (включаем) BroadcastReceiver
         getActivity().registerReceiver(br, intFilt);
 
-
-
-
-        ///  flickrSearchThread = new FlickrSearchThread(cityImageView);
-//        getWeather(city);
-
         return view;
     }
+    public void updateAdditionInfo(String additionalInfo){
+        additionalTextView.setText(additionalInfo);
 
+    }
     private String temperatureFormat(float temperature) {
         if (temperature > 0) return "+" + String.valueOf(Math.round(temperature));
         else return String.valueOf(Math.round(temperature));
     }
 
+    private String formatAdditionInfoString(){
+        String additionalInfo="";
+        if (isPressure) {
+            additionalInfo += "Pressure: " + pressure + " " + getString(R.string.pressure_dim) + "\n";
+        }
+        if (isWind) {
+            additionalInfo += "Wind: " + wind + " " + getString(R.string.wind_dim) + "\n";
+        }
+        if (isHumidity) {
+            additionalInfo += "Humidity: " + humidity + " " + getString(R.string.humidity_dim) + "\n";
+        }
+        return additionalInfo;
+    }
     void initViews(View view) {
-     //   cityTextView = view.findViewById(R.id.info_city_tv);
+
         additionalTextView = view.findViewById(R.id.info_additional_info_tv);
         temperatureTextView = view.findViewById(R.id.info_temperature_tv);
         descriptionTextView = view.findViewById(R.id.info_description_tv);
         lastUpdTextView = view.findViewById(R.id.tv_last_update);
 
-//        descriptionTextView.setTypeface(Preferences.fontOswaldLight(getActivity().getAssets()));
-//        additionalTextView.setTypeface(Preferences.fontOswaldLight(getActivity().getAssets()));
-//        temperatureTextView.setTypeface(Preferences.fontOswaldLight(getActivity().getAssets()));
-//        cityTextView.setTypeface(Preferences.fontOswaldLight(getActivity().getAssets()));
-
         weatherImage = view.findViewById(R.id.info_weather_ico);
     }
-
-    private void renderWeather(JSONObject json) {
-        try {
-
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Weather.class, new WeatherDeserializer())
-                    .registerTypeAdapter(WeatherMain.class, new WeatherMainDeserializer())
-
-                    .create();
-            Weather weatherForGSon = gson.fromJson(json.toString(), Weather.class);
-
-            temperature = weatherForGSon.getTemperature();
-            pressure = weatherForGSon.getPressure();
-            wind = weatherForGSon.getWind();
-            humidity = weatherForGSon.getHumidity();
-            city = weatherForGSon.getCity();
-
-            lon = String.valueOf(weatherForGSon.getLon());
-            lat = String.valueOf(weatherForGSon.getLat());
-
-            String additionalInfo = "";
-
-            if (isPressure) {
-                additionalInfo += "Pressure: " + pressure + " " + getString(R.string.pressure_dim) + "\n";
-            }
-            if (isWind) {
-                additionalInfo += "Wind: " + wind + " " + getString(R.string.wind_dim) + "\n";
-            }
-            if (isHumidity) {
-                additionalInfo += "Humidity: " + humidity + " " + getString(R.string.humidity_dim) + "\n";
-            }
-//
-//            temperature = weatherForGSon.getTemperature();
-//            description=weatherForGSon.getMainInfo();
-//            Drawable weatherIcon = getWeatherIcon(weatherForGSon.getId());
-
-         //   cityTextView.setText(weatherForGSon.getCity());
-            additionalTextView.setText(additionalInfo);
-            temperatureTextView.setText(temperatureFormat(weatherForGSon.getTemperature()));
-            descriptionTextView.setText(weatherForGSon.getMainInfo());
-
-            weatherImage.setImageDrawable(getWeatherIcon(weatherForGSon.getId()));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-//    public void getWeather(final String city) {
-//        this.city = city;
-//        // cityBitmap = loadBitmap();
-//
-//        Thread jsonWeatherThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                final JSONObject jsonObject = WeatherDataLoader.getJSONData(getActivity().getApplicationContext(), city);
-//
-//                if (jsonObject != null) {
-//                    Log.d("TAG", jsonObject.toString());
-//                    handler.post(new Runnable() {
-//                        public void run() {
-//                            renderWeather(jsonObject);
-//
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//
-//        jsonWeatherThread.start();
-//        cityBitmap = FileManager.loadBitmap(getContext(), city);
-//        if (cityBitmap == null) {
-//            getAindSetToolbarImage();
-//        } else {
-//            cityImageView.setImageBitmap(cityBitmap);
-//            Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
-//        }
-//
-////                public void run() {
-////                final JSONObject jsonObject = WeatherDataLoader.getJSONData(getActivity().getApplicationContext(), city);
-////
-////                if (jsonObject != null) {
-////                    Log.d("TAG", jsonObject.toString());
-////                    handler.post(new Runnable() {
-////                        public void run() {
-////                            renderWeather(jsonObject);
-////
-////                        }
-////                    });
-////                }
-////            }
-////        }.start();
-//
-//    }
 
     public void getAindSetToolbarImage() {
         //  flickrSearch.setLatAndLon(lat, lon);
@@ -340,29 +256,6 @@ public class WeatherInfoFragment extends Fragment {
                 break;
         }
         return ico;
-    }
-
-
-    private Bitmap loadBitmap() {
-        File file = new File(getActivity().getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), city.toLowerCase() + ".jpg");
-        return BitmapFactory.decodeFile(file.getAbsolutePath());
-    }
-
-    private void saveBitmap(Bitmap bitmap) {
-
-        try {
-
-            File file = new File(getActivity().getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), city.toLowerCase() + ".jpg");
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-
-            out.flush();
-            out.close();
-            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, file.getName(), file.getName()); // регистрация в фотоальбоме
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Toast.makeText(getActivity(), "Saved in storage as " + city.toLowerCase() + ".jpg", Toast.LENGTH_SHORT).show();
     }
 
     public void setAdditionalParams(String additionInfo) {
@@ -418,7 +311,7 @@ public class WeatherInfoFragment extends Fragment {
         return wind;
     }
 
-    public void setIsWind(int wind) {
+    public void setWind(int wind) {
         this.wind = wind;
     }
 
@@ -426,7 +319,7 @@ public class WeatherInfoFragment extends Fragment {
         return humidity;
     }
 
-    public void setIsHumidity(int humidity) {
+    public void setHumidity(int humidity) {
         this.humidity = humidity;
     }
 

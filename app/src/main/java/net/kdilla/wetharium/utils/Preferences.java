@@ -1,8 +1,11 @@
 package net.kdilla.wetharium.utils;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 
 import net.kdilla.wetharium.MainActivity;
+import net.kdilla.wetharium.R;
 
 /**
  * Created by avetc on 10.12.2017.
@@ -10,7 +13,9 @@ import net.kdilla.wetharium.MainActivity;
 
 public class Preferences {
     public static final String SAVED_WEATHER = "saved_weather";
-
+    public static final String SOURCE = "source";
+    public static final String SPLASH = "splash";
+    public static final String DB_LIST = "db licst";
     public static final String SAVED_WIND = "saved_wind";
     public static final String SAVED_PRESSURE = "saved_pressure";
     public static final String SAVED_HUMIDITY = "saved_storm";
@@ -27,6 +32,9 @@ public class Preferences {
     public static final String ADD_IS_PRESSURE = "add is pressure";
     public static final String ADD_IS_HUMIDITY = "add is humidity";
     public static final String ADD_DESCRIPTION = "add description";
+    public static final String ADD_IS_BIND = "add is bind";
+    public static final String ADD_ADDITION= "add addition";
+
     public final static String ADD_ICON = "add icon";
     public final static String BROADCAST_ACTION = "net.kdilla.wetharium.p0961servicebackbroadcast";
     public final static String TAG_1 = "FRAGMENT_1";
@@ -53,6 +61,40 @@ public class Preferences {
     public final static int VERTICAL = 1;
 
 
-    public static final String ADD_IS_BIND = "add is bind";
+    public static  Drawable getWeatherIcon(int id, Context context ) {
+        id = id / 100;
+        Drawable ico = null;
+        switch (id) {
+            case 2:
+
+                ico = context.getDrawable(R.drawable.day_thunder);
+                break;
+            case 3:
+                ico = context.getDrawable(R.drawable.day_drizzle);
+                break;
+            case 5:
+                ico = context.getDrawable(R.drawable.day_rainy);
+                break;
+            case 6:
+                ico = context.getDrawable(R.drawable.day_snowie);
+                break;
+            case 7:
+                ico = context.getDrawable(R.drawable.day_foggy);
+                break;
+            case 8:
+                ico = context.getDrawable(R.drawable.day_cloudly);
+                break;
+
+            default:
+                break;
+        }
+        return ico;
+    }
+
+    public static String getWeatherDescription(int id, Context context){
+        String[] desc = context.getResources().getStringArray(R.array.description_wether);
+        return desc[id];
+    }
+
 
 }

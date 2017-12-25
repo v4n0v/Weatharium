@@ -1,32 +1,19 @@
 package net.kdilla.wetharium.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import net.kdilla.wetharium.utils.tasks.BitmapSetterTask;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
-/**
- * Created by avetc on 20.12.2017.
- */
 
 public class FlickrSearch {
     private final String KEY = "9c6b4a5f6ad93dafa5a5ca0ef3b2f864";

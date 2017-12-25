@@ -25,6 +25,7 @@ public class BitmapSetterTask extends AsyncTask<String, Void, Bitmap> {
     Context context;
     String cityName;
     ImageView imageView;
+
     public BitmapSetterTask(String cityName, Context context, ImageView imageView) {
         this.context=context;
         this.cityName = cityName;
@@ -58,21 +59,21 @@ public class BitmapSetterTask extends AsyncTask<String, Void, Bitmap> {
         return images;
     }
 
-
-    private void saveBitmap(Bitmap bitmap) {
-
-        try {
-
-            File file = new File(context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), cityName.toLowerCase() + ".jpg");
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-
-            out.flush();
-            out.close();
-            MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, file.getName(), file.getName()); // регистрация в фотоальбоме
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Toast.makeText(context, "Saved in storage as " + cityName.toLowerCase() + ".jpg", Toast.LENGTH_SHORT).show();
-    }
+//
+//    private void saveBitmap(Bitmap bitmap) {
+//
+//        try {
+//
+//            File file = new File(context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), cityName.toLowerCase() + ".jpg");
+//            FileOutputStream out = new FileOutputStream(file);
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+//
+//            out.flush();
+//            out.close();
+//            MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, file.getName(), file.getName()); // регистрация в фотоальбоме
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        Toast.makeText(context, "Saved in storage as " + cityName.toLowerCase() + ".jpg", Toast.LENGTH_SHORT).show();
+//    }
 }

@@ -9,10 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
+import net.kdilla.wetharium.utils.Preferences;
 import net.kdilla.wetharium.utils.RecyclerAdapter;
 
 import java.util.List;
@@ -65,6 +67,7 @@ public class DBListActivity extends AppCompatActivity {
         private TextView windTV;
         private TextView pressureTV;
         private TextView timeTV;
+        private ImageView img;
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_last_shown, parent, false));
             itemView.setOnClickListener(this);
@@ -74,6 +77,7 @@ public class DBListActivity extends AppCompatActivity {
             pressureTV = (TextView) itemView.findViewById(R.id.last_pressure);
             windTV = (TextView) itemView.findViewById(R.id.last_wind);
             timeTV = (TextView) itemView.findViewById(R.id.last_time);
+            img = (ImageView) itemView.findViewById(R.id.last_img);
         }
 
         void bind(int position) {
@@ -83,12 +87,15 @@ public class DBListActivity extends AppCompatActivity {
             int pressure = weatherNotese.get(position).getPressure();
             int humidity = weatherNotese.get(position).getHumidity();
             int wind = weatherNotese.get(position).getWind();
+            int weatherId = weatherNotese.get(position).getWeatherID();
             cityTV.setText(city);
             tempTV.setText(getString(R.string.temp)+" "+String.valueOf(temp)+getString(R.string.cels));
             pressureTV.setText(getString(R.string.pressure)+" "+String.valueOf(pressure)+getString(R.string.pressure_dim));
             humidityTV.setText(getString(R.string.humidity)+" "+String.valueOf(humidity)+getString(R.string.humidity_dim));
             windTV.setText(getString(R.string.wind)+" "+String.valueOf(wind)+getString(R.string.wind_dim));
             timeTV.setText(getString(R.string.updated)+time);
+            //img.setImageDrawable(getDrawable(Preferences.getWeatherIcon(weatherId, DBListActivity.this));
+            img.setImageDrawable(Preferences.getWeatherIcon(weatherId, getApplication()));
             //     muscleGroupTextView.setText(muscles[position]);
         }
 
@@ -122,6 +129,7 @@ public class DBListActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(DBListActivity.this, MainActivity.class);
+        intent.putExtra(Preferences.SOURCE, Preferences.DB_LIST);
         startActivity(intent);
     }
 }

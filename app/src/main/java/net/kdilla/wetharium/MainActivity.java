@@ -1,18 +1,12 @@
 package net.kdilla.wetharium;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -37,19 +31,13 @@ import android.widget.Toast;
 
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
-
 import net.kdilla.wetharium.fragments.OnFragmentClickListener;
-import net.kdilla.wetharium.fragments.SplashFragment;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
 import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.FileManager;
-import net.kdilla.wetharium.utils.FlickrSearch;
-import net.kdilla.wetharium.utils.GoogleSearchThread;
-
 import net.kdilla.wetharium.utils.Preferences;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,47 +47,31 @@ public class MainActivity extends AppCompatActivity
     List<WeatherNote> elements;
     WeatherDataSource notesDataSource;
 
-
-    public void setWind(boolean wind) {
-        isWind = wind;
-    }
-
-    public void setPressure(boolean pressure) {
-        isPressure = pressure;
-    }
-
-    public void setHumidity(boolean humidity) {
-        isHumidity = humidity;
-    }
-
     private boolean isWind = true;
     private boolean isPressure = true;
     private boolean isHumidity = true;
 
-    String additionalInfo;
+
     String city;
     SharedPreferences preferences;
 
     WeatherInfoFragment weatherInfoFragment;
-    SplashFragment splashFragment;
-
-    Typeface font;
     ImageView toolbarImage;
-    FlickrSearch flickrImage;
-    ArrayList<Bitmap> cityImages;
-    private final Handler handler = new Handler();
-    GoogleSearchThread imageSearch;
 
 
-    BroadcastReceiver br;
     int temperature;
     int pressure;
     int wind;
     int humidity;
+    boolean bind;
+    String additionalInfo;
+    String description;
+    int weatherId;
+
     long lastUpd;
     Toolbar toolbar;
     ServiceConnection sConn;
-    boolean bind;
+
     ServiceWeather serviceWeather;
     CollapsingToolbarLayout toolbarLayout;
 
@@ -107,7 +79,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.deleteDatabase("weather.db");
+       // this.deleteDatabase("weather.db");
 
         //serviceWeather=new ServiceWeather();
 
@@ -115,34 +87,64 @@ public class MainActivity extends AppCompatActivity
 //        fillFragment(splashFragment);
 
 //        // получаем информацию из интента
-//        isHumidity = savedInstanceState.getBoolean(Preferences.ADD_IS_HUMIDITY);
-//        isWind = savedInstanceState.getBoolean(Preferences.ADD_IS_WIND);
-//        isPressure = savedInstanceState.getBoolean(Preferences.ADD_IS_PRESSURE);
-//        city = savedInstanceState.getString(Preferences.ADD_CITY);
-//        bind = savedInstanceState.getBoolean(Preferences.ADD_IS_BIND);
         weatherInfoFragment = new WeatherInfoFragment();
+        Intent intent = getIntent();
+        if (intent!=null) {
+            String source =  intent.getStringExtra(Preferences.SOURCE);
+            if (source.equals(Preferences.SPLASH)) {
+                isHumidity = intent.getBooleanExtra(Preferences.ADD_IS_HUMIDITY, true);
+                isWind = intent.getBooleanExtra(Preferences.ADD_IS_WIND, true);
+                isPressure = intent.getBooleanExtra(Preferences.ADD_IS_PRESSURE, true);
+                city = intent.getStringExtra(Preferences.ADD_CITY);
+
+                //   bind = intent.getBooleanExtra(Preferences.ADD_IS_BIND, true);
+                temperature = intent.getIntExtra(Preferences.ADD_TEMP, 0);
+                pressure = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+                humidity = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
+                wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
+                pressure = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+              //  additionalInfo = intent.getStringExtra(Preferences.ADD_ADDITION);
+                description = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
+                weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
+            } else if (source.equals(Preferences.DB_LIST)){
+
+                loadPreferences();
+
+            } else {
+                Log.d("DEBUGGG", "Wrong SOURCE ");
+            }
+        }
+
+
+        weatherInfoFragment.setCity(city);
+        weatherInfoFragment.setTemperature(temperature);
+        weatherInfoFragment.setPressure(pressure);
+        weatherInfoFragment.setHumidity(humidity);
+        weatherInfoFragment.setWind(wind);
+        weatherInfoFragment.setDescription(description);
+        weatherInfoFragment.setWeatherId(weatherId);
+        weatherInfoFragment.setAdditionalParams(formatAdditionInfoString());
+        weatherInfoFragment.setOptions(isHumidity,isWind, isPressure);
 
         date = new Date();
+        if (!bind) {
+            sConn = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                  //  Toast.makeText(getBaseContext(), "Service connected", Toast.LENGTH_SHORT).show();
+                    Log.d("DEBUGGG", "Service connected");
+                    serviceWeather = ((ServiceWeather.WeatherBinder) service).getService();
+                    bind = true;
+                }
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    bind = false;
+                }
+            };
 
-        sConn = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                Toast.makeText(getBaseContext(), "Service connected", Toast.LENGTH_SHORT).show();
-                Log.d("ServiceWeather", "Service connected");
-                serviceWeather = ((ServiceWeather.WeatherBinder) service).getService();
-                serviceWeather.changeCity(city);
-                bind = true;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                bind = false;
-            }
-        };
-
-        Intent intent = new Intent(getBaseContext(), ServiceWeather.class);
-        bindService(intent, sConn, BIND_AUTO_CREATE);
-
+            intent = new Intent(getBaseContext(), ServiceWeather.class);
+            bindService(intent, sConn, BIND_AUTO_CREATE);
+        }
 
         toolbarImage = (ImageView) findViewById(R.id.header);
 
@@ -152,17 +154,6 @@ public class MainActivity extends AppCompatActivity
         notesDataSource.open();
 
         elements = notesDataSource.getAllNotes();
-
-//        String jsonImg = GoogleSearchThread.getAndSetImage("moscow city");
-
-        // так не получается запустить
-//        new Thread() {
-//            public void run() {
-//                GoogleSearch.getAndSetImage("moscow city");
-//            }
-//        }.start();
-
-        // так получается
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -232,23 +223,37 @@ public class MainActivity extends AppCompatActivity
 
         weatherInfoFragment.setCityImageView(toolbarImage);
         weatherInfoFragment.setToolbarLayout(toolbarLayout);
-        weatherInfoFragment.setIsPressure(isPressure);
-        weatherInfoFragment.setIsWind(isWind);
-        weatherInfoFragment.setIsHumidity(isHumidity);
-        weatherInfoFragment.setCity(city);
-
+//        weatherInfoFragment.setIsPressure(isPressure);
+//        weatherInfoFragment.setIsWind(isWind);
+//        weatherInfoFragment.setIsHumidity(isHumidity);
+//        weatherInfoFragment.setCity(city);
+        fillFragment(weatherInfoFragment);
         //  serviceWeather.setCity(city);
 
 
-        loadPreferences();
+   //     loadPreferences();
 
 
-        fillFragment(weatherInfoFragment);
+     //   fillFragment(weatherInfoFragment);
 
     }
 
     public void reloadPicture(MenuItem item) {
         reloadPicture();
+    }
+
+    private String formatAdditionInfoString(){
+        String additionalInfo="";
+        if (isPressure) {
+            additionalInfo += "Pressure: " + pressure + " " + getString(R.string.pressure_dim) + "\n";
+        }
+        if (isWind) {
+            additionalInfo += "Wind: " + wind + " " + getString(R.string.wind_dim) + "\n";
+        }
+        if (isHumidity) {
+            additionalInfo += "Humidity: " + humidity + " " + getString(R.string.humidity_dim) + "\n";
+        }
+        return additionalInfo;
     }
 
     public void reloadPicture() {
@@ -312,9 +317,7 @@ public class MainActivity extends AppCompatActivity
 //                loadPreferences();
                 break;
             case R.id.nav_last_weather:
-//                LastShownFragment lastFragment = new LastShownFragment();
-//                lastFragment.setElements(elements);
-//                fillFragment(lastFragment);
+
                 Intent intent = new Intent(MainActivity.this, DBListActivity.class);
                 startActivity(intent);
 
@@ -355,7 +358,7 @@ public class MainActivity extends AppCompatActivity
         builder.setPositiveButton("Show me the weather", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                city = input.getText().toString();
+                city = cityTextFormat(input.getText().toString());
                 //  Intent intent = new Intent(Preferences.BROADCAST_ACTION);
                 weatherInfoFragment.setCity(city);
 
@@ -363,24 +366,18 @@ public class MainActivity extends AppCompatActivity
                     for (int i = 0; i < elements.size(); i++) {
                         if (elements.get(i).getCity().equals(city)) {
                             weatherInfoFragment.setLastDate(elements.get(i).getDate());
-                            Log.d("DATE", "Last date = " + elements.get(i).getDate());
+                            Log.d("DEBUGGG", "Last date = " + elements.get(i).getDate());
                         }
                     }
                 }
                 lastUpd = System.currentTimeMillis();
 
-                // weatherInfoFragment.setDate(lastUpd);
-                Log.d("DATE", "Current date = " + lastUpd);
+                Log.d("DEBUGGG", "Current date = " + lastUpd);
 
                 serviceWeather.changeCity(city);
 
                 fillFragment(weatherInfoFragment);
-                //  dbUpdate(elements, city, lastUpd);
 
-                elements.clear();
-                elements = notesDataSource.getAllNotes();
-                Log.d("dbUpdate", "Elements count " + elements.size());
-                savePreferences();
             }
         });
         builder.show();
@@ -414,7 +411,7 @@ public class MainActivity extends AppCompatActivity
 
                     isExist = true;
                     Toast.makeText(MainActivity.this, "Exist and edited", Toast.LENGTH_SHORT).show();
-                    Log.d("dbUpdate", "Exist and edited " + city);
+                    Log.d("DEBUGGG", "Exist and edited " + city);
                     // изменил базу ,прерываю цикл
                     break;
                 }
@@ -431,7 +428,7 @@ public class MainActivity extends AppCompatActivity
                         weatherInfoFragment.getWeatherId()
                 );
                 Toast.makeText(MainActivity.this, "Not exist, created new", Toast.LENGTH_SHORT).show();
-                Log.d("dbUpdate", "Not exist, created new " + city);
+                Log.d("DEBUGGG", "Not exist, created new " + city);
             }
 
         } else {
@@ -445,7 +442,7 @@ public class MainActivity extends AppCompatActivity
                     weatherInfoFragment.getWeatherId()
             );
             Toast.makeText(MainActivity.this, "Table is empty, created new note", Toast.LENGTH_SHORT).show();
-            Log.d("dbUpdate", "Table is empty, created new note " + city);
+            Log.d("DEBUGGG", "Table is empty, created new note " + city);
         }
 
     }
@@ -477,12 +474,11 @@ public class MainActivity extends AppCompatActivity
                 else isWind = false;
                 if (humidityCheckBox.isChecked()) isHumidity = true;
                 else isHumidity = false;
-                //Toast.makeText(MainActivity.this, "Ok", Toast.LENGTH_SHORT).show();
-                weatherInfoFragment.setOptions(isWind, isPressure, isHumidity);
-                //   weatherInfoFragment.setCity(weatherInfoFragment.getCity());
-                serviceWeather.changeCity(weatherInfoFragment.getCity());
 
-                // fillFragment(weatherInfoFragment);
+                weatherInfoFragment.setOptions(isHumidity, isWind, isPressure);
+                weatherInfoFragment.setAdditionalParams(formatAdditionInfoString());
+                weatherInfoFragment.updateAdditionInfo(formatAdditionInfoString());
+
             }
         });
         builder.show();
@@ -491,38 +487,42 @@ public class MainActivity extends AppCompatActivity
 
     private void loadPreferences() {
         preferences = getPreferences(MODE_PRIVATE);
-        String savedCity = preferences.getString(Preferences.SAVED_CITY, "Moscow");
 
-        weatherInfoFragment.setIsPressure(preferences.getBoolean(Preferences.SAVED_PRESSURE, true));
-        weatherInfoFragment.setIsWind(preferences.getBoolean(Preferences.SAVED_WIND, true));
-        weatherInfoFragment.setIsHumidity(preferences.getBoolean(Preferences.SAVED_HUMIDITY, true));
-        // weatherInfoFragment.setLastDate(preferences.getLong(Preferences.SAVED_LAST_UPD, 0));
+        isHumidity = preferences.getBoolean(Preferences.ADD_IS_HUMIDITY, true);
+        isWind = preferences.getBoolean(Preferences.ADD_IS_WIND, true);
+        isPressure = preferences.getBoolean(Preferences.ADD_IS_PRESSURE, true);
+        city = preferences.getString(Preferences.ADD_CITY, "Moscow");
 
-        if (savedCity.equals("") || savedCity == null) savedCity = "Moscow";
-        city = savedCity;
 
-        if (elements.size() > 0) {
-            WeatherNote note = getNoteByName(city);
-            if (note != null) {
-                weatherInfoFragment.setLastDate(note.getDate());
-                weatherInfoFragment.setDate(System.currentTimeMillis());
-            }
-        }
+        temperature = preferences.getInt(Preferences.ADD_TEMP, 0);
+        pressure = preferences.getInt(Preferences.ADD_PRESSURE, 0);
+        humidity = preferences.getInt(Preferences.ADD_HUMIDITY, 0);
+        wind = preferences.getInt(Preferences.ADD_WIND, 0);
+        pressure = preferences.getInt(Preferences.ADD_PRESSURE, 0);
+        additionalInfo = preferences.getString(Preferences.ADD_ADDITION,"");
+        description = preferences.getString(Preferences.ADD_DESCRIPTION, "");
+        weatherId = preferences.getInt(Preferences.ADD_IMAGE_ID, 0);
 
-        // обновляю базу, обновляю время текущего элемента
-        // dbUpdate(elements, city, System.currentTimeMillis());
-        toolbarLayout.setTitle(city);
-        weatherInfoFragment.setCity(city);
     }
 
     private void savePreferences() {
         preferences = getPreferences(MODE_PRIVATE);
+        WeatherNote note = getNoteByName(city);
         SharedPreferences.Editor ed = preferences.edit();
-        ed.putString(Preferences.SAVED_CITY, weatherInfoFragment.getCity());
-        ed.putBoolean(Preferences.SAVED_PRESSURE, weatherInfoFragment.isPressure());
-        ed.putBoolean(Preferences.SAVED_WIND, weatherInfoFragment.isWind());
-        ed.putBoolean(Preferences.SAVED_HUMIDITY, weatherInfoFragment.isHumidity());
-        ed.putLong(Preferences.SAVED_LAST_UPD, lastUpd);
+        ed.putString(Preferences.ADD_CITY, note.getCity());
+        ed.putBoolean(Preferences.ADD_IS_PRESSURE,isPressure);
+        ed.putBoolean(Preferences.ADD_IS_WIND, isWind);
+        ed.putBoolean(Preferences.ADD_IS_WIND, isHumidity);
+        ed.putLong(Preferences.SAVED_LAST_UPD, note.getDate());
+
+        ed.putInt(Preferences.ADD_TEMP, note.getTemperature());
+        ed.putInt(Preferences.ADD_PRESSURE, note.getPressure());
+        ed.putInt(Preferences.ADD_WIND, note.getWind());
+        ed.putInt(Preferences.ADD_HUMIDITY, note.getHumidity());
+        ed.putInt(Preferences.ADD_IMAGE_ID, weatherId);
+        ed.putString(Preferences.ADD_ADDITION, additionalInfo);
+        ed.putString(Preferences.ADD_DESCRIPTION, description);
+
         ed.commit();
     }
 
@@ -556,10 +556,16 @@ public class MainActivity extends AppCompatActivity
                 //   Toast.makeText(MainActivity.this, "Fragment Navigation 1", Toast.LENGTH_SHORT).show();
                 serviceWeather.changeCity(city);
                 fillFragment(weatherInfoFragment);
-                Log.d("Splash", "Splash end");
+                Log.d("DEBUGGG", "Splash end");
                 break;
 
         }
+    }
+
+
+    private String cityTextFormat(String word){
+        if(word == null || word.isEmpty()) return "";
+        return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 
     @Override
@@ -575,7 +581,7 @@ public class MainActivity extends AppCompatActivity
                     long id = elements.get(i).getId();
                     notesDataSource.editNote(id, city, temp, pressure,hum, wind, time,date,weatherId);
                     isExist = true;
-                    Log.d("dbUpdate", "Exist and edited " + city);
+                    Log.d("DEBUGGG", "Exist and edited " + city);
                     // изменил базу ,прерываю цикл
                     break;
                 }
@@ -583,14 +589,21 @@ public class MainActivity extends AppCompatActivity
             }
             if (!isExist) {
                 notesDataSource.addNote(city, temp, pressure,hum, wind, time,date,weatherId);
-                Log.d("dbUpdate", "Not exist, created new " + city);
+                Log.d("DEBUGGG", "Not exist, created new " + city);
             }
 
         } else {
             notesDataSource.addNote(city, temp, pressure,hum, wind, time,date,weatherId);
-            Log.d("dbUpdate", "Table is empty, created new note " + city);
+            Log.d("DEBUGGG", "Table is empty, created new note " + city);
         }
+        elements.clear();
+        elements = notesDataSource.getAllNotes();
+        Log.d("DEBUGGG", "Elements count " + elements.size());
+    }
 
+    @Override
+    public void onTitleUpdate(String title) {
+        toolbarLayout.setTitle(title);
     }
 
 

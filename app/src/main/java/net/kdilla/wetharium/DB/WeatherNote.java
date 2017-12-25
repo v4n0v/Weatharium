@@ -13,6 +13,11 @@ public class WeatherNote {
     private int pressure;
     private int humidity;
     private String time;
+
+    public int getWeatherID() {
+        return weatherID;
+    }
+
     private int weatherID;
 
     public long getDate() {

@@ -1,11 +1,9 @@
 package net.kdilla.wetharium.utils.tasks;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.util.Log;
 
-import net.kdilla.wetharium.utils.FileManager;
+import android.os.AsyncTask;
+
 import net.kdilla.wetharium.utils.WeatherDataLoader;
 
 import org.json.JSONObject;
@@ -32,11 +30,6 @@ public class WeatherGetTask extends AsyncTask<String, Void, JSONObject> {
     protected void onPostExecute(JSONObject jsonObject) {
         super.onPostExecute(jsonObject);
 
-
-//        imageView.setImageBitmap(bitmap);
-//        //  saveBitmap(bitmap);
-//        FileManager.saveBitmap(bitmap, context, cityName);
-//        Log.d("BITMAP", "Bitmap applied");
     }
 
 }

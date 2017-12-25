@@ -29,4 +29,15 @@
         <item>Wind</item>
         <item>Humidity</item>
     </string-array>
+
+    <string-array name="description_wether">
+        <item>0</item>
+        <item>1</item>
+        <item>Thunder</item>
+        <item>Drizzle</item>
+        <item>Rainy</item>
+        <item>Snowie</item>
+        <item>Foggy</item>
+        <item>Cloudly</item>
+    </string-array>
 </resources>

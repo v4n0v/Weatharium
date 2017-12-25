@@ -30,7 +30,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
-public class ServiceWeather extends Service{
+public class ServiceWeather extends Service {
 
     Timer timer;
     TimerTask tTask;
@@ -44,7 +44,7 @@ public class ServiceWeather extends Service{
     String lon;
     String description;
     // обновляю каждые 10 минут
-    private long interval = 60_000;
+    private long interval = 600_000;
 
     WeatherBinder binder = new WeatherBinder();
 
@@ -52,7 +52,6 @@ public class ServiceWeather extends Service{
     private boolean isPressure = true;
     private boolean isHumidity = true;
     private boolean isComplete=true;
-
 
     @Override
     public void onCreate() {
@@ -69,6 +68,7 @@ public class ServiceWeather extends Service{
       setCity(city);
       isComplete=false;
       schedule();
+
     }
     private void schedule() {
         if (tTask != null) tTask.cancel();
@@ -85,7 +85,6 @@ public class ServiceWeather extends Service{
                 }
             };
             timer.schedule(tTask, 1000, interval);
-
         }
     }
 
@@ -102,7 +101,6 @@ public class ServiceWeather extends Service{
         }
         if (jsonObject != null) {
             renderWeather(jsonObject);
-
         } else {
             Log.d("ServiceWeather", "jsonObject=null ");
         }
@@ -153,7 +151,6 @@ public class ServiceWeather extends Service{
 //            additionalTextView.setText(additionalInfo);
 //            temperatureTextView.setText(temperatureFormat(weatherForGSon.getTemperature()));
 //            descriptionTextView.setText(weatherForGSon.getMainInfo());
-//
 //            weatherImage.setImageDrawable(getWeatherIcon(weatherForGSon.getId()));
 
             Intent intent = new Intent(Preferences.BROADCAST_ACTION);
@@ -164,7 +161,6 @@ public class ServiceWeather extends Service{
             intent.putExtra(Preferences.ADD_PRESSURE, pressure);
             intent.putExtra(Preferences.ADD_DESCRIPTION, description);
             intent.putExtra(Preferences.ADD_IMAGE_ID, imageId);
-
 
             sendBroadcast(intent);
 
@@ -208,7 +204,11 @@ public class ServiceWeather extends Service{
         return ico;
     }
 
+
+
     public class WeatherBinder extends Binder{
        public ServiceWeather getService(){ return ServiceWeather.this;}
     }
+
+
 }
