@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "weather.db"; // название бд
-    public static final int DATABASE_VERSION =3; // версия базы данных
+    public static final int DATABASE_VERSION =1; // версия базы данных
     public static final String TABLE_NOTES = "weather_info"; // название таблицы в бд
     // названия столбцов
     public static final String COLUMN_ID = "id";

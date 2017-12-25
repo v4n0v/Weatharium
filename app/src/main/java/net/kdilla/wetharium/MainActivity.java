@@ -54,7 +54,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentClickListener{
+        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentClickListener {
 
     List<WeatherNote> elements;
     WeatherDataSource notesDataSource;
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        this.deleteDatabase("weather.db");
 
         //serviceWeather=new ServiceWeather();
 
@@ -124,10 +124,10 @@ public class MainActivity extends AppCompatActivity
 
         date = new Date();
 
-        sConn= new ServiceConnection() {
+        sConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                Toast.makeText(getBaseContext(),"Service connected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Service connected", Toast.LENGTH_SHORT).show();
                 Log.d("ServiceWeather", "Service connected");
                 serviceWeather = ((ServiceWeather.WeatherBinder) service).getService();
                 serviceWeather.changeCity(city);
@@ -144,12 +144,9 @@ public class MainActivity extends AppCompatActivity
         bindService(intent, sConn, BIND_AUTO_CREATE);
 
 
-
-
-
         toolbarImage = (ImageView) findViewById(R.id.header);
 
-        //  this.deleteDatabase("weather.db");
+
         notesDataSource = new WeatherDataSource(getApplicationContext());
 
         notesDataSource.open();
@@ -167,7 +164,7 @@ public class MainActivity extends AppCompatActivity
 
         // так получается
 
-     toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -179,8 +176,8 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 char c = 167;
-                String share= "Temperature in "+weatherInfoFragment.getCity()+" is "+weatherInfoFragment.getTemperature()+c+"\n";
-                share+="Powered by Weatharium";
+                String share = "Temperature in " + weatherInfoFragment.getCity() + " is " + weatherInfoFragment.getTemperature() + c + "\n";
+                share += "Powered by Weatharium";
 
                 intent.putExtra(Intent.EXTRA_TEXT, share);
 
@@ -241,7 +238,6 @@ public class MainActivity extends AppCompatActivity
         weatherInfoFragment.setCity(city);
 
         //  serviceWeather.setCity(city);
-
 
 
         loadPreferences();
@@ -360,26 +356,26 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 city = input.getText().toString();
-              //  Intent intent = new Intent(Preferences.BROADCAST_ACTION);
+                //  Intent intent = new Intent(Preferences.BROADCAST_ACTION);
                 weatherInfoFragment.setCity(city);
 
                 if (elements.size() != 0) {
                     for (int i = 0; i < elements.size(); i++) {
                         if (elements.get(i).getCity().equals(city)) {
                             weatherInfoFragment.setLastDate(elements.get(i).getDate());
-                            Log.d("DATE", "Last date = "+elements.get(i).getDate());
+                            Log.d("DATE", "Last date = " + elements.get(i).getDate());
                         }
                     }
                 }
                 lastUpd = System.currentTimeMillis();
 
-               // weatherInfoFragment.setDate(lastUpd);
-                Log.d("DATE", "Current date = "+lastUpd);
+                // weatherInfoFragment.setDate(lastUpd);
+                Log.d("DATE", "Current date = " + lastUpd);
 
                 serviceWeather.changeCity(city);
 
                 fillFragment(weatherInfoFragment);
-                dbUpdate(elements, city, lastUpd);
+                //  dbUpdate(elements, city, lastUpd);
 
                 elements.clear();
                 elements = notesDataSource.getAllNotes();
@@ -389,7 +385,9 @@ public class MainActivity extends AppCompatActivity
         });
         builder.show();
     }
+
     Date date;
+
     void dbUpdate(List<WeatherNote> elements, String city, long dateTime) {
         boolean isExist = false;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM' at ' HH:mm:ss ");
@@ -491,8 +489,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     private void loadPreferences() {
         preferences = getPreferences(MODE_PRIVATE);
         String savedCity = preferences.getString(Preferences.SAVED_CITY, "Moscow");
@@ -500,19 +496,21 @@ public class MainActivity extends AppCompatActivity
         weatherInfoFragment.setIsPressure(preferences.getBoolean(Preferences.SAVED_PRESSURE, true));
         weatherInfoFragment.setIsWind(preferences.getBoolean(Preferences.SAVED_WIND, true));
         weatherInfoFragment.setIsHumidity(preferences.getBoolean(Preferences.SAVED_HUMIDITY, true));
-       // weatherInfoFragment.setLastDate(preferences.getLong(Preferences.SAVED_LAST_UPD, 0));
+        // weatherInfoFragment.setLastDate(preferences.getLong(Preferences.SAVED_LAST_UPD, 0));
 
         if (savedCity.equals("") || savedCity == null) savedCity = "Moscow";
         city = savedCity;
 
-        WeatherNote note = getNoteByName(city);
-        if (note!=null) {
-            weatherInfoFragment.setLastDate(note.getDate());
-            weatherInfoFragment.setDate(System.currentTimeMillis());
+        if (elements.size() > 0) {
+            WeatherNote note = getNoteByName(city);
+            if (note != null) {
+                weatherInfoFragment.setLastDate(note.getDate());
+                weatherInfoFragment.setDate(System.currentTimeMillis());
+            }
         }
 
         // обновляю базу, обновляю время текущего элемента
-        dbUpdate(elements, city, System.currentTimeMillis());
+        // dbUpdate(elements, city, System.currentTimeMillis());
         toolbarLayout.setTitle(city);
         weatherInfoFragment.setCity(city);
     }
@@ -555,7 +553,7 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentItemClick(int id) {
         switch (id) {
             case 1:
-             //   Toast.makeText(MainActivity.this, "Fragment Navigation 1", Toast.LENGTH_SHORT).show();
+                //   Toast.makeText(MainActivity.this, "Fragment Navigation 1", Toast.LENGTH_SHORT).show();
                 serviceWeather.changeCity(city);
                 fillFragment(weatherInfoFragment);
                 Log.d("Splash", "Splash end");
@@ -565,17 +563,42 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDbUpdateWeatherID(int id) {
+    public void onDbUpdateWeatherID(String city, int temp, int pressure, int hum, int wind, long date, int weatherId) {
+        boolean isExist = false;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM' at ' HH:mm:ss ");
 
-    }
-
-
-    private WeatherNote getNoteByName(String name){
+        String time = dateFormat.format(System.currentTimeMillis());
 
         if (elements.size() != 0) {
             for (int i = 0; i < elements.size(); i++) {
                 if (elements.get(i).getCity().equals(city)) {
-                     return elements.get(i);
+                    long id = elements.get(i).getId();
+                    notesDataSource.editNote(id, city, temp, pressure,hum, wind, time,date,weatherId);
+                    isExist = true;
+                    Log.d("dbUpdate", "Exist and edited " + city);
+                    // изменил базу ,прерываю цикл
+                    break;
+                }
+
+            }
+            if (!isExist) {
+                notesDataSource.addNote(city, temp, pressure,hum, wind, time,date,weatherId);
+                Log.d("dbUpdate", "Not exist, created new " + city);
+            }
+
+        } else {
+            notesDataSource.addNote(city, temp, pressure,hum, wind, time,date,weatherId);
+            Log.d("dbUpdate", "Table is empty, created new note " + city);
+        }
+
+    }
+
+
+    private WeatherNote getNoteByName(String name) {
+        if (elements.size() != 0) {
+            for (int i = 0; i < elements.size(); i++) {
+                if (elements.get(i).getCity().equals(city)) {
+                    return elements.get(i);
                 }
             }
         }

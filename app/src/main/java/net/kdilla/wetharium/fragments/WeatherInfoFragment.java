@@ -45,7 +45,7 @@ import java.util.Date;
 
 public class WeatherInfoFragment extends Fragment {
 
-    OnFragmentClickListener mainActivity;
+
     Handler handler = new Handler();
 
     private boolean isWind = true;
@@ -103,8 +103,11 @@ public class WeatherInfoFragment extends Fragment {
 
     CollapsingToolbarLayout toolbarLayout;
 
-    public void setMainActivity(OnFragmentClickListener mainActivity) {
-        this.mainActivity = mainActivity;
+
+    OnFragmentClickListener mainActivity;
+    public void onAttach(Context context) {
+        mainActivity = (OnFragmentClickListener) context;
+        super.onAttach(context);
     }
 
     @Nullable
@@ -146,7 +149,7 @@ public class WeatherInfoFragment extends Fragment {
                     Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
                 }
                 toolbarLayout.setTitle(city);
-//                date = System.currentTimeMillis();
+                 date = System.currentTimeMillis();
 //                long agoTime=(date-lastDate)/1000;
 //
 //                String timeMetric = "seconds";
@@ -169,6 +172,8 @@ public class WeatherInfoFragment extends Fragment {
                 descriptionTextView.setText(decription);
                 weatherImage.setImageDrawable(getWeatherIcon(weatherId));
                 // TODO запилить обновление ячейки времени в базу
+
+                mainActivity.onDbUpdateWeatherID(city, temp, press, hum, wind, date, weatherId);
 
             }
 
