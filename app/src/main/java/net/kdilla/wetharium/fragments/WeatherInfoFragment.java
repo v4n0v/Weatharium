@@ -155,7 +155,7 @@ public class WeatherInfoFragment extends Fragment {
             Log.d("DEBUGGG", "Picture loaded from storage");
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM' at ' HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM' at ' HH:mm");
 
         String time = "Updated: " + dateFormat.format(System.currentTimeMillis());
         String pressureInfo = pressure + getString(R.string.pressure_dim);
