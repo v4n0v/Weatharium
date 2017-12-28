@@ -13,6 +13,7 @@ public class WeatherNote {
     private int pressure;
     private int humidity;
     private String time;
+    private String description;
 
     public int getWeatherID() {
         return weatherID;
@@ -91,5 +92,13 @@ public class WeatherNote {
 
     public void setWeatherID(int weatherID) {
         this.weatherID = weatherID;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+     return this.description;
     }
 }

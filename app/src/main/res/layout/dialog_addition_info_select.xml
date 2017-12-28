@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lil_margin"
-        android:layout_marginLeft="@dimen/std_padding"
+        android:layout_marginLeft="@dimen/std_margin"
 
         android:text="@string/pressure"
  />
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lil_margin"
-        android:layout_marginLeft="@dimen/std_padding"
+        android:layout_marginLeft="@dimen/std_margin"
         android:layout_marginRight="5dp"
         android:text="@string/humidity"
        />
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
 
         android:layout_marginTop="@dimen/lil_margin"
-        android:layout_marginLeft="@dimen/std_padding"
+        android:layout_marginLeft="@dimen/std_margin"
         android:text="@string/wind"
         />
 

@@ -4,14 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -23,38 +18,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import net.kdilla.wetharium.R;
 import net.kdilla.wetharium.utils.FileManager;
 import net.kdilla.wetharium.utils.FlickrSearch;
 import net.kdilla.wetharium.utils.Preferences;
-import net.kdilla.wetharium.utils.gson.Weather;
-import net.kdilla.wetharium.utils.gson.WeatherDeserializer;
-import net.kdilla.wetharium.utils.gson.WeatherMain;
-import net.kdilla.wetharium.utils.gson.WeatherMainDeserializer;
-import net.kdilla.wetharium.utils.tasks.LastUpdateTask;
 
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 
 public class WeatherInfoFragment extends Fragment {
 
-
-    Handler handler = new Handler();
-
     private boolean isWind = true;
     private boolean isPressure = true;
     private boolean isHumidity = true;
-    SharedPreferences preferences;
 
-    // String cityText;
     int temperature;
+    int tempMin;
+    int tempMax;
     int pressure;
     int wind;
     int humidity;
@@ -68,18 +48,24 @@ public class WeatherInfoFragment extends Fragment {
         this.weatherId = weatherId;
     }
 
-    int weatherId;
-    //    private String additionalInfo;
+    private int weatherId;
+
     private String description;
 
     private String city;
 
-//    TextView cityTextView;
-    TextView additionalTextView;
-    TextView temperatureTextView;
-    TextView descriptionTextView;
-    TextView lastUpdTextView;
+    private TextView additionalTextView;
+    private TextView temperatureTextView;
+    private TextView descriptionTextView;
+    private TextView lastUpdTextView;
+    private  TextView pressureTextView;
+    private  TextView windTextView;
+    private  TextView humidityTextView;
+    private TextView tempMinMaxTextView;
+
     Drawable icon;
+
+
     private long date;
 
     public void setLastDate(long lastDate) {
@@ -87,28 +73,30 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     private long lastDate;
+
     public void setCityImageView(ImageView cityImageView) {
         this.cityImageView = cityImageView;
     }
 
-    ImageView cityImageView;
-    ImageView weatherImage;
+    private ImageView cityImageView;
+    private ImageView weatherImage;
+    private  String CELCIUM;
+    private  String lat;
+    private  String lon;
+    private FlickrSearch flickrSearch;
 
-    String lat;
-    String lon;
-    FlickrSearch flickrSearch;
-
-    Bitmap cityBitmap;
-    BroadcastReceiver br;
+    private  Bitmap cityBitmap;
+    private BroadcastReceiver br;
 
     public void setToolbarLayout(CollapsingToolbarLayout collapsingToolbarLayout) {
         this.toolbarLayout = collapsingToolbarLayout;
     }
 
-    CollapsingToolbarLayout toolbarLayout;
+    private  CollapsingToolbarLayout toolbarLayout;
 
 
     OnFragmentClickListener mainActivity;
+
     public void onAttach(Context context) {
         mainActivity = (OnFragmentClickListener) context;
         super.onAttach(context);
@@ -119,67 +107,26 @@ public class WeatherInfoFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weather_info, container, false);
         flickrSearch = new FlickrSearch(cityImageView, getContext());
+        CELCIUM = getString(R.string.cels);
 
-        // cityImageView = view.findViewById(R.id.header);
         initViews(view);
-        cityBitmap = FileManager.loadBitmap(getContext(), city);
-        if (cityBitmap == null) {
-            getAindSetToolbarImage();
-        } else {
-            cityImageView.setImageBitmap(cityBitmap);
-            Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
-            Log.d("DEBUGGG", "Picture loaded from storage");
-        }
 
-        temperatureTextView.setText(temperatureFormat(temperature));
-        descriptionTextView.setText(description);
-        additionalTextView.setText(additionInfo);
-        weatherImage.setImageDrawable(getWeatherIcon(weatherId));
-        mainActivity.onTitleUpdate(city);
-        mainActivity.onDbUpdateWeatherID(city, temperature, pressure, humidity, wind, date, weatherId);
+        refresh();
 
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //  flickrSearch.downloadAndSetImage(city);
+                city = intent.getStringExtra(Preferences.ADD_CITY);
                 temperature = intent.getIntExtra(Preferences.ADD_TEMP, 0);
                 humidity = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
                 wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
-                pressure= intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
-                String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
+                pressure = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+                description = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
                 weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
-                cityBitmap = FileManager.loadBitmap(getContext(), city);
-                if (cityBitmap == null) {
-                    getAindSetToolbarImage();
-                } else {
-                    cityImageView.setImageBitmap(cityBitmap);
-                    Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
-                }
-                mainActivity.onTitleUpdate(city);
-                 date = System.currentTimeMillis();
-//                long agoTime=(date-lastDate)/1000;
-//
-//                String timeMetric = "seconds";
-//                if (agoTime>60*60*24) {
-//                    timeMetric = "days";
-//                    agoTime /= 60*60*24;
-//                }if (agoTime>60*60){
-//                    timeMetric = "hours";
-//                    agoTime/=60*60;
-//                }else if (agoTime>60){
-//                    timeMetric = "minutes";
-//                    agoTime/=60;
-//                }
-//
-//                lastUpdTextView.setText("Updated: "+String.valueOf(agoTime)+" "+timeMetric+" ago");
-            //    cityTextView.setText(city);
+                tempMax= intent.getIntExtra(Preferences.ADD_TEMP_MAX, 0);
+                tempMin= intent.getIntExtra(Preferences.ADD_TEMP_MIN, 0);
 
-                additionalTextView.setText(formatAdditionInfoString());
-                temperatureTextView.setText(temperatureFormat(temperature));
-                descriptionTextView.setText(decription);
-                weatherImage.setImageDrawable(getWeatherIcon(weatherId));
-
-                mainActivity.onDbUpdateWeatherID(city, temperature, pressure, humidity, wind, date, weatherId);
+                refresh();
 
             }
 
@@ -191,17 +138,51 @@ public class WeatherInfoFragment extends Fragment {
 
         return view;
     }
-    public void updateAdditionInfo(String additionalInfo){
+
+    public void updateAdditionInfo(String additionalInfo) {
         additionalTextView.setText(additionalInfo);
 
     }
+
+    private void refresh() {
+        // получаем картинку города, если она закеширована, то из памяти, если нет, то качаем новую
+        cityBitmap = FileManager.loadBitmap(getContext(), city);
+        if (cityBitmap == null) {
+            getAindSetToolbarImage();
+        } else {
+            cityImageView.setImageBitmap(cityBitmap);
+            Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
+            Log.d("DEBUGGG", "Picture loaded from storage");
+        }
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM' at ' HH:mm");
+
+        String time = "Updated: " + dateFormat.format(System.currentTimeMillis());
+        String pressureInfo = pressure + getString(R.string.pressure_dim);
+        String windInfo = wind + getString(R.string.wind_dim);
+        String humInfo = humidity + getString(R.string.humidity_dim);
+
+        pressureTextView.setText(pressureInfo);
+        windTextView.setText(windInfo);
+        humidityTextView.setText(humInfo);
+        lastUpdTextView.setText(time);
+        String minMax = temperatureFormat(tempMin)+CELCIUM+" "+temperatureFormat(tempMax)+CELCIUM;
+        tempMinMaxTextView.setText(minMax);
+        //   additionalTextView.setText(formatAdditionInfoString());
+        temperatureTextView.setText(temperatureFormat(temperature) + CELCIUM);
+        descriptionTextView.setText(description);
+        weatherImage.setImageDrawable(getWeatherIcon(weatherId));
+        mainActivity.onTitleUpdate(city);
+        mainActivity.onDbUpdateWeatherID(city, temperature, pressure, humidity, wind, date, weatherId);
+    }
+
     private String temperatureFormat(float temperature) {
         if (temperature > 0) return "+" + String.valueOf(Math.round(temperature));
         else return String.valueOf(Math.round(temperature));
     }
 
-    private String formatAdditionInfoString(){
-        String additionalInfo="";
+    private String formatAdditionInfoString() {
+        String additionalInfo = "";
         if (isPressure) {
             additionalInfo += "Pressure: " + pressure + " " + getString(R.string.pressure_dim) + "\n";
         }
@@ -213,18 +194,20 @@ public class WeatherInfoFragment extends Fragment {
         }
         return additionalInfo;
     }
-    void initViews(View view) {
 
-        additionalTextView = view.findViewById(R.id.info_additional_info_tv);
+    void initViews(View view) {
+        //  additionalTextView = view.findViewById(R.id.info_additional_info_tv);
         temperatureTextView = view.findViewById(R.id.info_temperature_tv);
         descriptionTextView = view.findViewById(R.id.info_description_tv);
         lastUpdTextView = view.findViewById(R.id.tv_last_update);
-
         weatherImage = view.findViewById(R.id.info_weather_ico);
+        pressureTextView = view.findViewById(R.id.info_pressure);
+        windTextView = view.findViewById(R.id.info_wind);
+        humidityTextView = view.findViewById(R.id.info_humidity);
+        tempMinMaxTextView = view.findViewById(R.id.info_min_max);
     }
 
     public void getAindSetToolbarImage() {
-        //  flickrSearch.setLatAndLon(lat, lon);
         flickrSearch.downloadAndSetImage(city);
     }
 
@@ -258,14 +241,29 @@ public class WeatherInfoFragment extends Fragment {
         return ico;
     }
 
+    public void configure(String city, int temp, int pressure, int wind, int hum, int tempMin, int tempMax, String description, int weatherId, String additionInfo) {
+        this.tempMin=tempMin;
+        this.tempMax=tempMax;
+        this.city = city;
+        this.temperature = temp;
+        this.pressure = pressure;
+        this.wind = wind;
+        this.humidity = hum;
+        this.description = description;
+        this.weatherId = weatherId;
+        this.additionInfo = additionInfo;
+    }
+
     public void setAdditionalParams(String additionInfo) {
         this.additionInfo = additionInfo;
     }
-    public void setOptions(boolean isHumidity, boolean isWind, boolean isPressure){
+
+    public void setOptions(boolean isHumidity, boolean isWind, boolean isPressure) {
         setIsHumidity(isHumidity);
         setIsWind(isWind);
         setIsPressure(isPressure);
     }
+
     public boolean isWind() {
         return isWind;
     }

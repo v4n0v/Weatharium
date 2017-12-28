@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ public class WeatherDataSource {
             DBHelper.COLUMN_ID,
             DBHelper.COLUMN_CITY,
             DBHelper.COLUMN_TEMPERATURE,
+            DBHelper.COLUMN_DESCRIPTION,
             DBHelper.COLUMN_PRESSURE,
             DBHelper.COLUMN_HUMIDITY,
             DBHelper.COLUMN_WIND,
@@ -44,7 +44,7 @@ public class WeatherDataSource {
         dbHelper.close();
     }
 
-    public WeatherNote addNote(String city, int temperature,
+    public WeatherNote addNote(String city, int temperature, String description,
                                int pressure, int humidity, int wind, String time, long date, int wId) {
 
         WeatherNote newNote = new WeatherNote();
@@ -52,6 +52,7 @@ public class WeatherDataSource {
         ContentValues values = new ContentValues();
         values.put(DBHelper.COLUMN_CITY, city);
         values.put(DBHelper.COLUMN_TEMPERATURE, temperature);
+        values.put(DBHelper.COLUMN_DESCRIPTION, description);
         values.put(DBHelper.COLUMN_PRESSURE, pressure);
         values.put(DBHelper.COLUMN_HUMIDITY, humidity);
         values.put(DBHelper.COLUMN_WIND, wind);
@@ -64,6 +65,7 @@ public class WeatherDataSource {
 
         newNote.setCity(city);
         newNote.setTemperature(temperature);
+        newNote.setDescription(description);
         newNote.setPressure(pressure);
         newNote.setHumidity(humidity);
         newNote.setWind(wind);
@@ -76,13 +78,14 @@ public class WeatherDataSource {
     }
 
 
-    public void editNote(long id, String city, int temperature, int pressure,
+    public void editNote(long id, String city, int temperature, String description, int pressure,
                          int humidity, int wind, String time, long date, int wId) {
         ContentValues editedNote = new ContentValues();
-        editedNote.put(dbHelper.COLUMN_ID, id);
+        editedNote.put(DBHelper.COLUMN_ID, id);
 
         editedNote.put(DBHelper.COLUMN_CITY, city);
         editedNote.put(DBHelper.COLUMN_TEMPERATURE, temperature);
+        editedNote.put(DBHelper.COLUMN_DESCRIPTION, description);
         editedNote.put(DBHelper.COLUMN_PRESSURE, pressure);
         editedNote.put(DBHelper.COLUMN_HUMIDITY, humidity);
         editedNote.put(DBHelper.COLUMN_WIND, wind);
@@ -127,12 +130,13 @@ public class WeatherDataSource {
         note.setId(cursor.getLong(0));
         note.setCity(cursor.getString(1));
         note.setTemperature(cursor.getInt(2));
-        note.setPressure(cursor.getInt(3));
-        note.setHumidity(cursor.getInt(4));
-        note.setWind(cursor.getInt(5));
-        note.setTime(cursor.getString(6));
-        note.setDate(cursor.getLong(7));
-        note.setWeatherID(cursor.getInt(8));
+        note.setDescription(cursor.getString(3));
+        note.setPressure(cursor.getInt(4));
+        note.setHumidity(cursor.getInt(5));
+        note.setWind(cursor.getInt(6));
+        note.setTime(cursor.getString(7));
+        note.setDate(cursor.getLong(8));
+        note.setWeatherID(cursor.getInt(9));
         return note;
     }
 }

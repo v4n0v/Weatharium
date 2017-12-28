@@ -6,12 +6,12 @@ public class Weather {
     private int humidity;
     private String city;
     private int temperature;
-    private  int wind;
+    private int wind;
     private int pressure;
-    private  int tempMin;
-    private  int tempMax;
+    private int tempMin;
+    private int tempMax;
     private String description;
-    private  String mainInfo;
+    private String mainInfo;
     private int id;
 
     public float getLat() {
@@ -52,7 +52,6 @@ public class Weather {
     }
 
 
-
     public void setHumidity(int humidity) {
         this.humidity = humidity;
     }
@@ -83,7 +82,7 @@ public class Weather {
     }
 
 
-    public float getTempMin() {
+    public int getTempMin() {
         return tempMin;
     }
 
@@ -91,14 +90,13 @@ public class Weather {
         this.tempMin = tempMin;
     }
 
-    public float getTempMax() {
+    public int getTempMax() {
         return tempMax;
     }
 
     public void setTempMax(int tempMax) {
         this.tempMax = tempMax;
     }
-
 
 
     public String getMainInfo() {
@@ -118,15 +116,16 @@ public class Weather {
     }
 
 
-
     public void setId(int id) {
         this.id = id;
     }
 
 
-    public Weather(){}
+    public Weather() {
+    }
+
     public Weather(String city, int temperature, int wind,
-                   int pressure, int humidity ) {
+                   int pressure, int humidity) {
         this.city = city;
         this.temperature = temperature;
         this.wind = wind;

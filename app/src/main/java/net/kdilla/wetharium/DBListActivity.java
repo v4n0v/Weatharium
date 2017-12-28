@@ -27,13 +27,21 @@ public class DBListActivity extends AppCompatActivity {
     private List<WeatherNote> weatherNotese;
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
-
+    float midSize;
+    float bigSize;
+    float lilSize;
     WeatherDataSource notesDataSource;
+
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_db_list);
+
+
+        bigSize = getResources().getDimension(R.dimen.last_city_font_size);
+        midSize = getResources().getDimension(R.dimen.info_max_min_font_size);
+        lilSize = getResources().getDimension(R.dimen.last_addition_font_size);
 
         notesDataSource = new WeatherDataSource(getApplicationContext());
         notesDataSource.open();
@@ -49,15 +57,15 @@ public class DBListActivity extends AppCompatActivity {
             }
         });
 
+        if (weatherNotese.size() > 0) {
+            recyclerView = (RecyclerView) findViewById(R.id.recycler);
+            recyclerView.setHasFixedSize(true);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
-        adapter = new RecyclerAdapter(this, weatherNotese);
-        recyclerView.setAdapter(new  MyAdapter());
-
+            adapter = new RecyclerAdapter(this, weatherNotese);
+            recyclerView.setAdapter(new MyAdapter());
+        }
     }
 
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -66,8 +74,10 @@ public class DBListActivity extends AppCompatActivity {
         private TextView humidityTV;
         private TextView windTV;
         private TextView pressureTV;
+        private TextView descriptionTV;
         private TextView timeTV;
         private ImageView img;
+
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_last_shown, parent, false));
             itemView.setOnClickListener(this);
@@ -77,50 +87,61 @@ public class DBListActivity extends AppCompatActivity {
             pressureTV = (TextView) itemView.findViewById(R.id.last_pressure);
             windTV = (TextView) itemView.findViewById(R.id.last_wind);
             timeTV = (TextView) itemView.findViewById(R.id.last_time);
+            descriptionTV = (TextView) itemView.findViewById(R.id.last_description);
             img = (ImageView) itemView.findViewById(R.id.last_img);
         }
 
         void bind(int position) {
-            String city = weatherNotese.get(position).getCity();
-            String time = weatherNotese.get(position).getTime();
-            int temp = weatherNotese.get(position).getTemperature();
-            int pressure = weatherNotese.get(position).getPressure();
-            int humidity = weatherNotese.get(position).getHumidity();
-            int wind = weatherNotese.get(position).getWind();
-            int weatherId = weatherNotese.get(position).getWeatherID();
-            cityTV.setText(city);
-            tempTV.setText(getString(R.string.temp)+" "+String.valueOf(temp)+getString(R.string.cels));
-            pressureTV.setText(getString(R.string.pressure)+" "+String.valueOf(pressure)+getString(R.string.pressure_dim));
-            humidityTV.setText(getString(R.string.humidity)+" "+String.valueOf(humidity)+getString(R.string.humidity_dim));
-            windTV.setText(getString(R.string.wind)+" "+String.valueOf(wind)+getString(R.string.wind_dim));
-            timeTV.setText(getString(R.string.updated)+time);
-            //img.setImageDrawable(getDrawable(Preferences.getWeatherIcon(weatherId, DBListActivity.this));
-            img.setImageDrawable(Preferences.getWeatherIcon(weatherId, getApplication()));
-            //     muscleGroupTextView.setText(muscles[position]);
+            if (weatherNotese.size() > 0) {
+                String city = weatherNotese.get(position).getCity();
+                String time = weatherNotese.get(position).getTime();
+                String description = weatherNotese.get(position).getDescription();
+                int temp = weatherNotese.get(position).getTemperature();
+                int pressure = weatherNotese.get(position).getPressure();
+                int humidity = weatherNotese.get(position).getHumidity();
+                int wind = weatherNotese.get(position).getWind();
+                int weatherId = weatherNotese.get(position).getWeatherID();
+
+
+                String pressureInfo = pressure + getString(R.string.pressure_dim);
+                String windInfo = wind + getString(R.string.wind_dim);
+                String humInfo = humidity + getString(R.string.humidity_dim);
+
+                int length = city.length();
+                if (city.length() < 11) cityTV.setTextSize(36);
+                else if (city.length() < 18) cityTV.setTextSize(24);
+                else if (city.length() < 24) cityTV.setTextSize(18);
+
+                cityTV.setText(city);
+                tempTV.setText(temp + getString(R.string.cels));
+                pressureTV.setText(pressureInfo);
+                humidityTV.setText(humInfo);
+                windTV.setText(windInfo);
+                timeTV.setText(getString(R.string.updated) + " " + time);
+                descriptionTV.setText(description);
+
+                img.setImageDrawable(Preferences.getWeatherIcon(weatherId, getApplication()));
+            }
         }
 
         @Override
         public void onClick(View view) {
-            //startWorkout(view);
 
         }
     }
-//
-//    private void startWorkout(View view) {
-//        mainActivity.onFragmentButtonClick(view.getId());
-//    }
 
-    private class       MyAdapter extends RecyclerView.Adapter< MyViewHolder> {
+    private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(DBListActivity.this);
-            return new  MyViewHolder(inflater, parent);
+            return new MyViewHolder(inflater, parent);
         }
 
         @Override
-        public void onBindViewHolder( MyViewHolder holder, int position) {
+        public void onBindViewHolder(MyViewHolder holder, int position) {
             holder.bind(position);
         }
+
         public int getItemCount() {
             return weatherNotese.size();
         }

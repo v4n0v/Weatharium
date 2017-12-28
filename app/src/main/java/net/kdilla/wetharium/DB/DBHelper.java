@@ -13,6 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_CITY = "city";
     public static final String COLUMN_TEMPERATURE = "temperature";
+    public static final String COLUMN_DESCRIPTION = "descrition";
     public static final String COLUMN_PRESSURE = "pressure";
     public static final String COLUMN_HUMIDITY = "humidity";
     public static final String COLUMN_WIND = "wind";
@@ -30,6 +31,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
                 + COLUMN_CITY + " TEXT,"
                 + COLUMN_TEMPERATURE + " INTEGER,"
+                + COLUMN_DESCRIPTION+ " TEXT,"
                 + COLUMN_PRESSURE + " INTEGER,"
                 + COLUMN_HUMIDITY + " INTEGER,"
                 + COLUMN_WIND + " INTEGER,"

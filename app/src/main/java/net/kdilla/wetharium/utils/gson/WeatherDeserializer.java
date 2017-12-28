@@ -28,8 +28,9 @@ public class  WeatherDeserializer implements JsonDeserializer<Weather> {
         weather.setPressure(Integer.parseInt(main.pressure));
         WeatherWind wind = (WeatherWind) context.deserialize(jsonObject.get("wind"), WeatherWind.class);
         weather.setWind(Math.round(Float.parseFloat(main.temp)));
-        weather.setTempMax(Math.round(Float.parseFloat(main.temp)));
-        weather.setTempMin(Math.round(Float.parseFloat(main.temp)));
+
+        weather.setTempMax(Math.round(Float.parseFloat(main.getTempMax())));
+        weather.setTempMin(Math.round(Float.parseFloat(main.getTempMin())));
 
         JsonArray details = jsonObject.getAsJsonArray("weather");
         JsonObject detailsObject = (JsonObject)details.get(0);

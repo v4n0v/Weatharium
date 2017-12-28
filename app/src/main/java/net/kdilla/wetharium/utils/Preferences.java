@@ -20,10 +20,11 @@ public class Preferences {
     public static final String SAVED_PRESSURE = "saved_pressure";
     public static final String SAVED_HUMIDITY = "saved_storm";
     public static final String SAVED_LAST_UPD= "saved last upd";
-    public static final String WEATHER_POS = "message tag";
 
     public static final String ADD_CITY = "add city";
     public static final String ADD_TEMP = "add temp";
+    public static final String ADD_TEMP_MAX ="add temp max";
+    public static final String ADD_TEMP_MIN ="add temp min";
     public static final String ADD_WIND = "add wind";
     public static final String ADD_PRESSURE = "add pressure";
     public static final String ADD_HUMIDITY = "add humidity";

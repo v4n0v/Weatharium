@@ -2,14 +2,11 @@ package net.kdilla.wetharium.services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,7 +14,6 @@ import com.google.gson.GsonBuilder;
 
 import net.kdilla.wetharium.R;
 import net.kdilla.wetharium.utils.Preferences;
-import net.kdilla.wetharium.utils.WeatherDataLoader;
 import net.kdilla.wetharium.utils.gson.Weather;
 import net.kdilla.wetharium.utils.gson.WeatherDeserializer;
 import net.kdilla.wetharium.utils.gson.WeatherMain;
@@ -40,6 +36,8 @@ public class ServiceWeather extends Service {
     int pressure;
     int wind;
     int humidity;
+    int tempMin;
+    int tempMax;
     String lat;
     String lon;
     String description;
@@ -78,8 +76,8 @@ public class ServiceWeather extends Service {
                 public void run() {
                     Log.d("ServiceWeather", " " + interval);
                     if (city!=null) {
-                        if (isComplete == false) {
-                            loagWeatherJson();
+                        if (!isComplete) {
+                            loadWeatherJson();
                         }
                     }
                 }
@@ -88,7 +86,7 @@ public class ServiceWeather extends Service {
         }
     }
 
-    private void loagWeatherJson(){
+    private void loadWeatherJson(){
         WeatherGetTask tak = (WeatherGetTask) new WeatherGetTask(getApplicationContext()).execute(city);
 
         JSONObject jsonObject = null;
@@ -124,8 +122,9 @@ public class ServiceWeather extends Service {
             humidity = weatherForGSon.getHumidity();
             city = weatherForGSon.getCity();
             int imageId= weatherForGSon.getId();
-           description=weatherForGSon.getMainInfo();
-
+            description=weatherForGSon.getMainInfo();
+            tempMin=weatherForGSon.getTempMin();
+            tempMax=weatherForGSon.getTempMax();
             lon = String.valueOf(weatherForGSon.getLon());
             lat = String.valueOf(weatherForGSon.getLat());
 
@@ -140,28 +139,20 @@ public class ServiceWeather extends Service {
             if (isHumidity) {
                 additionalInfo += "Humidity: " + humidity + " " + getString(R.string.humidity_dim) + "\n";
             }
-//
-//            temperature = weatherForGSon.getTemperature();
-//            description=weatherForGSon.getMainInfo();
-//            Drawable weatherIcon = getWeatherIcon(weatherForGSon.getId());
 
             Log.d("GSON", gson.toJson(weatherForGSon));
 
-//            cityTextView.setText(weatherForGSon.getCity());
-//            additionalTextView.setText(additionalInfo);
-//            temperatureTextView.setText(temperatureFormat(weatherForGSon.getTemperature()));
-//            descriptionTextView.setText(weatherForGSon.getMainInfo());
-//            weatherImage.setImageDrawable(getWeatherIcon(weatherForGSon.getId()));
 
             Intent intent = new Intent(Preferences.BROADCAST_ACTION);
-
+            intent.putExtra(Preferences.ADD_CITY, city);
             intent.putExtra(Preferences.ADD_TEMP, temperature);
             intent.putExtra(Preferences.ADD_HUMIDITY, humidity);
             intent.putExtra(Preferences.ADD_WIND, wind);
             intent.putExtra(Preferences.ADD_PRESSURE, pressure);
             intent.putExtra(Preferences.ADD_DESCRIPTION, description);
             intent.putExtra(Preferences.ADD_IMAGE_ID, imageId);
-
+            intent.putExtra(Preferences.ADD_TEMP_MIN, tempMin);
+            intent.putExtra(Preferences.ADD_TEMP_MAX, tempMax);
             sendBroadcast(intent);
 
         } catch (Exception e) {
@@ -172,39 +163,10 @@ public class ServiceWeather extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Toast.makeText(this, "Service bind", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Service bind", Toast.LENGTH_SHORT).show();
+        Log.d("DEBUGG", "Service bind");
         return binder;
     }
-    private Drawable getWeatherIcon(int id) {
-        id = id / 100;
-        Drawable ico = null;
-        switch (id) {
-            case 2:
-                ico = getResources().getDrawable(R.drawable.day_thunder);
-                break;
-            case 3:
-                ico = getResources().getDrawable(R.drawable.day_drizzle);
-                break;
-            case 5:
-                ico = getResources().getDrawable(R.drawable.day_rainy);
-                break;
-            case 6:
-                ico = getResources().getDrawable(R.drawable.day_snowie);
-                break;
-            case 7:
-                ico = getResources().getDrawable(R.drawable.day_foggy);
-                break;
-            case 8:
-                ico = getResources().getDrawable(R.drawable.day_cloudly);
-                break;
-
-            default:
-                break;
-        }
-        return ico;
-    }
-
-
 
     public class WeatherBinder extends Binder{
        public ServiceWeather getService(){ return ServiceWeather.this;}

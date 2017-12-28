@@ -9,10 +9,8 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.Preferences;
@@ -28,13 +26,17 @@ public class SplashActivity extends AppCompatActivity {
     boolean isWind;
     String city;
     BroadcastReceiver br;
-
+    int tempMin;
+    int tempMax;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+//
+//        ApplicationController applicationController = new ApplicationController(getApplicationContext());
+      loadPreferences();
 
-        loadPreferences();
+
         sConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -44,7 +46,6 @@ public class SplashActivity extends AppCompatActivity {
                 serviceWeather.changeCity(city);
                 bind = true;
             }
-
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 bind = false;
@@ -61,6 +62,8 @@ public class SplashActivity extends AppCompatActivity {
                 int hum = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
                 int wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
                 int press = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+                tempMax= intent.getIntExtra(Preferences.ADD_TEMP_MAX, 0);
+                tempMin= intent.getIntExtra(Preferences.ADD_TEMP_MIN, 0);
                 String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
                 String additionalInfo = "";
                 int weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
@@ -86,7 +89,8 @@ public class SplashActivity extends AppCompatActivity {
                 intent1.putExtra(Preferences.ADD_ADDITION, additionalInfo);
                 intent1.putExtra(Preferences.ADD_DESCRIPTION,decription );
                 intent1.putExtra(Preferences.ADD_IMAGE_ID, weatherId);
-                intent1.putExtra(Preferences.ADD_IS_BIND, bind);
+                intent1.putExtra(Preferences.ADD_TEMP_MIN, tempMin);
+                intent1.putExtra(Preferences.ADD_TEMP_MAX, tempMax);
                 intent1.putExtra(Preferences.SOURCE, Preferences.SPLASH);
                 intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -102,7 +106,7 @@ public class SplashActivity extends AppCompatActivity {
         registerReceiver(br, intFilt);
 
     }
-
+//
     private void loadPreferences() {
         preferences = getPreferences(MODE_PRIVATE);
         String savedCity = preferences.getString(Preferences.SAVED_CITY, "Moscow");
