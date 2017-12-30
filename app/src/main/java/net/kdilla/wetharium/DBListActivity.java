@@ -93,6 +93,7 @@ public class DBListActivity extends AppCompatActivity {
 
         void bind(int position) {
             if (weatherNotese.size() > 0) {
+
                 String city = weatherNotese.get(position).getCity();
                 String time = weatherNotese.get(position).getTime();
                 String description = weatherNotese.get(position).getDescription();
@@ -108,7 +109,7 @@ public class DBListActivity extends AppCompatActivity {
                 String humInfo = humidity + getString(R.string.humidity_dim);
 
                 int length = city.length();
-                if (city.length() < 11) cityTV.setTextSize(36);
+                if (city.length() < 11) cityTV.setTextSize(32);
                 else if (city.length() < 18) cityTV.setTextSize(24);
                 else if (city.length() < 24) cityTV.setTextSize(18);
 
@@ -118,6 +119,9 @@ public class DBListActivity extends AppCompatActivity {
                 humidityTV.setText(humInfo);
                 windTV.setText(windInfo);
                 timeTV.setText(getString(R.string.updated) + " " + time);
+
+                if (weatherId==800) description=getString(R.string.clear);
+                else description=Preferences.getWeatherDescription(weatherId, getApplicationContext());
                 descriptionTV.setText(description);
 
                 img.setImageDrawable(Preferences.getWeatherIcon(weatherId, getApplication()));

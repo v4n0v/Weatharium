@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/big_margin"
     android:background="@color/colorGrayBG"
-    android:elevation="@dimen/lil_margin"
+    android:elevation="@dimen/margin_border"
     android:orientation="vertical">
 
     <ImageView
@@ -24,7 +24,7 @@
             android:id="@+id/last_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
+            android:layout_marginRight="@dimen/lil_margin"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
             tools:src="@drawable/day_cloudly" />
@@ -41,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryDark"
+
                 android:textSize="@dimen/last_city_font_size"
                 android:textStyle="bold"
                 tools:text="London" />
@@ -61,101 +62,25 @@
             android:id="@+id/last_temp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
+            android:layout_weight="3"
             android:textAlignment="viewEnd"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/last_temp_font_size"
-            tools:text="+30" />
+            tools:text="+301" />
     </LinearLayout>
-    <!--android:fontFamily="@font/roboto_light"-->
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="@dimen/margin_border"
 
         android:src="@drawable/border" />
 
-    <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:background="@color/colorWhite"-->
-    <!--android:padding="@dimen/mid_margin">-->
-
-
-    <!--<TextView-->
-    <!--android:id="@+id/info_pressure_txt"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="50dp"-->
-    <!--android:layout_marginBottom="@dimen/std_margin"-->
-    <!--android:layout_marginEnd="50dp"-->
-    <!--android:textColor="@color/colorBlack"-->
-    <!--android:textStyle="bold"-->
-    <!--android:textSize="@dimen/last_addition_font_size"-->
-    <!--tools:text="Pressure:" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/last_pressure"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_toEndOf="@id/info_pressure_txt"-->
-    <!--android:textSize="@dimen/last_addition_font_size"-->
-    <!--android:textColor="@color/colorBlack"-->
-    <!--tools:text="1000mPhg" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/info_wind_txt"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_below="@id/info_pressure_txt"-->
-    <!--android:layout_marginBottom="@dimen/std_margin"-->
-    <!--android:textColor="@color/colorBlack"-->
-    <!--android:textStyle="bold"-->
-    <!--android:textSize="@dimen/last_addition_font_size"-->
-    <!--android:layout_alignStart="@id/info_pressure_txt"-->
-    <!--tools:text="Wind:" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/last_wind"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignBottom="@id/info_wind_txt"-->
-    <!--android:textSize="@dimen/last_addition_font_size"-->
-    <!--android:layout_alignStart="@id/last_pressure"-->
-    <!--android:textColor="@color/colorBlack"-->
-    <!--tools:text="70%" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/info_humidity_txt"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_below="@id/info_wind_txt"-->
-    <!--android:layout_marginBottom="@dimen/std_margin"-->
-    <!--android:textColor="@color/colorBlack"-->
-    <!--android:textStyle="bold"-->
-    <!--android:textSize="@dimen/last_addition_font_size"-->
-    <!--android:layout_alignStart="@id/info_pressure_txt"-->
-    <!--tools:text="Humidity:" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/last_humidity"-->
-
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignBottom="@id/info_humidity_txt"-->
-    <!--android:layout_alignStart="@id/last_wind"-->
-    <!--android:textSize="@dimen/last_addition_font_size"-->
-    <!--android:textColor="@color/colorBlack"-->
-    <!--tools:text="7ms" />-->
-
-
-    <!--</RelativeLayout>-->
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
-        android:elevation="2dp"
+
         android:orientation="vertical"
         android:padding="@dimen/mid_margin">
 

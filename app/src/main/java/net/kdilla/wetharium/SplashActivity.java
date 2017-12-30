@@ -16,36 +16,40 @@ import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.Preferences;
 
 public class SplashActivity extends AppCompatActivity {
-    ServiceConnection sConn;
-    boolean bind;
-    ServiceWeather serviceWeather;
+    private ServiceConnection sConn;
+    private boolean bind;
+    private ServiceWeather serviceWeather;
 
-    SharedPreferences preferences;
-    boolean isPressure;
-    boolean isHumidity;
-    boolean isWind;
-    String city;
-    BroadcastReceiver br;
-    int tempMin;
-    int tempMax;
+    private SharedPreferences preferences;
+    private boolean isPressure;
+    private boolean isHumidity;
+    private boolean isWind;
+    private String city;
+    private BroadcastReceiver br;
+    private int tempMin;
+    private int tempMax;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 //
 //        ApplicationController applicationController = new ApplicationController(getApplicationContext());
-      loadPreferences();
+        loadPreferences();
+
+        city="Moscow";
 
 
         sConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-            //    Toast.makeText(getBaseContext(), "Splash service connected", Toast.LENGTH_SHORT).show();
+                //    Toast.makeText(getBaseContext(), "Splash service connected", Toast.LENGTH_SHORT).show();
                 Log.d("DEBUGGG", "Splash service connected");
                 serviceWeather = ((ServiceWeather.WeatherBinder) service).getService();
                 serviceWeather.changeCity(city);
                 bind = true;
             }
+
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 bind = false;
@@ -62,11 +66,12 @@ public class SplashActivity extends AppCompatActivity {
                 int hum = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
                 int wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
                 int press = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
-                tempMax= intent.getIntExtra(Preferences.ADD_TEMP_MAX, 0);
-                tempMin= intent.getIntExtra(Preferences.ADD_TEMP_MIN, 0);
+                tempMax = intent.getIntExtra(Preferences.ADD_TEMP_MAX, 0);
+                tempMin = intent.getIntExtra(Preferences.ADD_TEMP_MIN, 0);
                 String decription = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
                 String additionalInfo = "";
                 int weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
+
                 if (isPressure) {
                     additionalInfo += "Pressure: " + press + " " + getString(R.string.pressure_dim) + "\n";
                 }
@@ -87,7 +92,7 @@ public class SplashActivity extends AppCompatActivity {
                 intent1.putExtra(Preferences.ADD_HUMIDITY, hum);
                 intent1.putExtra(Preferences.ADD_WIND, wind);
                 intent1.putExtra(Preferences.ADD_ADDITION, additionalInfo);
-                intent1.putExtra(Preferences.ADD_DESCRIPTION,decription );
+                intent1.putExtra(Preferences.ADD_DESCRIPTION, decription);
                 intent1.putExtra(Preferences.ADD_IMAGE_ID, weatherId);
                 intent1.putExtra(Preferences.ADD_TEMP_MIN, tempMin);
                 intent1.putExtra(Preferences.ADD_TEMP_MAX, tempMax);
@@ -106,18 +111,18 @@ public class SplashActivity extends AppCompatActivity {
         registerReceiver(br, intFilt);
 
     }
-//
-    private void loadPreferences() {
-        preferences = getPreferences(MODE_PRIVATE);
-        String savedCity = preferences.getString(Preferences.SAVED_CITY, "Moscow");
 
-        isPressure = preferences.getBoolean(Preferences.SAVED_PRESSURE, true);
-        isWind = preferences.getBoolean(Preferences.SAVED_WIND, true);
-        isHumidity = preferences.getBoolean(Preferences.SAVED_HUMIDITY, true);
+    //
+    private void loadPreferences() {
+//        preferences = getPreferences(MODE_PRIVATE);
+        preferences = getSharedPreferences(Preferences.APP_PREFERENCES, Context.MODE_PRIVATE);
+        String savedCity = preferences.getString(Preferences.ADD_CITY, "Moscow");
+
+        isPressure = preferences.getBoolean(Preferences.ADD_IS_PRESSURE, true);
+        isWind = preferences.getBoolean(Preferences.ADD_IS_WIND, true);
+        isHumidity = preferences.getBoolean(Preferences.ADD_IS_HUMIDITY, true);
         if (savedCity.equals("") || savedCity == null) savedCity = "Moscow";
         city = savedCity;
-        //  serviceWeather.setCity(city);
-        // weatherInfoFragment.setCity(city);
 
     }
 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/widget_clock"
+        style="@style/TextShadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:elevation="@dimen/margin_border"
+        android:fontFamily="@font/roboto_light"
+        android:textColor="@color/colorGrayBG"
+        android:textSize="80sp"
+        tools:text="21:21" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right">
+        <TextView
+            android:id="@+id/widget_city"
+            style="@style/TextShadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorGrayBG"
+            android:textSize="@dimen/last_addition_font_size"
+            tools:text="Moscow"
+            android:layout_marginRight="@dimen/mid_margin"/>
+        <TextView
+            android:id="@+id/widget_temp"
+            style="@style/TextShadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/colorGrayBG"
+            android:textSize="@dimen/last_addition_font_size"
+            tools:text="+30o" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

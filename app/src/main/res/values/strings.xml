@@ -38,9 +38,18 @@
         <item>1</item>
         <item>Thunder</item>
         <item>Drizzle</item>
-        <item>Rainy</item>
-        <item>Snowie</item>
-        <item>Foggy</item>
-        <item>Cloudly</item>
+        <item>4</item>
+        <item>Rain</item>
+        <item>Snow</item>
+        <item>Mist</item>
+        <item>Clouds</item>
     </string-array>
+
+
+    <string name="city_default">Moscow</string>
+    <string name="clear">Clear</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Select city</string>
+    <string name="ok">Ok</string>
+    <string name="update_weather">Update weather</string>
 </resources>

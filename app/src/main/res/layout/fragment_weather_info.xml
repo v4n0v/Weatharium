@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/info_weather_ico_size"
                 android:layout_marginBottom="-15dp"
-                android:layout_weight="2"
+                android:layout_weight="7"
                 tools:src="@drawable/day_rainy" />
 
             <TextView
@@ -33,24 +33,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/mid_margin"
                 android:layout_marginTop="-15dp"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:textColor="@color/colorDarkGray"
-                android:textSize="90sp"
-                tools:text="+21" />
+                android:textSize="@dimen/info_temp_font"
+                tools:text="+21o" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/info_description_shape"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="7"
                 android:background="@color/colorWhite"
                 android:elevation="@dimen/mid_margin"
                 android:padding="@dimen/lil_margin">
@@ -73,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/mid_margin"
-                android:layout_weight="1"
+                android:layout_weight="3"
 
                 android:text="+1 +3"
                 android:textColor="@color/colorDarkGray"

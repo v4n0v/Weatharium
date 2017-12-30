@@ -20,7 +20,16 @@
 
     <dimen name="last_addition_font_size">18sp</dimen>
     <dimen name="info_max_min_font_size">24sp</dimen>
-    <dimen name="last_city_font_size">36sp</dimen>
+    <dimen name="last_city_font_size">32sp</dimen>
+    <dimen name="widget_time_font_size">46sp</dimen>
+
     <dimen name="last_temp_font_size">56sp</dimen>
     <dimen name="text_sizze_header">60sp</dimen>
+
+    <!--
+Refer to App Widget Documentation for margin information
+http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
+    -->
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="info_temp_font">90sp</dimen>
 </resources>

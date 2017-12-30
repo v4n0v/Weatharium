@@ -2,10 +2,22 @@ package net.kdilla.wetharium.utils.gson;
 
 public class WeatherMain {
 
+    public String getHumidity() {
+        return humidity;
+    }
 
+    private String humidity;
 
-    public void setTemp(
-            String temp) {
+    public String getTemp() {
+        return temp;
+    }
+
+    private String temp;
+    private String tempMin;
+    private String tempMax;
+    private String pressure;
+
+    public void setTemp(String temp) {
         this.temp = temp;
     }
 
@@ -17,13 +29,9 @@ public class WeatherMain {
         this.pressure = pressure;
     }
 
-
     public void setHumidity(String humidity) {
         this.humidity = humidity;
     }
-
-    String humidity;
-    String temp;
 
     public String getTempMin() {
         return tempMin;
@@ -41,7 +49,5 @@ public class WeatherMain {
         this.tempMax = tempMax;
     }
 
-    String tempMin;
-    String tempMax;
-    String pressure;
+
 }

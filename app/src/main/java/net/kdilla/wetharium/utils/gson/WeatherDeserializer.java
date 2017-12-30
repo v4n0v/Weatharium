@@ -8,11 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
-import java.util.Locale;
 
-/**
- * Created by avetc on 08.12.2017.
- */
 
 public class  WeatherDeserializer implements JsonDeserializer<Weather> {
     @Override
@@ -23,11 +19,14 @@ public class  WeatherDeserializer implements JsonDeserializer<Weather> {
         weather.setCity(jsonObject.get("name").getAsString());
 
         WeatherMain main = (WeatherMain) context.deserialize(jsonObject.get("main"), WeatherMain.class);
-        weather.setHumidity(Integer.parseInt(main.humidity));
-        weather.setTemperature(Math.round(Float.parseFloat(main.temp)));
-        weather.setPressure(Integer.parseInt(main.pressure));
+        weather.setHumidity(Integer.parseInt(main.getHumidity()));
+        weather.setTemperature(Math.round(Float.parseFloat(main.getTemp())));
+        String aaa = main.getPressure();
+        int a = Math.round(Float.parseFloat(main.getPressure()));
+
+        weather.setPressure(a);
         WeatherWind wind = (WeatherWind) context.deserialize(jsonObject.get("wind"), WeatherWind.class);
-        weather.setWind(Math.round(Float.parseFloat(main.temp)));
+        weather.setWind(Math.round(Float.parseFloat(wind.speed)));
 
         weather.setTempMax(Math.round(Float.parseFloat(main.getTempMax())));
         weather.setTempMin(Math.round(Float.parseFloat(main.getTempMin())));

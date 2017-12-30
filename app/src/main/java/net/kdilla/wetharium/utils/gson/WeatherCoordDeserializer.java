@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 public class WeatherCoordDeserializer implements JsonDeserializer<WeatherCoord> {
     @Override
     public WeatherCoord deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        WeatherCoord coord = new WeatherCoord();
+          WeatherCoord coord = new WeatherCoord();
         JsonObject jsonObject = json.getAsJsonObject();
         coord.setLat(jsonObject.get("lat").getAsFloat());
         coord.setLon(jsonObject.get("lon").getAsFloat());

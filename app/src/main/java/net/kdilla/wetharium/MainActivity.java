@@ -2,6 +2,7 @@ package net.kdilla.wetharium;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -36,6 +37,7 @@ import net.kdilla.wetharium.fragments.WeatherInfoFragment;
 import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.FileManager;
 import net.kdilla.wetharium.utils.Preferences;
+import net.kdilla.wetharium.widget.WidgetWeather;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -114,11 +116,11 @@ public class MainActivity extends AppCompatActivity
                     loadPreferences();
 
                 } else {
-                    Log.d("DEBUGGG", "Wrong SOURCE ");
+                    Log.d(Preferences.DEBUG_KEY, "Wrong SOURCE ");
                 }
                 // если приложение открыто после закрытия, то загружаем сохранные данные
             } else {
-                Log.d("DEBUGGG", "SOURCE = null");
+                Log.d(Preferences.DEBUG_KEY,  "MAIN SOURCE = null");
                 loadPreferences();
 
             }
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 //  Toast.makeText(getBaseContext(), "Service connected", Toast.LENGTH_SHORT).show();
-                Log.d("DEBUGGG", "Service connected");
+                Log.d(Preferences.DEBUG_KEY, "MAIN Service connected");
                 serviceWeather = ((ServiceWeather.WeatherBinder) service).getService();
                 bind = true;
             }
@@ -311,7 +313,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
                 city = cityTextFormat(input.getText().toString());
 
-                Log.d("DEBUGGG", "Current date = " + lastUpd);
+                Log.d(Preferences.DEBUG_KEY, "Current date = " + lastUpd);
 
                 serviceWeather.changeCity(city);
                 //   fillFragment(weatherInfoFragment);
@@ -322,6 +324,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     Date date;
+
+
+    public void updateWeather(MenuItem item){
+        serviceWeather.update();
+        Toast.makeText(this, "Updating", Toast.LENGTH_SHORT).show();
+    }
 
     public void showOptions(MenuItem item) {
 
@@ -361,8 +369,8 @@ public class MainActivity extends AppCompatActivity
 
 
     private void loadPreferences() {
-        preferences = getPreferences(MODE_PRIVATE);
-
+//        preferences = getPreferences(MODE_PRIVATE);
+        preferences = getSharedPreferences(Preferences.APP_PREFERENCES, Context.MODE_PRIVATE);
         isHumidity = preferences.getBoolean(Preferences.ADD_IS_HUMIDITY, true);
         isWind = preferences.getBoolean(Preferences.ADD_IS_WIND, true);
         isPressure = preferences.getBoolean(Preferences.ADD_IS_PRESSURE, true);
@@ -384,12 +392,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void savePreferences() {
-        preferences = getPreferences(MODE_PRIVATE);
-        WeatherNote note = getNoteByName(city);
+//        preferences = getPreferences(MODE_PRIVATE);
+        preferences = getSharedPreferences(Preferences.APP_PREFERENCES, Context.MODE_PRIVATE);
+        WeatherNote note = Preferences.getNoteByName(city, elements);
         if (note != null) {
             SharedPreferences.Editor ed = preferences.edit();
 
-            ed.putString(Preferences.ADD_CITY, note.getCity());
+            ed.putString(Preferences.ADD_CITY, city);
             ed.putBoolean(Preferences.ADD_IS_PRESSURE, isPressure);
             ed.putBoolean(Preferences.ADD_IS_WIND, isWind);
             ed.putBoolean(Preferences.ADD_IS_WIND, isHumidity);
@@ -399,9 +408,9 @@ public class MainActivity extends AppCompatActivity
             ed.putInt(Preferences.ADD_PRESSURE, note.getPressure());
             ed.putInt(Preferences.ADD_WIND, note.getWind());
             ed.putInt(Preferences.ADD_HUMIDITY, note.getHumidity());
-            ed.putInt(Preferences.ADD_IMAGE_ID, weatherId);
+            ed.putInt(Preferences.ADD_IMAGE_ID, note.getWeatherID());
             ed.putString(Preferences.ADD_ADDITION, additionalInfo);
-            ed.putString(Preferences.ADD_DESCRIPTION, description);
+            ed.putString(Preferences.ADD_DESCRIPTION, note.getDescription());
 
             ed.putInt(Preferences.ADD_TEMP_MAX, tempMax);
             ed.putInt(Preferences.ADD_TEMP_MIN, tempMin);
@@ -414,7 +423,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         savePreferences();
-
         super.onStop();
     }
 
@@ -465,18 +473,18 @@ public class MainActivity extends AppCompatActivity
         // если элемент не существует и список пустой, создаем новую запись
         if (note == null || elements.size() == 0) {
             notesDataSource.addNote(city, temp, description, pressure, hum, wind, time, date, weatherId);
-            Log.d("DEBUGGG", "Not exist, created new " + city);
+            Log.d(Preferences.DEBUG_KEY, "Not exist, created new " + city);
             // иначе редактируем существующую
         } else {
             long id = note.getId();
             notesDataSource.editNote(id, city, temp, description, pressure, hum, wind, time, date, weatherId);
-            Log.d("DEBUGGG", "Exist and edited " + city);
+            Log.d(Preferences.DEBUG_KEY, "Exist and edited " + city);
         }
 
         // очищаем и обновляем список элментов
         elements.clear();
         elements = notesDataSource.getAllNotes();
-        Log.d("DEBUGGG", "Elements count " + elements.size());
+        Log.d(Preferences.DEBUG_KEY, "Elements count " + elements.size());
     }
 
     @Override
@@ -493,7 +501,7 @@ public class MainActivity extends AppCompatActivity
     private WeatherNote getNoteByName(String name) {
         if (elements.size() != 0) {
             for (int i = 0; i < elements.size(); i++) {
-                if (elements.get(i).getCity().equals(city)) {
+                if (elements.get(i).getCity().equals(name)) {
                     return elements.get(i);
                 }
             }
@@ -501,5 +509,16 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
+    protected void onWidgetChangeCity(String city){
+        Intent intent_city_update = new  Intent(getApplicationContext(), WidgetWeather.class);
+        intent_city_update.putExtra(WidgetWeather.UPDATE_WIDGET_CITY, city);
+        sendBroadcast(intent_city_update);
+    }
+
+    protected void onMessage() {
+        Intent intent_meeting_update = new  Intent(getApplicationContext(), WidgetWeather.class);
+        intent_meeting_update.setAction(WidgetWeather.UPDATE_WIDGET_ACTION);
+        sendBroadcast(intent_meeting_update);
+    }
 
 }

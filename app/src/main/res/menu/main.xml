@@ -2,29 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-
-        android:title="@string/select_city"
         android:id="@+id/menu_select_city"
+        android:title="@string/select_city"
         android:onClick="showInputDialog"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
         android:title="@string/action_settings"
+        android:orderInCategory="100"
         android:onClick="showOptions"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_clear_base"
+        android:id="@+id/action_update_weather"
+        android:title="@string/update_weather"
         android:orderInCategory="100"
-        android:title="@string/clear_base"
-        android:onClick="clearBase"
+        android:onClick="updateWeather"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_change_pic"
-        android:orderInCategory="100"
         android:title="@string/reload_picture"
+        android:orderInCategory="100"
         android:onClick="reloadPicture"
         app:showAsAction="never" />
 </menu>

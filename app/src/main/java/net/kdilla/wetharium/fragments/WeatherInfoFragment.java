@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.R;
 import net.kdilla.wetharium.utils.FileManager;
 import net.kdilla.wetharium.utils.FlickrSearch;
@@ -85,6 +86,7 @@ public class WeatherInfoFragment extends Fragment {
     private  String lon;
     private FlickrSearch flickrSearch;
 
+    boolean isOk;
     private  Bitmap cityBitmap;
     private BroadcastReceiver br;
 
@@ -116,7 +118,10 @@ public class WeatherInfoFragment extends Fragment {
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                isOk= intent.getBooleanExtra(Preferences.ADD_IS_OK, false);
+
                 city = intent.getStringExtra(Preferences.ADD_CITY);
+
                 temperature = intent.getIntExtra(Preferences.ADD_TEMP, 0);
                 humidity = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
                 wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
@@ -166,12 +171,18 @@ public class WeatherInfoFragment extends Fragment {
         windTextView.setText(windInfo);
         humidityTextView.setText(humInfo);
         lastUpdTextView.setText(time);
-        String minMax = temperatureFormat(tempMin)+CELCIUM+" "+temperatureFormat(tempMax)+CELCIUM;
+        String minMax = Preferences.temperatureFormat(tempMin)+CELCIUM+" "+Preferences.temperatureFormat(tempMax)+CELCIUM;
         tempMinMaxTextView.setText(minMax);
         //   additionalTextView.setText(formatAdditionInfoString());
-        temperatureTextView.setText(temperatureFormat(temperature) + CELCIUM);
+
+        if (weatherId==800) description=getString(R.string.clear);
+        else description=Preferences.getWeatherDescription(weatherId, getContext());
+
+        temperatureTextView.setText(Preferences.temperatureFormat(temperature) + CELCIUM);
         descriptionTextView.setText(description);
-        weatherImage.setImageDrawable(getWeatherIcon(weatherId));
+
+        weatherImage.setImageDrawable(Preferences.getWeatherIcon(weatherId, getContext()));
+
         mainActivity.onTitleUpdate(city);
         mainActivity.onDbUpdateWeatherID(city, temperature, pressure, humidity, wind, date, weatherId);
     }
@@ -209,36 +220,6 @@ public class WeatherInfoFragment extends Fragment {
 
     public void getAindSetToolbarImage() {
         flickrSearch.downloadAndSetImage(city);
-    }
-
-    private Drawable getWeatherIcon(int id) {
-        id = id / 100;
-        Drawable ico = null;
-        switch (id) {
-            case 2:
-
-                ico = getResources().getDrawable(R.drawable.day_thunder);
-                break;
-            case 3:
-                ico = getResources().getDrawable(R.drawable.day_drizzle);
-                break;
-            case 5:
-                ico = getResources().getDrawable(R.drawable.day_rainy);
-                break;
-            case 6:
-                ico = getResources().getDrawable(R.drawable.day_snowie);
-                break;
-            case 7:
-                ico = getResources().getDrawable(R.drawable.day_foggy);
-                break;
-            case 8:
-                ico = getResources().getDrawable(R.drawable.day_cloudly);
-                break;
-
-            default:
-                break;
-        }
-        return ico;
     }
 
     public void configure(String city, int temp, int pressure, int wind, int hum, int tempMin, int tempMax, String description, int weatherId, String additionInfo) {

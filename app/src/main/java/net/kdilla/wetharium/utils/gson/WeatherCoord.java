@@ -1,5 +1,4 @@
 package net.kdilla.wetharium.utils.gson;
-
 /**
  * Created by avetc on 22.12.2017.
  */

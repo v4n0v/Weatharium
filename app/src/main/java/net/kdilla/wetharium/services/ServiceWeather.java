@@ -19,6 +19,7 @@ import net.kdilla.wetharium.utils.gson.WeatherDeserializer;
 import net.kdilla.wetharium.utils.gson.WeatherMain;
 import net.kdilla.wetharium.utils.gson.WeatherMainDeserializer;
 import net.kdilla.wetharium.utils.tasks.WeatherGetTask;
+import net.kdilla.wetharium.widget.WidgetWeather;
 
 import org.json.JSONObject;
 
@@ -28,54 +29,58 @@ import java.util.concurrent.ExecutionException;
 
 public class ServiceWeather extends Service {
 
-    Timer timer;
-    TimerTask tTask;
+    private Timer timer;
+    private TimerTask tTask;
 
-    String city;
-    int temperature;
-    int pressure;
-    int wind;
-    int humidity;
-    int tempMin;
-    int tempMax;
-    String lat;
-    String lon;
-    String description;
+    private String city;
+    private int temperature;
+    private int pressure;
+    private int wind;
+    private int humidity;
+    private int tempMin;
+    private int tempMax;
+    private String lat;
+    private String lon;
+    private String description;
     // обновляю каждые 10 минут
     private long interval = 600_000;
 
-    WeatherBinder binder = new WeatherBinder();
+    private WeatherBinder binder = new WeatherBinder();
 
     private boolean isWind = true;
     private boolean isPressure = true;
     private boolean isHumidity = true;
-    private boolean isComplete=true;
+    private boolean isComplete = true;
 
+    private boolean isOk;
     @Override
     public void onCreate() {
         super.onCreate();
         timer = new Timer();
-        Log.d("ServiceWeather", "Service created");
-     schedule();
+        Log.d(Preferences.DEBUG_KEY,  "ServiceWeather created");
+        schedule();
 
     }
-    public void setCity(String city){
-        this.city=city;
+
+    public void setCity(String city) {
+        this.city = city;
     }
-    public void changeCity(String city){
-      setCity(city);
-      isComplete=false;
-      schedule();
+
+    public void changeCity(String city) {
+        setCity(city);
+        isComplete = false;
+        schedule();
 
     }
+
     private void schedule() {
         if (tTask != null) tTask.cancel();
         if (interval > 0) {
             // начинаем отсчет до 10минут
             tTask = new TimerTask() {
                 public void run() {
-                    Log.d("ServiceWeather", " " + interval);
-                    if (city!=null) {
+                    Log.d(Preferences.DEBUG_KEY, "Service weather interval " + interval);
+                    if (city != null) {
                         if (!isComplete) {
                             loadWeatherJson();
                         }
@@ -86,7 +91,7 @@ public class ServiceWeather extends Service {
         }
     }
 
-    private void loadWeatherJson(){
+    private void loadWeatherJson() {
         WeatherGetTask tak = (WeatherGetTask) new WeatherGetTask(getApplicationContext()).execute(city);
 
         JSONObject jsonObject = null;
@@ -100,10 +105,10 @@ public class ServiceWeather extends Service {
         if (jsonObject != null) {
             renderWeather(jsonObject);
         } else {
-            Log.d("ServiceWeather", "jsonObject=null ");
+            Log.d(Preferences.DEBUG_KEY, "ServiceWeather jsonObject=null ");
         }
         isComplete = true;
-        Log.d("ServiceWeather", "jsonObject load complete");
+        Log.d(Preferences.DEBUG_KEY,"ServiceWeather jsonObject load complete");
     }
 
     private void renderWeather(JSONObject json) {
@@ -121,10 +126,10 @@ public class ServiceWeather extends Service {
             wind = weatherForGSon.getWind();
             humidity = weatherForGSon.getHumidity();
             city = weatherForGSon.getCity();
-            int imageId= weatherForGSon.getId();
-            description=weatherForGSon.getMainInfo();
-            tempMin=weatherForGSon.getTempMin();
-            tempMax=weatherForGSon.getTempMax();
+            int imageId = weatherForGSon.getId();
+            description = weatherForGSon.getMainInfo();
+            tempMin = weatherForGSon.getTempMin();
+            tempMax = weatherForGSon.getTempMax();
             lon = String.valueOf(weatherForGSon.getLon());
             lat = String.valueOf(weatherForGSon.getLat());
 
@@ -153,13 +158,24 @@ public class ServiceWeather extends Service {
             intent.putExtra(Preferences.ADD_IMAGE_ID, imageId);
             intent.putExtra(Preferences.ADD_TEMP_MIN, tempMin);
             intent.putExtra(Preferences.ADD_TEMP_MAX, tempMax);
+            intent.putExtra(Preferences.ADD_IS_OK, isOk);
             sendBroadcast(intent);
+
+            Intent intent_city_update = new  Intent(getApplicationContext(), WidgetWeather.class);
+            intent_city_update.setAction(WidgetWeather.ACTION_WIDGET_RECEIVER);
+            intent_city_update.putExtra(Preferences.ADD_CITY, city);
+            intent_city_update.putExtra(Preferences.ADD_TEMP, temperature);
+            intent_city_update.putExtra(Preferences.SOURCE, Preferences.WIDGET);
+            sendBroadcast(intent_city_update);
+            Log.d(Preferences.DEBUG_KEY, "ServiceWeather complete Json render");
 
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d("ERRORO", e.getMessage());
         }
 
     }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -168,9 +184,25 @@ public class ServiceWeather extends Service {
         return binder;
     }
 
-    public class WeatherBinder extends Binder{
-       public ServiceWeather getService(){ return ServiceWeather.this;}
+    public void update() {
+        isComplete = false;
+        schedule();
     }
 
+    public class WeatherBinder extends Binder {
+        public ServiceWeather getService() {
+            return ServiceWeather.this;
+        }
+    }
 
+    protected void onWidgetChangeCity(String city){
+        Intent intent_city_update = new  Intent(getApplicationContext(), WidgetWeather.class);
+        intent_city_update.putExtra(WidgetWeather.ACTION_WIDGET_RECEIVER, city);
+        sendBroadcast(intent_city_update);
+
+
+        Intent active = new Intent(getApplicationContext(), WidgetWeather.class);
+        active.setAction(WidgetWeather.ACTION_WIDGET_RECEIVER);
+
+    }
 }

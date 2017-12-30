@@ -17,7 +17,7 @@ import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    List<WeatherNote> elements;
+    private List<WeatherNote> elements;
     private Activity activity;
 
     public RecyclerAdapter(Activity activity,  List<WeatherNote>  elements) {

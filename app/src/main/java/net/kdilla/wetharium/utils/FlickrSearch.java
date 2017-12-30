@@ -19,11 +19,11 @@ public class FlickrSearch {
     private final String KEY = "9c6b4a5f6ad93dafa5a5ca0ef3b2f864";
     private final int COUNT = 50;
     private final String IMAGE_SIZE = "url_m";
-    //https://api.flickr.com/services/rest/?safe_search=safe&api_key=9c6b4a5f6ad93dafa5a5ca0ef3b2f864&format=json&text="kursk+city"&method=flickr.photos.search&media=photos&extras=url_m
-
-    ImageView toolbarImage;
-    Context context;
-    String city;
+    //https://api.flickr.com/services/rest/?safe_search=safe&api_key=9c6b4a5f6ad93dafa5a5ca0ef3b2f864&format=json&text="kursk+city+main"&method=flickr.photos.search&media=photos&extras=url_m
+    private final String REQUEST_IMAGE_KEY = "city";
+    private  ImageView toolbarImage;
+    private  Context context;
+    private  String city;
 
     public FlickrSearch(ImageView toolbarImage, Context context) {
         this.context = context;
@@ -31,8 +31,8 @@ public class FlickrSearch {
 
     }
 
-    String lat;
-    String lon;
+    private  String lat;
+    private  String lon;
 
     public void setLatAndLon(final String lat, final String lon) {
         this.lat = lat;
@@ -60,7 +60,7 @@ public class FlickrSearch {
                         link += "&lat=" + lat + "&lon=" + lon;
                         Log.d("BITMAP", "lat=" + lat + ", lon=" + lon);
                     } else {
-                        link += "&text=" + strNoSpaces + "+city";
+                        link += "&text=" + strNoSpaces + "+"+ REQUEST_IMAGE_KEY;
                     }
                     URL url = new URL(link);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
