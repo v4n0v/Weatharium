@@ -34,7 +34,7 @@ public class WidgetWeather extends AppWidgetProvider {
     public static final String UPDATE_WIDGET_CITY = "update city";
     private String city;
     private int temp;
-
+    private String description;
 
     public static String ACTION_WIDGET_RECEIVER = "ActionReceiverWidget";
     public static String TIME_WIDGET_RECEIVER = "TimenReceiverWidget";
@@ -71,8 +71,7 @@ public class WidgetWeather extends AppWidgetProvider {
                 R.layout.layout_widget);
         ComponentName watchWidget = new ComponentName(context, WidgetWeather.class);
         Intent configIntent = new Intent(context, MainActivity.class);
-//        rv.setTextViewText(R.id.widget_city, city);
-//        rv.setTextViewText(R.id.widget_temp, Preferences.temperatureFormat(temp));
+
         PendingIntent pIntent = PendingIntent.getActivity(context, i,
                 configIntent, 0);
         rv.setOnClickPendingIntent(R.id.widget_clock, pIntent);
@@ -87,17 +86,6 @@ public class WidgetWeather extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.layout_widget);
 
-        views.setTextViewText(R.id.widget_city, widgetText);
-//
-//        List<WeatherNote> elements;
-//        WeatherDataSource notesDataSource;
-//        notesDataSource = new WeatherDataSource(context);
-//        notesDataSource.open();
-//
-//        elements = notesDataSource.getAllNotes();
-//        Preferences.getNoteByName(widgetText, elements);
-
-        // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
@@ -116,44 +104,65 @@ public class WidgetWeather extends AppWidgetProvider {
                 msg = intent.getStringExtra(Preferences.ADD_CITY);
                 city = intent.getStringExtra(Preferences.ADD_CITY);
                 temp = intent.getIntExtra(Preferences.ADD_TEMP, 0);
-
+                description= intent.getStringExtra(Preferences.ADD_DESCRIPTION);
             } catch (NullPointerException e) {
                 Log.e("Error", "msg = null");
             }
-            remoteViews.setTextViewText(R.id.widget_city, city);
-            remoteViews.setTextViewText(R.id.widget_temp, Preferences.temperatureFormat(temp)+Preferences.CELCIUM);
+//            remoteViews.setTextViewText(R.id.widget_city, city);
+
+            //TODO сделать форматирование города, сокращенеи слова и если неск слов то у всех, кроме последнего по 1ой букве в слове
+            String weatherInfo = city+" "+
+                     description+" "+Preferences.temperatureFormat(temp)+Preferences.CELCIUM;
+
+            remoteViews.setTextViewText(R.id.widget_temp,weatherInfo);
             writeDate(remoteViews, appWidgetManager, widget);
             appWidgetManager.updateAppWidget(widget, remoteViews);
 
             Log.d(Preferences.DEBUG_KEY, "ACTION_WIDGET_RECEIVER end");
         }
        else if (TIME_WIDGET_RECEIVER.equals(action)) {
-//            Date dt = new Date();
-//            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-//
+
             writeDate(remoteViews, appWidgetManager, widget);
-           // Toast.makeText(context, format.format(dt), Toast.LENGTH_SHORT).show();
+
             Log.d(Preferences.DEBUG_KEY, "TIME_WIDGET_RECEIVER end");
         }
     }
 
+    private String cityWidgetFormat(String str){
+        String[] lines = str.split(" ");
+        // если слов больше одного
+        if (lines.length>0){
+            String a =lines[lines.length].substring(0, 1).toUpperCase() + lines[lines.length].substring(1);
+            if(a.equals(" ")){
+
+            };
+
+        }
+        return null;
+    }
     private void writeDate(RemoteViews remoteViews, AppWidgetManager appWidgetManager, ComponentName watchWidget ){
         Date dt = new Date();
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat formatDay = new SimpleDateFormat("dd MMM ccc");
         remoteViews.setTextViewText(R.id.widget_clock, format.format(dt));
+        remoteViews.setTextViewText(R.id.widget_num, formatDay.format(dt));
         appWidgetManager.updateAppWidget(watchWidget, remoteViews);
     }
 
+
     private void setStartTimer(Context context){
-        long time = (long) Math.floor(System.currentTimeMillis()/60000);
-//        time = time*60000 + 60000;
-        time = time*60000;
+        long time = (long) Math.rint(System.currentTimeMillis()/60000);
+        // получаем минуту, округляем, и прибавляем минуту, получаем слудущую
+        // минуту, от коророй и включаем таймер на обновление через каждую минуту
+
+        time = time*60000 + 60000;
+//        time = time*60000;
         Intent intent = new Intent(context, WidgetWeather.class);
         intent.setAction(TIME_WIDGET_RECEIVER);
         PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC, time,
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time,
                 60_000, pIntent);
 
     }
@@ -161,20 +170,10 @@ public class WidgetWeather extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
-        // получаем минуту, округляем ее в меньшую сторону, и прибавляем минуту, получаем слудущую
-        // минуту, от коророй и включаем таймер на обновление через каждую минуту
+
 
         setStartTimer(context);
 
-//        long time = (long) Math.floor(System.currentTimeMillis()/60000);
-//        time = time*60000 + 60000;
-//        Intent intent = new Intent(context, WidgetWeather.class);
-//        intent.setAction(TIME_WIDGET_RECEIVER);
-//        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-//        AlarmManager alarmManager = (AlarmManager) context
-//                .getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.setRepeating(AlarmManager.RTC, time,
-//                60000, pIntent);
         Log.d(Preferences.DEBUG_KEY, "onEnabled finished");
     }
 

@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.R;
 import net.kdilla.wetharium.utils.FileManager;
 import net.kdilla.wetharium.utils.FlickrSearch;
@@ -33,13 +32,13 @@ public class WeatherInfoFragment extends Fragment {
     private boolean isPressure = true;
     private boolean isHumidity = true;
 
-    int temperature;
-    int tempMin;
-    int tempMax;
-    int pressure;
-    int wind;
-    int humidity;
-    String additionInfo;
+    private int temperature;
+    private int tempMin;
+    private int tempMax;
+    private int pressure;
+    private int wind;
+    private int humidity;
+    private String additionInfo;
 
     public int getWeatherId() {
         return weatherId;
@@ -59,21 +58,12 @@ public class WeatherInfoFragment extends Fragment {
     private TextView temperatureTextView;
     private TextView descriptionTextView;
     private TextView lastUpdTextView;
-    private  TextView pressureTextView;
-    private  TextView windTextView;
-    private  TextView humidityTextView;
+    private TextView pressureTextView;
+    private TextView windTextView;
+    private TextView humidityTextView;
     private TextView tempMinMaxTextView;
 
-    Drawable icon;
-
-
     private long date;
-
-    public void setLastDate(long lastDate) {
-        this.lastDate = lastDate;
-    }
-
-    private long lastDate;
 
     public void setCityImageView(ImageView cityImageView) {
         this.cityImageView = cityImageView;
@@ -81,26 +71,25 @@ public class WeatherInfoFragment extends Fragment {
 
     private ImageView cityImageView;
     private ImageView weatherImage;
-    private  String CELCIUM;
-    private  String lat;
-    private  String lon;
+    private String CELCIUM;
+    private String lat;
+    private String lon;
     private FlickrSearch flickrSearch;
 
     boolean isOk;
-    private  Bitmap cityBitmap;
+    private Bitmap cityBitmap;
     private BroadcastReceiver br;
 
     public void setToolbarLayout(CollapsingToolbarLayout collapsingToolbarLayout) {
         this.toolbarLayout = collapsingToolbarLayout;
     }
 
-    private  CollapsingToolbarLayout toolbarLayout;
+    private CollapsingToolbarLayout toolbarLayout;
 
-
-    OnFragmentClickListener mainActivity;
+    OnFragmentListener mainActivity;
 
     public void onAttach(Context context) {
-        mainActivity = (OnFragmentClickListener) context;
+        mainActivity = (OnFragmentListener) context;
         super.onAttach(context);
     }
 
@@ -118,7 +107,7 @@ public class WeatherInfoFragment extends Fragment {
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                isOk= intent.getBooleanExtra(Preferences.ADD_IS_OK, false);
+                isOk = intent.getBooleanExtra(Preferences.ADD_IS_OK, false);
 
                 city = intent.getStringExtra(Preferences.ADD_CITY);
 
@@ -128,8 +117,8 @@ public class WeatherInfoFragment extends Fragment {
                 pressure = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
                 description = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
                 weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
-                tempMax= intent.getIntExtra(Preferences.ADD_TEMP_MAX, 0);
-                tempMin= intent.getIntExtra(Preferences.ADD_TEMP_MIN, 0);
+                tempMax = intent.getIntExtra(Preferences.ADD_TEMP_MAX, 0);
+                tempMin = intent.getIntExtra(Preferences.ADD_TEMP_MIN, 0);
 
                 refresh();
 
@@ -171,12 +160,12 @@ public class WeatherInfoFragment extends Fragment {
         windTextView.setText(windInfo);
         humidityTextView.setText(humInfo);
         lastUpdTextView.setText(time);
-        String minMax = Preferences.temperatureFormat(tempMin)+CELCIUM+" "+Preferences.temperatureFormat(tempMax)+CELCIUM;
+        String minMax = Preferences.temperatureFormat(tempMin) + CELCIUM + " " + Preferences.temperatureFormat(tempMax) + CELCIUM;
         tempMinMaxTextView.setText(minMax);
-        //   additionalTextView.setText(formatAdditionInfoString());
 
-        if (weatherId==800) description=getString(R.string.clear);
-        else description=Preferences.getWeatherDescription(weatherId, getContext());
+
+        if (weatherId == 800) description = getString(R.string.clear);
+        else description = Preferences.getWeatherDescription(weatherId, getContext());
 
         temperatureTextView.setText(Preferences.temperatureFormat(temperature) + CELCIUM);
         descriptionTextView.setText(description);
@@ -223,8 +212,8 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     public void configure(String city, int temp, int pressure, int wind, int hum, int tempMin, int tempMax, String description, int weatherId, String additionInfo) {
-        this.tempMin=tempMin;
-        this.tempMax=tempMax;
+        this.tempMin = tempMin;
+        this.tempMax = tempMax;
         this.city = city;
         this.temperature = temp;
         this.pressure = pressure;

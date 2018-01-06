@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingRight="@dimen/lil_margin">
 
     <TextView
         android:id="@+id/widget_clock"
@@ -11,37 +12,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:layout_marginTop="-15dp"
         android:elevation="@dimen/margin_border"
         android:fontFamily="@font/roboto_light"
+        android:textAlignment="viewEnd"
         android:textColor="@color/colorGrayBG"
-        android:textSize="80sp"
+        android:textSize="56sp"
         tools:text="21:21" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/widget_num"
+        style="@style/TextShadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="right">
-        <TextView
-            android:id="@+id/widget_city"
-            style="@style/TextShadow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorGrayBG"
-            android:textSize="@dimen/last_addition_font_size"
-            tools:text="Moscow"
-            android:layout_marginRight="@dimen/mid_margin"/>
-        <TextView
-            android:id="@+id/widget_temp"
-            style="@style/TextShadow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewEnd"
-            android:textColor="@color/colorGrayBG"
-            android:textSize="@dimen/last_addition_font_size"
-            tools:text="+30o" />
+        android:layout_gravity="\right"
 
+        android:layout_marginTop="-12dp"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/colorGrayBG"
+        android:textSize="@dimen/last_addition_font_size"
+        tools:text="2 jan monday" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/widget_temp"
+        style="@style/TextShadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="-2dp"
+
+        android:textAlignment="viewEnd"
+        android:textColor="@color/colorGrayBG"
+        android:textSize="@dimen/last_addition_font_size"
+        tools:text="+30o" />
+
 
 </LinearLayout>

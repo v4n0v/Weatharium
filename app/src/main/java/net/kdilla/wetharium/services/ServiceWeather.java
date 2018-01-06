@@ -31,33 +31,19 @@ public class ServiceWeather extends Service {
 
     private Timer timer;
     private TimerTask tTask;
-
     private String city;
-    private int temperature;
-    private int pressure;
-    private int wind;
-    private int humidity;
-    private int tempMin;
-    private int tempMax;
-    private String lat;
-    private String lon;
-    private String description;
+
     // обновляю каждые 10 минут
     private long interval = 600_000;
-
     private WeatherBinder binder = new WeatherBinder();
-
-    private boolean isWind = true;
-    private boolean isPressure = true;
-    private boolean isHumidity = true;
     private boolean isComplete = true;
-
     private boolean isOk;
+
     @Override
     public void onCreate() {
         super.onCreate();
         timer = new Timer();
-        Log.d(Preferences.DEBUG_KEY,  "ServiceWeather created");
+        Log.d(Preferences.DEBUG_KEY, "ServiceWeather created");
         schedule();
 
     }
@@ -93,25 +79,40 @@ public class ServiceWeather extends Service {
 
     private void loadWeatherJson() {
         WeatherGetTask tak = (WeatherGetTask) new WeatherGetTask(getApplicationContext()).execute(city);
-
+        Log.d(Preferences.DEBUG_KEY, "ServiceWeather start jsonObject load");
         JSONObject jsonObject = null;
         try {
             jsonObject = tak.get();
+            Log.d(Preferences.DEBUG_KEY, "ServiceWeather jsonObject load complete");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
         if (jsonObject != null) {
+            Log.d(Preferences.DEBUG_KEY, "ServiceWeather render jsonObject");
             renderWeather(jsonObject);
+            Log.d(Preferences.DEBUG_KEY, "ServiceWeather jsonObject render complete");
         } else {
             Log.d(Preferences.DEBUG_KEY, "ServiceWeather jsonObject=null ");
         }
         isComplete = true;
-        Log.d(Preferences.DEBUG_KEY,"ServiceWeather jsonObject load complete");
+
     }
 
     private void renderWeather(JSONObject json) {
+        int temperature;
+        int pressure;
+        int wind;
+        int humidity;
+        int tempMin;
+        int tempMax;
+        String lat;
+        String lon;
+        boolean isWind = true;
+        boolean isPressure = true;
+        boolean isHumidity = true;
+        String description;
         try {
 
             Gson gson = new GsonBuilder()
@@ -147,7 +148,7 @@ public class ServiceWeather extends Service {
 
             Log.d("GSON", gson.toJson(weatherForGSon));
 
-
+            // отправляем во фрагмент
             Intent intent = new Intent(Preferences.BROADCAST_ACTION);
             intent.putExtra(Preferences.ADD_CITY, city);
             intent.putExtra(Preferences.ADD_TEMP, temperature);
@@ -161,10 +162,12 @@ public class ServiceWeather extends Service {
             intent.putExtra(Preferences.ADD_IS_OK, isOk);
             sendBroadcast(intent);
 
-            Intent intent_city_update = new  Intent(getApplicationContext(), WidgetWeather.class);
+            // отправляем в виджет
+            Intent intent_city_update = new Intent(getApplicationContext(), WidgetWeather.class);
             intent_city_update.setAction(WidgetWeather.ACTION_WIDGET_RECEIVER);
             intent_city_update.putExtra(Preferences.ADD_CITY, city);
             intent_city_update.putExtra(Preferences.ADD_TEMP, temperature);
+            intent_city_update.putExtra(Preferences.ADD_DESCRIPTION, description);
             intent_city_update.putExtra(Preferences.SOURCE, Preferences.WIDGET);
             sendBroadcast(intent_city_update);
             Log.d(Preferences.DEBUG_KEY, "ServiceWeather complete Json render");
@@ -185,8 +188,8 @@ public class ServiceWeather extends Service {
     }
 
     public void update() {
-        isComplete = false;
-        schedule();
+
+        loadWeatherJson();
     }
 
     public class WeatherBinder extends Binder {
@@ -195,8 +198,8 @@ public class ServiceWeather extends Service {
         }
     }
 
-    protected void onWidgetChangeCity(String city){
-        Intent intent_city_update = new  Intent(getApplicationContext(), WidgetWeather.class);
+    protected void onWidgetChangeCity(String city) {
+        Intent intent_city_update = new Intent(getApplicationContext(), WidgetWeather.class);
         intent_city_update.putExtra(WidgetWeather.ACTION_WIDGET_RECEIVER, city);
         sendBroadcast(intent_city_update);
 

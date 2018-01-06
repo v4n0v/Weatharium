@@ -155,6 +155,7 @@ public class DBListActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent(DBListActivity.this, MainActivity.class);
         intent.putExtra(Preferences.SOURCE, Preferences.DB_LIST);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 }

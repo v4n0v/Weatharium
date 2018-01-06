@@ -32,7 +32,7 @@ import android.widget.Toast;
 
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
-import net.kdilla.wetharium.fragments.OnFragmentClickListener;
+import net.kdilla.wetharium.fragments.OnFragmentListener;
 import net.kdilla.wetharium.fragments.WeatherInfoFragment;
 import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.FileManager;
@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentListener {
 
     List<WeatherNote> elements;
     WeatherDataSource notesDataSource;
@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity
 
 
     public void updateWeather(MenuItem item){
-        serviceWeather.update();
+        serviceWeather.changeCity(city);
         Toast.makeText(this, "Updating", Toast.LENGTH_SHORT).show();
     }
 
