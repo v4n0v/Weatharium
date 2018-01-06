@@ -7,10 +7,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.kdilla.wetharium.DB.WeatherDataSource;
 import net.kdilla.wetharium.DB.WeatherNote;
@@ -38,7 +41,6 @@ public class DBListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_db_list);
 
-
         bigSize = getResources().getDimension(R.dimen.last_city_font_size);
         midSize = getResources().getDimension(R.dimen.info_max_min_font_size);
         lilSize = getResources().getDimension(R.dimen.last_addition_font_size);
@@ -58,6 +60,21 @@ public class DBListActivity extends AppCompatActivity {
         });
 
         if (weatherNotese.size() > 0) {
+            refreshRecycleview();
+
+        }
+
+
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.db_menu, menu);
+        return true;
+    }
+
+    private void refreshRecycleview(){
+
             recyclerView = (RecyclerView) findViewById(R.id.recycler);
             recyclerView.setHasFixedSize(true);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -65,7 +82,17 @@ public class DBListActivity extends AppCompatActivity {
 
             adapter = new RecyclerAdapter(this, weatherNotese);
             recyclerView.setAdapter(new MyAdapter());
-        }
+
+    }
+
+    public void clearBase(MenuItem item){
+
+            notesDataSource.deleteAll();
+            weatherNotese.clear();
+            refreshRecycleview();
+            Toast.makeText(DBListActivity.this, "Base cleared", Toast.LENGTH_SHORT).show();
+
+
     }
 
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -109,7 +136,7 @@ public class DBListActivity extends AppCompatActivity {
                 String humInfo = humidity + getString(R.string.humidity_dim);
 
                 int length = city.length();
-                if (city.length() < 11) cityTV.setTextSize(32);
+                if (city.length() < 11) cityTV.setTextSize(30);
                 else if (city.length() < 18) cityTV.setTextSize(24);
                 else if (city.length() < 24) cityTV.setTextSize(18);
 
