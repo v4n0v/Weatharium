@@ -52,4 +52,5 @@
     <string name="add_widget">Select city</string>
     <string name="ok">Ok</string>
     <string name="update_weather">Update weather</string>
+    <string name="loading">loading...</string>
 </resources>

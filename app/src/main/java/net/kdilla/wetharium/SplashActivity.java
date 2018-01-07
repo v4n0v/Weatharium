@@ -16,10 +16,10 @@ import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.Preferences;
 
 public class SplashActivity extends AppCompatActivity {
-    private ServiceConnection sConn;
+
     private boolean bind;
     private ServiceWeather serviceWeather;
-
+    private ServiceConnection sConn;
     private SharedPreferences preferences;
     private boolean isPressure;
     private boolean isHumidity;
@@ -33,11 +33,10 @@ public class SplashActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-//
-//        ApplicationController applicationController = new ApplicationController(getApplicationContext());
+
         loadPreferences();
 
-        city="Moscow";
+       // city="Moscow";
 
 
         sConn = new ServiceConnection() {

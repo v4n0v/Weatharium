@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -142,10 +141,10 @@ public class WeatherInfoFragment extends Fragment {
         // получаем картинку города, если она закеширована, то из памяти, если нет, то качаем новую
         cityBitmap = FileManager.loadBitmap(getContext(), city);
         if (cityBitmap == null) {
-            getAindSetToolbarImage();
+            getAndSetToolbarImage();
         } else {
             cityImageView.setImageBitmap(cityBitmap);
-            Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(getContext(), "Loaded from storage", Toast.LENGTH_SHORT).show();
             Log.d("DEBUGGG", "Picture loaded from storage");
         }
 
@@ -207,7 +206,7 @@ public class WeatherInfoFragment extends Fragment {
         tempMinMaxTextView = view.findViewById(R.id.info_min_max);
     }
 
-    public void getAindSetToolbarImage() {
+    public void getAndSetToolbarImage() {
         flickrSearch.downloadAndSetImage(city);
     }
 

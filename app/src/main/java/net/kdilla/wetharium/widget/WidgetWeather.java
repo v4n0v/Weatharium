@@ -7,21 +7,18 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import net.kdilla.wetharium.DB.WeatherDataSource;
-import net.kdilla.wetharium.DB.WeatherNote;
 import net.kdilla.wetharium.MainActivity;
 import net.kdilla.wetharium.R;
+import net.kdilla.wetharium.services.ServiceWeather;
 import net.kdilla.wetharium.utils.Preferences;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by avetc on 29.12.2017.
@@ -35,6 +32,8 @@ public class WidgetWeather extends AppWidgetProvider {
     private String city;
     private int temp;
     private String description;
+
+    private ServiceConnection sConn;
 
     public static String ACTION_WIDGET_RECEIVER = "ActionReceiverWidget";
     public static String TIME_WIDGET_RECEIVER = "TimenReceiverWidget";
@@ -65,7 +64,6 @@ public class WidgetWeather extends AppWidgetProvider {
 
     private void updateWidget(Context context, AppWidgetManager appWidgetManager, int i) {
         setStartTimer(context);
-
 
         RemoteViews rv = new RemoteViews(context.getPackageName(),
                 R.layout.layout_widget);
@@ -101,7 +99,7 @@ public class WidgetWeather extends AppWidgetProvider {
         if (ACTION_WIDGET_RECEIVER.equals(action)) {
             String msg = "null";
             try {
-                msg = intent.getStringExtra(Preferences.ADD_CITY);
+               // msg = intent.getStringExtra(Preferences.ADD_CITY);
                 city = intent.getStringExtra(Preferences.ADD_CITY);
                 temp = intent.getIntExtra(Preferences.ADD_TEMP, 0);
                 description= intent.getStringExtra(Preferences.ADD_DESCRIPTION);
@@ -111,7 +109,7 @@ public class WidgetWeather extends AppWidgetProvider {
 //            remoteViews.setTextViewText(R.id.widget_city, city);
 
             //TODO сделать форматирование города, сокращенеи слова и если неск слов то у всех, кроме последнего по 1ой букве в слове
-            String weatherInfo = city+" "+
+            String weatherInfo = cityWidgetFormat(city)+" "+
                      description+" "+Preferences.temperatureFormat(temp)+Preferences.CELCIUM;
 
             remoteViews.setTextViewText(R.id.widget_temp,weatherInfo);
@@ -130,15 +128,25 @@ public class WidgetWeather extends AppWidgetProvider {
 
     private String cityWidgetFormat(String str){
         String[] lines = str.split(" ");
-        // если слов больше одного
+        // если слов больше 0
         if (lines.length>0){
-            String a =lines[lines.length].substring(0, 1).toUpperCase() + lines[lines.length].substring(1);
-            if(a.equals(" ")){
 
-            };
+            // если одно слово, возвращам его
+            if (lines.length==1){
+                return lines[0];
+            } else {
+                // если больше, то сокращаем все все кроме последнего до
+                String cityName="";
+                for (int i = 0; i < lines.length; i++) {
+                    if (i<lines.length-1){
+                        lines[i] = lines[i].substring(0, 1).toUpperCase();
+                    }
+                    cityName+=lines[i]+".";
+                }
+                return cityName;
+            }
+        } else return "";
 
-        }
-        return null;
     }
     private void writeDate(RemoteViews remoteViews, AppWidgetManager appWidgetManager, ComponentName watchWidget ){
         Date dt = new Date();
@@ -170,8 +178,6 @@ public class WidgetWeather extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
-
-
         setStartTimer(context);
 
         Log.d(Preferences.DEBUG_KEY, "onEnabled finished");

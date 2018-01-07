@@ -39,14 +39,14 @@ public class FileManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Toast.makeText(context, "Saved in storage as " + name.toLowerCase() + ".jpg", Toast.LENGTH_SHORT).show();
+    //    Toast.makeText(context, "Saved in storage as " + name.toLowerCase() + ".jpg", Toast.LENGTH_SHORT).show();
     }
 
     public static void deleteBitmap(Context context, String name) {
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name.toLowerCase() + ".jpg");
         if (file.exists()) {
             file.delete();
-            Toast.makeText(context, "Image deleted from storage", Toast.LENGTH_SHORT).show();
+      //      Toast.makeText(context, "Image deleted from storage", Toast.LENGTH_SHORT).show();
         }
 
     }

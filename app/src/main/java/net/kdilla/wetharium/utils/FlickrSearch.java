@@ -3,6 +3,7 @@ package net.kdilla.wetharium.utils;
 import android.content.Context;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import net.kdilla.wetharium.utils.tasks.BitmapSetterTask;
 
@@ -28,6 +29,7 @@ public class FlickrSearch {
     public FlickrSearch(ImageView toolbarImage, Context context) {
         this.context = context;
         this.toolbarImage = toolbarImage;
+
 
     }
 

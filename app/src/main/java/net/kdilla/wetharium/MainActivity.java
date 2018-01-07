@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.kdilla.wetharium.DB.WeatherDataSource;
@@ -78,6 +79,8 @@ public class MainActivity extends AppCompatActivity
     ServiceWeather serviceWeather;
     CollapsingToolbarLayout toolbarLayout;
 
+    TextView loadingTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity
         weatherInfoFragment = new WeatherInfoFragment();
         Intent intent = getIntent();
 
+        loadingTextView = (TextView) findViewById(R.id.toolbar_loading);
         // получаем интент
         if (intent != null) {
             String source = intent.getStringExtra(Preferences.SOURCE);
@@ -215,9 +219,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void reloadPicture() {
+        Toast.makeText(MainActivity.this, "Loading image", Toast.LENGTH_LONG).show();
+
         FileManager.deleteBitmap(getApplicationContext(), city);
-        weatherInfoFragment.getAindSetToolbarImage();
+        weatherInfoFragment.getAndSetToolbarImage();
     }
+
+
+
 
     public void reloadPicture(View view) {
         reloadPicture();
@@ -311,6 +320,7 @@ public class MainActivity extends AppCompatActivity
         builder.setPositiveButton("Show me the weather", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 city = cityTextFormat(input.getText().toString());
 
                 Log.d(Preferences.DEBUG_KEY, "Current date = " + lastUpd);
@@ -457,7 +467,18 @@ public class MainActivity extends AppCompatActivity
 
     private String cityTextFormat(String word) {
         if (word == null || word.isEmpty()) return "";
-        return word.substring(0, 1).toUpperCase() + word.substring(1);
+        // делаем первую букву заглавной
+        word = word.substring(0, 1).toUpperCase() + word.substring(1);
+
+        // удаляю лишние пробелы
+        String[] words = word.split(" ");
+        String resultWord="";
+        for (int i = 0; i < words.length; i++) {
+            if (!words[i].equals(""))
+                resultWord+=words[i];
+            if (i<words.length-1) resultWord+=" ";
+        }
+        return resultWord;
     }
 
     // обновляем базу

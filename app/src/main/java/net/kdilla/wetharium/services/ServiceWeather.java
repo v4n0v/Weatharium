@@ -28,16 +28,27 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 public class ServiceWeather extends Service {
-
-    private Timer timer;
-    private TimerTask tTask;
-    private String city;
-
-    // обновляю каждые 10 минут
-    private long interval = 600_000;
-    private WeatherBinder binder = new WeatherBinder();
-    private boolean isComplete = true;
-    private boolean isOk;
+    int temperature;
+    int pressure;
+    int wind;
+    int humidity;
+    int tempMin;
+    int tempMax;
+    String lat;
+    String lon;
+    boolean isWind = true;
+    boolean isPressure = true;
+    boolean isHumidity = true;
+    String description;
+     Timer timer;
+     TimerTask tTask;
+     String city;
+    int imageId;
+    // обновляю каждые 30 минут
+     long interval = 600_000*3;
+     WeatherBinder binder = new WeatherBinder();
+     boolean isComplete = true;
+     boolean isOk;
 
     @Override
     public void onCreate() {
@@ -59,7 +70,7 @@ public class ServiceWeather extends Service {
 
     }
 
-    private void schedule() {
+    protected void schedule() {
         if (tTask != null) tTask.cancel();
         if (interval > 0) {
             // начинаем отсчет до 10минут
@@ -77,7 +88,7 @@ public class ServiceWeather extends Service {
         }
     }
 
-    private void loadWeatherJson() {
+    protected void loadWeatherJson() {
         WeatherGetTask tak = (WeatherGetTask) new WeatherGetTask(getApplicationContext()).execute(city);
         Log.d(Preferences.DEBUG_KEY, "ServiceWeather start jsonObject load");
         JSONObject jsonObject = null;
@@ -100,21 +111,9 @@ public class ServiceWeather extends Service {
 
     }
 
-    private void renderWeather(JSONObject json) {
-        int temperature;
-        int pressure;
-        int wind;
-        int humidity;
-        int tempMin;
-        int tempMax;
-        String lat;
-        String lon;
-        boolean isWind = true;
-        boolean isPressure = true;
-        boolean isHumidity = true;
-        String description;
-        try {
+    protected void renderWeather(JSONObject json) {
 
+        try {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Weather.class, new WeatherDeserializer())
                     .registerTypeAdapter(WeatherMain.class, new WeatherMainDeserializer())
@@ -127,7 +126,7 @@ public class ServiceWeather extends Service {
             wind = weatherForGSon.getWind();
             humidity = weatherForGSon.getHumidity();
             city = weatherForGSon.getCity();
-            int imageId = weatherForGSon.getId();
+            imageId = weatherForGSon.getId();
             description = weatherForGSon.getMainInfo();
             tempMin = weatherForGSon.getTempMin();
             tempMax = weatherForGSon.getTempMax();
@@ -148,28 +147,7 @@ public class ServiceWeather extends Service {
 
             Log.d("GSON", gson.toJson(weatherForGSon));
 
-            // отправляем во фрагмент
-            Intent intent = new Intent(Preferences.BROADCAST_ACTION);
-            intent.putExtra(Preferences.ADD_CITY, city);
-            intent.putExtra(Preferences.ADD_TEMP, temperature);
-            intent.putExtra(Preferences.ADD_HUMIDITY, humidity);
-            intent.putExtra(Preferences.ADD_WIND, wind);
-            intent.putExtra(Preferences.ADD_PRESSURE, pressure);
-            intent.putExtra(Preferences.ADD_DESCRIPTION, description);
-            intent.putExtra(Preferences.ADD_IMAGE_ID, imageId);
-            intent.putExtra(Preferences.ADD_TEMP_MIN, tempMin);
-            intent.putExtra(Preferences.ADD_TEMP_MAX, tempMax);
-            intent.putExtra(Preferences.ADD_IS_OK, isOk);
-            sendBroadcast(intent);
-
-            // отправляем в виджет
-            Intent intent_city_update = new Intent(getApplicationContext(), WidgetWeather.class);
-            intent_city_update.setAction(WidgetWeather.ACTION_WIDGET_RECEIVER);
-            intent_city_update.putExtra(Preferences.ADD_CITY, city);
-            intent_city_update.putExtra(Preferences.ADD_TEMP, temperature);
-            intent_city_update.putExtra(Preferences.ADD_DESCRIPTION, description);
-            intent_city_update.putExtra(Preferences.SOURCE, Preferences.WIDGET);
-            sendBroadcast(intent_city_update);
+            packIntent();
             Log.d(Preferences.DEBUG_KEY, "ServiceWeather complete Json render");
 
         } catch (Exception e) {
@@ -177,6 +155,31 @@ public class ServiceWeather extends Service {
             Log.d("ERRORO", e.getMessage());
         }
 
+    }
+
+    protected void packIntent(){
+        // отправляем во фрагмент
+        Intent intent = new Intent(Preferences.BROADCAST_ACTION);
+        intent.putExtra(Preferences.ADD_CITY, city);
+        intent.putExtra(Preferences.ADD_TEMP, temperature);
+        intent.putExtra(Preferences.ADD_HUMIDITY, humidity);
+        intent.putExtra(Preferences.ADD_WIND, wind);
+        intent.putExtra(Preferences.ADD_PRESSURE, pressure);
+        intent.putExtra(Preferences.ADD_DESCRIPTION, description);
+        intent.putExtra(Preferences.ADD_IMAGE_ID, imageId);
+        intent.putExtra(Preferences.ADD_TEMP_MIN, tempMin);
+        intent.putExtra(Preferences.ADD_TEMP_MAX, tempMax);
+        intent.putExtra(Preferences.ADD_IS_OK, isOk);
+        sendBroadcast(intent);
+
+        Intent intent_city_update = new Intent(getApplicationContext(), WidgetWeather.class);
+        intent_city_update.setAction(WidgetWeather.ACTION_WIDGET_RECEIVER);
+        intent_city_update.putExtra(Preferences.ADD_CITY, city);
+        intent_city_update.putExtra(Preferences.ADD_TEMP, temperature);
+        intent_city_update.putExtra(Preferences.ADD_DESCRIPTION, description);
+        intent_city_update.putExtra(Preferences.SOURCE, Preferences.WIDGET);
+        sendBroadcast(intent_city_update);
+//        Log.d(Preferences.DEBUG_KEY, "ServiceWeatherWidget sendBroadcast complete");
     }
 
     @Nullable
