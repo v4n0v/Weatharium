@@ -23,6 +23,7 @@ public class WeatherGetTask extends AsyncTask<String, Void, JSONObject> {
     protected JSONObject doInBackground(String... strings) {
 
         final JSONObject jsonObject = WeatherDataLoader.getJSONData(context, strings[0]);
+
         return jsonObject;
     }
 

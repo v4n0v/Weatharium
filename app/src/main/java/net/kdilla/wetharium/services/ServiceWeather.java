@@ -7,6 +7,7 @@ import android.os.IBinder;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -106,6 +107,11 @@ public class ServiceWeather extends Service {
             Log.d(Preferences.DEBUG_KEY, "ServiceWeather jsonObject render complete");
         } else {
             Log.d(Preferences.DEBUG_KEY, "ServiceWeather jsonObject=null ");
+
+            Intent intent = new Intent(Preferences.BROADCAST_ACTION);
+            intent.putExtra(Preferences.ADD_IS_OK, false);
+            sendBroadcast(intent);
+            return;
         }
         isComplete = true;
 
@@ -169,7 +175,7 @@ public class ServiceWeather extends Service {
         intent.putExtra(Preferences.ADD_IMAGE_ID, imageId);
         intent.putExtra(Preferences.ADD_TEMP_MIN, tempMin);
         intent.putExtra(Preferences.ADD_TEMP_MAX, tempMax);
-        intent.putExtra(Preferences.ADD_IS_OK, isOk);
+        intent.putExtra(Preferences.ADD_IS_OK, true);
         sendBroadcast(intent);
 
         Intent intent_city_update = new Intent(getApplicationContext(), WidgetWeather.class);

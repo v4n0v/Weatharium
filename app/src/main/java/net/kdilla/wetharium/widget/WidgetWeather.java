@@ -133,7 +133,7 @@ public class WidgetWeather extends AppWidgetProvider {
 
             // если одно слово, возвращам его
             if (lines.length==1){
-                return lines[0];
+                return lines[0]; //.substring(0, 8);
             } else {
                 // если больше, то сокращаем все все кроме последнего до
                 String cityName="";
@@ -141,7 +141,14 @@ public class WidgetWeather extends AppWidgetProvider {
                     if (i<lines.length-1){
                         lines[i] = lines[i].substring(0, 1).toUpperCase();
                     }
-                    cityName+=lines[i]+".";
+                    cityName+=lines[i];
+                    if (i<lines.length-1){
+                        lines[i]+=".";
+                    }
+                }
+                if (cityName.length()>7){
+                    cityName = cityName.substring(0,4)+".";
+                  //  +cityName.substring(cityName.length()-3,1);
                 }
                 return cityName;
             }

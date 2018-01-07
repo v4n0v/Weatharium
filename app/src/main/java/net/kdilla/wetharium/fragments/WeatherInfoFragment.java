@@ -106,20 +106,24 @@ public class WeatherInfoFragment extends Fragment {
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                isOk = intent.getBooleanExtra(Preferences.ADD_IS_OK, false);
+                isOk = intent.getBooleanExtra(Preferences.ADD_IS_OK, true);
 
-                city = intent.getStringExtra(Preferences.ADD_CITY);
+                if (isOk) {
+                    city = intent.getStringExtra(Preferences.ADD_CITY);
 
-                temperature = intent.getIntExtra(Preferences.ADD_TEMP, 0);
-                humidity = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
-                wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
-                pressure = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
-                description = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
-                weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
-                tempMax = intent.getIntExtra(Preferences.ADD_TEMP_MAX, 0);
-                tempMin = intent.getIntExtra(Preferences.ADD_TEMP_MIN, 0);
+                    temperature = intent.getIntExtra(Preferences.ADD_TEMP, 0);
+                    humidity = intent.getIntExtra(Preferences.ADD_HUMIDITY, 0);
+                    wind = intent.getIntExtra(Preferences.ADD_WIND, 0);
+                    pressure = intent.getIntExtra(Preferences.ADD_PRESSURE, 0);
+                    description = intent.getStringExtra(Preferences.ADD_DESCRIPTION);
+                    weatherId = intent.getIntExtra(Preferences.ADD_IMAGE_ID, 0);
+                    tempMax = intent.getIntExtra(Preferences.ADD_TEMP_MAX, 0);
+                    tempMin = intent.getIntExtra(Preferences.ADD_TEMP_MIN, 0);
 
-                refresh();
+                    refresh();
+                } else {
+                    Toast.makeText(getContext(), "Load weather error", Toast.LENGTH_SHORT).show();
+                }
 
             }
 
